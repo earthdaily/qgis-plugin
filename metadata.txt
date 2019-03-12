@@ -1,0 +1,39 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=GEOSYS Plugin
+qgisMinimumVersion=3.0
+description=Discover, request and use aggregate imagery products based on landsat-8, Sentinel 2 and other sensors from within QGIS, using the GEOSYS API.
+version=0.1
+author=Kartoza
+email=andre@kartoza.com
+
+about=Discover, request and use aggregate imagery products based on landsat-8, Sentinel 2 and other sensors from within QGIS, using the GEOSYS API.”
+
+tracker=https://github.com/kartoza/geosys-qgis-plugin/issues
+repository=https://github.com/kartoza/geosys-qgis-plugin
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=
+
+homepage=https://github.com/kartoza/geosys-qgis-plugin
+category=Plugins
+icon=icon.png
+# experimental flag
+experimental=False
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+

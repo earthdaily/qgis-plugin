@@ -1,0 +1,7 @@
+[flake8]
+exclude = test_*.py,__init__.py,*example.py,
+max-line-length = 79
+
+# E12x continuation line indentation
+
+ignore = E121,E722,W503,W605
