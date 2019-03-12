@@ -1,0 +1,44 @@
+language: python
+
+services:
+    - docker
+
+env:
+  global:
+    - ON_TRAVIS=true
+    - MUTE_LOGS=true
+    - WITH_PYTHON_PEP=true
+    - IMAGE=qgis/qgis
+
+  matrix:
+    - QGIS_VERSION_TAG=latest
+    - QGIS_VERSION_TAG=release-3_4
+
+python:
+  - "3.6"
+
+branches:
+  only:
+    - master
+    - develop
+
+addons:
+  apt:
+    packages:
+      - git
+      - python-software-properties
+
+before_install:
+  - docker pull ${IMAGE}:${QGIS_VERSION_TAG}
+
+install:
+  - pip install --upgrade pip
+  - pip install --upgrade pep257
+  - pip install --upgrade flake8
+
+script:
+  # The real test\
+  - make pep257
+  - make flake8
+
+sudo: false
