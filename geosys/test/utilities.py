@@ -3,7 +3,7 @@
 
 import sys
 import logging
-
+import processing
 
 LOGGER = logging.getLogger('QGIS')
 QGIS_APP = None  # Static variable used to hold hand to running QGIS app
@@ -34,10 +34,20 @@ def get_qgis_app():
 
     if QGIS_APP is None:
         gui_flag = True  # All test will run qgis in gui mode
-        #noinspection PyPep8Naming
-        QGIS_APP = QgsApplication(sys.argv, gui_flag)
+
+        # noinspection PyPep8Naming
+        if 'argv' in dir(sys):
+            QGIS_APP = QgsApplication([p.encode('utf-8')
+                                       for p in sys.argv], gui_flag)
+        else:
+            QGIS_APP = QgsApplication([], gui_flag)
+
         # Make sure QGIS_PREFIX_PATH is set in your env if needed!
         QGIS_APP.initQgis()
+
+        # Initialize processing
+        processing.Processing.initialize()
+
         s = QGIS_APP.showSettings()
         LOGGER.debug(s)
 

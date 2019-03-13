@@ -22,14 +22,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-
-import os
-
-from PyQt5 import QtGui, QtWidgets, uic
+from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'geosys_dockwidget_base.ui'))
+from geosys.utilities.resources import get_ui_class
+
+FORM_CLASS = get_ui_class('geosys_dockwidget_base.ui')
 
 
 class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
