@@ -22,15 +22,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os.path
+
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
-# Initialize Qt resources from file resources.py
-from .resources import *
 
-# Import the code for the DockWidget
-from .geosys_dockwidget import GeosysPluginDockWidget
-import os.path
+from geosys.utilities.resources import resources_path
 
 
 class GeosysPlugin:
@@ -167,7 +165,7 @@ class GeosysPlugin:
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/geosys/icon.png'
+        icon_path = resources_path('img', 'icons', 'icon.png')
         self.add_action(
             icon_path,
             text=self.tr(u'Aggregate imagery products, using GEOSYS API'),
@@ -220,6 +218,8 @@ class GeosysPlugin:
             #    removed on close (see self.onClosePlugin method)
             if self.dockwidget is None:
                 # Create the dockwidget (after translation) and keep reference
+                from geosys.ui.widgets.geosys_dockwidget import (
+                    GeosysPluginDockWidget)
                 self.dockwidget = GeosysPluginDockWidget()
 
             # connect to provide cleanup on closing of dockwidget

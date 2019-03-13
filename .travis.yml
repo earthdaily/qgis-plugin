@@ -35,9 +35,21 @@ install:
   - pip install --upgrade pip
   - pip install --upgrade pep257
   - pip install --upgrade flake8
+  - docker run -d --name qgis-testing-environment -v ${TRAVIS_BUILD_DIR}:/tests_directory -e WITH_PYTHON_PEP=${WITH_PYTHON_PEP} -e ON_TRAVIS=${ON_TRAVIS} -e MUTE_LOGS=${MUTE_LOGS} -e DISPLAY=:99 ${IMAGE}:${QGIS_VERSION_TAG}
+  - sleep 10
+  - docker exec -it qgis-testing-environment sh -c "qgis_setup.sh geosys"
+
+  # FIX default installation because the sources must be in "geosys" parent folder
+  - docker exec -it qgis-testing-environment sh -c "rm -f  /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/geosys"
+  - docker exec -it qgis-testing-environment sh -c "ln -s /tests_directory/ /root/.local/share/QGIS/QGIS3/profiles/default/python/plugins/geosys"
+
+  - docker exec -it qgis-testing-environment sh -c "pip3 install -r /tests_directory/REQUIREMENTS.txt"
+  - docker exec -it qgis-testing-environment sh -c "pip3 install -r /tests_directory/REQUIREMENTS_TESTING.txt"
 
 script:
-  # The real test\
+  # The real test
+  # disable test_suite until we manage to fix the environment
+  # - docker exec -it qgis-testing-environment sh -c "qgis_testrunner.sh test_suite.test_package"
   - make pep257
   - make flake8
 

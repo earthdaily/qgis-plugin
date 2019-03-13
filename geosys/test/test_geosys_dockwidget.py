@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Resources test.
+"""DockWidget test.
 
 .. note:: This program is free software; you can redistribute it and/or modify
      it under the terms of the GNU General Public License as published by
@@ -14,31 +14,29 @@ __copyright__ = 'Copyright 2019, Kartoza'
 
 import unittest
 
-from PyQt5.QtGui import QIcon
+from geosys.test.utilities import get_qgis_app
+from geosys.ui.widgets.geosys_dockwidget import GeosysPluginDockWidget
+
+QGIS_APP = get_qgis_app()
 
 
-
-class GeosysPluginDialogTest(unittest.TestCase):
-    """Test rerources work."""
+class GeosysPluginDockWidgetTest(unittest.TestCase):
+    """Test dockwidget works."""
 
     def setUp(self):
         """Runs before each test."""
-        pass
+        self.dockwidget = GeosysPluginDockWidget(None)
 
     def tearDown(self):
         """Runs after each test."""
+        self.dockwidget = None
+
+    def test_dockwidget_ok(self):
+        """Test we can click OK."""
         pass
 
-    def test_icon_png(self):
-        """Test we can click OK."""
-        path = ':/plugins/GeosysPlugin/icon.png'
-        icon = QIcon(path)
-        self.assertFalse(icon.isNull())
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(GeosysPluginResourcesTest)
+    suite = unittest.makeSuite(GeosysPluginDockWidgetTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)
-
-
-
