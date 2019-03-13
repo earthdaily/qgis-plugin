@@ -23,6 +23,12 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
+import sys
+import os
+
+sys.path.append(os.path.dirname(__file__))
+sys.path.extend([os.path.abspath(os.path.join(
+    os.path.dirname(__file__), os.path.pardir))])
 
 
 # noinspection PyPep8Naming
@@ -32,6 +38,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
-    from .geosys import GeosysPlugin
+    from .geosys.plugin import GeosysPlugin
     return GeosysPlugin(iface)

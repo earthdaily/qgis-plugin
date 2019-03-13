@@ -17,7 +17,6 @@ import unittest
 from PyQt5.QtGui import QIcon
 
 
-
 class GeosysPluginDialogTest(unittest.TestCase):
     """Test rerources work."""
 
@@ -30,10 +29,11 @@ class GeosysPluginDialogTest(unittest.TestCase):
         pass
 
     def test_icon_png(self):
-        """Test we can click OK."""
+        """Test we can load resources."""
         path = ':/plugins/GeosysPlugin/icon.png'
         icon = QIcon(path)
         self.assertFalse(icon.isNull())
+
 
 if __name__ == "__main__":
     suite = unittest.makeSuite(GeosysPluginResourcesTest)

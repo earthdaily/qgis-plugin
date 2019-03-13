@@ -14,11 +14,9 @@ __copyright__ = 'Copyright 2019, Kartoza'
 
 import unittest
 
-from PyQt5.QtGui import QDockWidget
-
-from geosys_dockwidget import GeosysPluginDockWidget
-
-from utilities import get_qgis_app
+from geosys.test.test_resources import GeosysPluginDialogTest
+from geosys.test.utilities import get_qgis_app
+from geosys.ui.widgets.geosys_dockwidget import GeosysPluginDockWidget
 
 QGIS_APP = get_qgis_app()
 
