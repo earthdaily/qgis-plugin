@@ -7,13 +7,13 @@ import os
 
 # This import is to enable SIP API V2
 # noinspection PyUnresolvedReferences
-import qgis  # NOQA pylint: disable=unused-import
+# import qgis  # NOQA pylint: disable=unused-import
 from qgis.PyQt import QtCore, uic
 
-__copyright__ = ""
+__copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
-__email__ = ""
-__revision__ = '$Format:%H$'
+__email__ = "rohmat@kartoza.com"
+__revision__ = "$Format:%H$"
 
 
 def resources_path(*args):

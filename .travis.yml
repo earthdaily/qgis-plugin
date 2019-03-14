@@ -35,6 +35,7 @@ install:
   - pip install --upgrade pip
   - pip install --upgrade pep257
   - pip install --upgrade flake8
+  - pip install -r REQUIREMENTS.txt
   - docker run -d --name qgis-testing-environment -v ${TRAVIS_BUILD_DIR}:/tests_directory -e WITH_PYTHON_PEP=${WITH_PYTHON_PEP} -e ON_TRAVIS=${ON_TRAVIS} -e MUTE_LOGS=${MUTE_LOGS} -e DISPLAY=:99 ${IMAGE}:${QGIS_VERSION_TAG}
   - sleep 10
   - docker exec -it qgis-testing-environment sh -c "qgis_setup.sh geosys"
@@ -50,6 +51,7 @@ script:
   # The real test
   # disable test_suite until we manage to fix the environment
   # - docker exec -it qgis-testing-environment sh -c "qgis_testrunner.sh test_suite.test_package"
+  - make test-bridge-api
   - make pep257
   - make flake8
 
