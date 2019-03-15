@@ -11,6 +11,11 @@ __revision__ = "$Format:%H$"
 
 
 class FieldLevelMapsAPIClientV4(ApiClient):
+    """Connection API Client
+
+    Managing field-level-maps request to geosys identity server.
+
+    """
     VERSION = 4
 
     def __init__(self, endpoint_url=BRIDGE_URLS['na']['prod']):
@@ -18,4 +23,9 @@ class FieldLevelMapsAPIClientV4(ApiClient):
 
     @property
     def base_url(self):
+        """Base url of the API.
+
+        :return: API url.
+        :rtype: str
+        """
         return '%s/field-level-maps/v%s/' % (self.endpoint_url, self.VERSION)

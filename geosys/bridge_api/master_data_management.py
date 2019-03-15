@@ -11,6 +11,11 @@ __revision__ = "$Format:%H$"
 
 
 class MasterDataManagementAPIClientV6(ApiClient):
+    """Connection API Client
+
+    Managing master-data-management request to geosys identity server.
+
+    """
     VERSION = 6
 
     def __init__(self, endpoint_url=BRIDGE_URLS['na']['prod']):
@@ -18,5 +23,10 @@ class MasterDataManagementAPIClientV6(ApiClient):
 
     @property
     def base_url(self):
+        """Base url of the API.
+
+        :return: API url.
+        :rtype: str
+        """
         return '%s/master-data-management/v%s/' % (
             self.endpoint_url, self.VERSION)
