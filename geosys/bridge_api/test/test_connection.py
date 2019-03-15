@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Resources test.
+"""Bridge API connection test.
 
 .. note:: This program is free software; you can redistribute it and/or modify
      it under the terms of the GNU General Public License as published by
@@ -9,7 +9,8 @@
 """
 import unittest
 
-from PyQt5.QtGui import QIcon
+from geosys.bridge_api.connection import ConnectionAPIClientV2
+from geosys.bridge_api.default import IDENTITY_URLS
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -17,8 +18,8 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 
-class GeosysPluginResourcesTest(unittest.TestCase):
-    """Test rerources work."""
+class BridgeAPIConnectionTest(unittest.TestCase):
+    """Test Bridge API connection works."""
 
     def setUp(self):
         """Runs before each test."""
@@ -28,14 +29,14 @@ class GeosysPluginResourcesTest(unittest.TestCase):
         """Runs after each test."""
         pass
 
-    def test_icon_png(self):
-        """Test we can load resources."""
-        path = ':/plugins/GeosysPlugin/icon.png'
-        icon = QIcon(path)
-        self.assertFalse(icon.isNull())
+    def test_access_token(self):
+        """Test we can successfully get the access token."""
+        client = ConnectionAPIClientV2(IDENTITY_URLS['na']['test'])
+        json = client.get_access_token('Bridge_US_Demo', 'Welcome12k18')
+        self.assertTrue('access_token' in json)
 
 
 if __name__ == "__main__":
-    suite = unittest.makeSuite(GeosysPluginResourcesTest)
+    suite = unittest.makeSuite(BridgeAPIConnectionTest)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite)

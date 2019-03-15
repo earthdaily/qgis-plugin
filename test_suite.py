@@ -10,7 +10,6 @@ Contact : rohmat at kartoza dot com
      (at your option) any later version.
 
 """
-
 import sys
 import os
 import unittest
@@ -31,10 +30,10 @@ from osgeo import gdal
 from qgis.PyQt import Qt
 from geosys.utilities.qgis import qgis_version
 
-__author__ = 'myarjunar'
-__revision__ = '$Format:%H$'
-__date__ = '12/03/2019'
-__copyright__ = ''
+__copyright__ = "Copyright 2019, Kartoza"
+__license__ = "GPL version 3"
+__email__ = "rohmat@kartoza.com"
+__revision__ = "$Format:%H$"
 
 
 def _run_tests(test_suite, package_name, with_coverage=False):

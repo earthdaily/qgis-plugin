@@ -8,14 +8,15 @@
 
 """
 
-__author__ = 'andre@kartoza.com'
-__date__ = '2019-03-11'
-__copyright__ = 'Copyright 2019, Kartoza'
-
 import unittest
 
 from geosys.test.utilities import get_qgis_app
 from geosys.ui.widgets.geosys_dockwidget import GeosysPluginDockWidget
+
+__copyright__ = "Copyright 2019, Kartoza"
+__license__ = "GPL version 3"
+__email__ = "rohmat@kartoza.com"
+__revision__ = "$Format:%H$"
 
 QGIS_APP = get_qgis_app()
 

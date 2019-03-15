@@ -264,3 +264,10 @@ flake8:
 	@echo "-----------"
 	@python3 -m flake8 --version
 	@python3 -m flake8 || true
+
+# Run test on bridge_api package
+test-bridge-api:
+	@echo "----------------------"
+	@echo "Bridge API Test Suite"
+	@echo "----------------------"
+	nosetests geosys.bridge_api -v --with-id
