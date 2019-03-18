@@ -24,7 +24,7 @@ class ConnectionAPIClientV2(ApiClient):
     VERSION = 2.1
 
     def __init__(self, endpoint_url=IDENTITY_URLS['na']['prod']):
-        super(ConnectionAPIClientV2, self).__init__(endpoint_url)
+        super(ConnectionAPIClientV2, self).__init__(endpoint_url=endpoint_url)
 
     @property
     def base_url(self):
@@ -61,5 +61,7 @@ class ConnectionAPIClientV2(ApiClient):
             'content-type': 'application/x-www-form-urlencoded'
         }
 
-        return self.post_json(
+        response = self.post(
             self.full_url('connect', 'token'), headers=headers, data=data)
+
+        return response.json()
