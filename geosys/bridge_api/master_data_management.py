@@ -11,15 +11,29 @@ __revision__ = "$Format:%H$"
 
 
 class MasterDataManagementAPIClientV6(ApiClient):
-    """Connection API Client
+    """Master Data Management API Client
 
     Managing master-data-management request to geosys identity server.
 
     """
     VERSION = 6
 
-    def __init__(self, endpoint_url=BRIDGE_URLS['na']['prod']):
-        super(MasterDataManagementAPIClientV6, self).__init__(endpoint_url)
+    def __init__(
+            self,
+            access_token,
+            endpoint_url=BRIDGE_URLS['na']['prod']):
+        """Implementation of master-data-management API client.
+
+        This API call requires access_token from identity server.
+
+        :param access_token: The access token.
+        :type access_token: str
+
+        :param endpoint_url: The API base url.
+        :type endpoint_url: str
+        """
+        super(MasterDataManagementAPIClientV6, self).__init__(
+            access_token, endpoint_url)
 
     @property
     def base_url(self):

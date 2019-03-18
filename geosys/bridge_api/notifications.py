@@ -11,15 +11,29 @@ __revision__ = "$Format:%H$"
 
 
 class NotificationsAPIClientV1(ApiClient):
-    """Connection API Client
+    """Notifications API Client
 
     Managing notifications request to geosys identity server.
 
     """
     VERSION = 1
 
-    def __init__(self, endpoint_url=BRIDGE_URLS['na']['prod']):
-        super(NotificationsAPIClientV1, self).__init__(endpoint_url)
+    def __init__(
+            self,
+            access_token,
+            endpoint_url=BRIDGE_URLS['na']['prod']):
+        """Implementation of notifications API client.
+
+        This API call requires access_token from identity server.
+
+        :param access_token: The access token.
+        :type access_token: str
+
+        :param endpoint_url: The API base url.
+        :type endpoint_url: str
+        """
+        super(NotificationsAPIClientV1, self).__init__(
+            access_token, endpoint_url)
 
     @property
     def base_url(self):

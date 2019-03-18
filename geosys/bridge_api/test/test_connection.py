@@ -32,8 +32,8 @@ class BridgeAPIConnectionTest(unittest.TestCase):
     def test_access_token(self):
         """Test we can successfully get the access token."""
         client = ConnectionAPIClientV2(IDENTITY_URLS['na']['test'])
-        json = client.get_access_token('Bridge_US_Demo', 'Welcome12k18')
-        self.assertTrue('access_token' in json)
+        response = client.get_access_token('Bridge_US_Demo', 'Welcome12k18')
+        self.assertTrue('access_token' in response)
 
 
 if __name__ == "__main__":

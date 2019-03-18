@@ -11,15 +11,29 @@ __revision__ = "$Format:%H$"
 
 
 class VegetationTimeSeriesAPIClientV1(ApiClient):
-    """Connection API Client
+    """Vegetation Time Series API Client
 
     Managing vegetation-time-series request to geosys identity server.
 
     """
     VERSION = 1
 
-    def __init__(self, endpoint_url=BRIDGE_URLS['na']['prod']):
-        super(VegetationTimeSeriesAPIClientV1, self).__init__(endpoint_url)
+    def __init__(
+            self,
+            access_token,
+            endpoint_url=BRIDGE_URLS['na']['prod']):
+        """Implementation of vegetation-time-series API client.
+
+        This API call requires access_token from identity server.
+
+        :param access_token: The access token.
+        :type access_token: str
+
+        :param endpoint_url: The API base url.
+        :type endpoint_url: str
+        """
+        super(VegetationTimeSeriesAPIClientV1, self).__init__(
+            access_token, endpoint_url)
 
     @property
     def base_url(self):
