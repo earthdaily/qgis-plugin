@@ -7,6 +7,7 @@
      (at your option) any later version.
 
 """
+import os
 import unittest
 
 from geosys.bridge_api.connection import ConnectionAPIClientV2
@@ -25,7 +26,16 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
     def setUp(self):
         """Runs before each test."""
         client = ConnectionAPIClientV2(IDENTITY_URLS['na']['test'])
-        json = client.get_access_token('Bridge_US_Demo', 'Welcome12k18')
+        username = os.environ.get('BRIDGE_API_USERNAME', None)
+        password = os.environ.get('BRIDGE_API_PASSWORD', None)
+
+        # we need to set the credentials as environment variables
+        message = ('BRIDGE_API_USERNAME and BRIDGE_API_PASSWORD need to be '
+                   'defined as environment variables')
+        self.assertIsNotNone(username, message)
+        self.assertIsNotNone(password, message)
+
+        json = client.get_access_token(username, password)
         self.assertTrue('access_token' in json)
         self.access_token = json['access_token']
 
@@ -34,7 +44,7 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
         pass
 
     def test_get_coverage(self):
-        """Test we can successfully get the access token."""
+        """Test we can successfully get the coverage."""
         data = {
           "Geometry": "POLYGON(("
                       "-86.86701653386694 41.331532756357426,"
