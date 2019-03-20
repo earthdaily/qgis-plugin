@@ -13,7 +13,7 @@ __revision__ = "$Format:%H$"
 class NotificationsAPIClientV1(ApiClient):
     """Notifications API Client
 
-    Managing notifications request to geosys identity server.
+    Managing notifications request to geosys bridge server.
 
     """
     VERSION = 1

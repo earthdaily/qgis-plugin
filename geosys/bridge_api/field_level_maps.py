@@ -15,7 +15,7 @@ __revision__ = "$Format:%H$"
 class FieldLevelMapsAPIClientV4(ApiClient):
     """Field Level Maps API Client
 
-    Managing field-level-maps request to geosys identity server.
+    Managing field-level-maps request to geosys bridge server.
 
     """
     VERSION = 4

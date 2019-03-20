@@ -13,7 +13,7 @@ __revision__ = "$Format:%H$"
 class VegetationTimeSeriesAPIClientV1(ApiClient):
     """Vegetation Time Series API Client
 
-    Managing vegetation-time-series request to geosys identity server.
+    Managing vegetation-time-series request to geosys bridge server.
 
     """
     VERSION = 1

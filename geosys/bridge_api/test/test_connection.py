@@ -8,6 +8,7 @@
 
 """
 import unittest
+import os
 
 from geosys.bridge_api.connection import ConnectionAPIClientV2
 from geosys.bridge_api.default import IDENTITY_URLS
@@ -32,7 +33,16 @@ class BridgeAPIConnectionTest(unittest.TestCase):
     def test_access_token(self):
         """Test we can successfully get the access token."""
         client = ConnectionAPIClientV2(IDENTITY_URLS['na']['test'])
-        response = client.get_access_token('Bridge_US_Demo', 'Welcome12k18')
+        username = os.environ.get('BRIDGE_API_USERNAME', None)
+        password = os.environ.get('BRIDGE_API_PASSWORD', None)
+
+        # we need to set the credentials as environment variables
+        message = ('BRIDGE_API_USERNAME and BRIDGE_API_PASSWORD need to be '
+                   'defined as environment variables')
+        self.assertIsNotNone(username, message)
+        self.assertIsNotNone(password, message)
+
+        response = client.get_access_token(username, password)
         self.assertTrue('access_token' in response)
 
 

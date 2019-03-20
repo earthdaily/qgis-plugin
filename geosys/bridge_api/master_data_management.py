@@ -13,7 +13,7 @@ __revision__ = "$Format:%H$"
 class MasterDataManagementAPIClientV6(ApiClient):
     """Master Data Management API Client
 
-    Managing master-data-management request to geosys identity server.
+    Managing master-data-management request to geosys bridge server.
 
     """
     VERSION = 6
