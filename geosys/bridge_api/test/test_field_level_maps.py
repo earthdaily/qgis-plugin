@@ -58,6 +58,27 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
         response = client.get_coverage(data=data, filters=filters)
         self.assertIsInstance(response, list)
 
+    def test_get_field_map(self):
+        """Test we can successfully get the requested field map."""
+        client = FieldLevelMapsAPIClientV4(
+            self.access_token, endpoint_url=BRIDGE_URLS['na']['test'])
+
+        # Test INSEASONFIELD_AVERAGE_NDVI map creation
+        data = {
+            "SeasonField": {
+                "Id": "zgzmbrm"
+            },
+            "Image": {
+                "Date": "2018-10-13"
+            },
+            "NPlanned": 48,
+            "NMin": 20,
+            "NMax": 70
+        }
+        response = client.get_field_map(
+            'inseason-field-average-ndvi', data=data)
+        self.assertTrue('seasonField' in response)
+
 
 if __name__ == "__main__":
     suite = unittest.makeSuite(BridgeAPIFieldLevelMapsTest)
