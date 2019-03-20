@@ -10,9 +10,9 @@
 import os
 import unittest
 
-from geosys.bridge_api.connection import ConnectionAPIClientV2
+from geosys.bridge_api.connection import ConnectionAPIClient
 from geosys.bridge_api.default import IDENTITY_URLS, BRIDGE_URLS
-from geosys.bridge_api.field_level_maps import FieldLevelMapsAPIClientV4
+from geosys.bridge_api.field_level_maps import FieldLevelMapsAPIClient
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -25,7 +25,7 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
 
     def setUp(self):
         """Runs before each test."""
-        client = ConnectionAPIClientV2(IDENTITY_URLS['na']['test'])
+        client = ConnectionAPIClient(IDENTITY_URLS['na']['test'])
         username = os.environ.get('BRIDGE_API_USERNAME', None)
         password = os.environ.get('BRIDGE_API_PASSWORD', None)
 
@@ -63,14 +63,14 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
             "coverageType": "CLEAR"
         }
 
-        client = FieldLevelMapsAPIClientV4(
+        client = FieldLevelMapsAPIClient(
             self.access_token, endpoint_url=BRIDGE_URLS['na']['test'])
         response = client.get_coverage(data=data, filters=filters)
         self.assertIsInstance(response, list)
 
     def test_get_field_map(self):
         """Test we can successfully get the requested field map."""
-        client = FieldLevelMapsAPIClientV4(
+        client = FieldLevelMapsAPIClient(
             self.access_token, endpoint_url=BRIDGE_URLS['na']['test'])
 
         # Test INSEASONFIELD_AVERAGE_NDVI map creation
