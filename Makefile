@@ -267,7 +267,15 @@ flake8:
 
 # Run test on bridge_api package
 test-bridge-api:
+	@echo
 	@echo "----------------------"
 	@echo "Bridge API Test Suite"
 	@echo "----------------------"
 	nosetests geosys.bridge_api -v --with-id
+
+test-bridge-api-wrapper:
+	@echo
+	@echo "----------------------"
+	@echo "Bridge API Test Suite"
+	@echo "----------------------"
+	nosetests geosys.test.test_bridge_api_wrapper -v --with-id

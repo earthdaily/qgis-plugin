@@ -68,8 +68,9 @@ class FieldLevelMapsAPIClient(ApiClient):
             }
         :type filters: dict
 
-        :return: JSON response
-        :rtype: dict
+        :return: JSON response.
+            List of maps data specification based on given criteria.
+        :rtype: list
         """
         filters = filters if filters else {}
         headers = {
@@ -105,8 +106,9 @@ class FieldLevelMapsAPIClient(ApiClient):
             }
         :type data: dict
 
-        :return:
-        :rtype:
+        :return: JSON response.
+            Map data specification based on given parameters.
+        :rtype: dict
         """
         params = params if params else {}
         headers = {
