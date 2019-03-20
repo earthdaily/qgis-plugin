@@ -3,6 +3,8 @@
 """
 from geosys.bridge_api.api_abstract import ApiClient
 from geosys.bridge_api.default import BRIDGE_URLS
+from geosys.bridge_api.definitions import COLOR_COMPOSITION
+from geosys.bridge_api.utilities import get_definition
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -41,7 +43,7 @@ class FieldLevelMapsAPIClientV4(ApiClient):
         """
         return '%s/field-level-maps/v%s/' % (self.endpoint_url, self.VERSION)
 
-    def get_coverage(self, data, filters):
+    def get_coverage(self, data, filters=None):
         """Get coverage based on given parameters.
 
         :param data: Data passed to the API to get specific coverage.
@@ -69,6 +71,7 @@ class FieldLevelMapsAPIClientV4(ApiClient):
         :return: JSON response
         :rtype: dict
         """
+        filters = filters if filters else {}
         headers = {
             'accept': 'application/json',
             'content-type': 'application/json'
@@ -81,3 +84,48 @@ class FieldLevelMapsAPIClientV4(ApiClient):
             json=data)
 
         return response.json()
+
+    def get_field_map(self, map_type_key, data, params=None):
+        """Get requested field map.
+
+        :param map_type_key: Map type key.
+        :type map_type_key: str
+
+        :param params: Map creation parameters.
+        :type params: dict
+
+        :param data: Map creation data.
+            example: {
+                "SeasonField": {
+                    "Id": "string"
+                },
+                "Image": {
+                    "Date": "string"
+                }
+            }
+        :type data: dict
+
+        :return:
+        :rtype:
+        """
+        params = params if params else {}
+        headers = {
+            'accept': 'application/json',
+            'content-type': 'application/json'
+        }
+        map_type = get_definition(map_type_key)
+        if map_type:
+            map_type == COLOR_COMPOSITION and params.update({
+                'mapType': COLOR_COMPOSITION['name']
+            })
+            map_family = map_type['map_family']
+            response = self.post(
+                self.full_url(
+                    'maps', map_family['endpoint'], map_type['name']),
+                headers=headers,
+                params=params,
+                json=data)
+
+            return response.json()
+
+        return {}
