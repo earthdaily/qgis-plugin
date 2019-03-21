@@ -85,6 +85,27 @@ class BridgeAPI(object):
         if not success:
             raise Exception(message)
 
+    @staticmethod
+    def get_crops():
+        """Get default crops available.
+
+        :return: List of crops available.
+        :rtype: list
+        """
+        return CROPS.values()
+
+    @staticmethod
+    def get_regions():
+        """Get default regions available
+
+        :return: List of tuple of regions available.
+        :rtype: list
+        """
+        regions = []
+        for region in ALL_REGIONS:
+            regions.append((region['key'], region['description']))
+        return regions
+
     def authenticate(self):
         """Authenticate user using given credentials.
 
@@ -108,27 +129,6 @@ class BridgeAPI(object):
         except KeyError:
             message = 'Please enter a correct region (NA or EU)'
             return False, message
-
-    @staticmethod
-    def get_crops(self):
-        """Get default crops available.
-
-        :return: List of crops available.
-        :rtype: list
-        """
-        return CROPS.values()
-
-    @staticmethod
-    def get_regions(self):
-        """Get default regions available
-
-        :return: List of tuple of regions available.
-        :rtype: list
-        """
-        regions = []
-        for region in ALL_REGIONS:
-            regions.append((region['key'], region['description']))
-        return regions
 
     def get_coverage(self, geometry, crop, sowing_date):
         """Get fields coverage for given parameters.

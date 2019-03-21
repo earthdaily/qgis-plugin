@@ -36,6 +36,35 @@ class BridgeAPIWrapperTest(unittest.TestCase):
         """Runs after each test."""
         pass
 
+    def test_get_crops(self):
+        """Test we can get all available crops from definition"""
+        bridge_api = BridgeAPI(
+            username=self.username,
+            password=self.password,
+            region='na',
+            debug=True)
+        crops = bridge_api.get_crops()
+        expected_crops = [
+            'SUGARCANE', 'CORN', 'MILLET', 'GRAPES', 'OTHERS', 'COTTON',
+            'SUNFLOWER', 'PEANUT', 'SOYBEANS', 'ORANGE', 'RICE', 'SORGHUM']
+        self.assertEqual(crops, expected_crops)
+
+    def test_get_regions(self):
+        """Test we can get all available regions from definition"""
+        bridge_api = BridgeAPI(
+            username=self.username,
+            password=self.password,
+            region='na',
+            debug=True)
+        regions = bridge_api.get_regions()
+        expected_regions = [
+            ('na',
+             'US Platform - Fields located in USA, Canada, and Australia.'),
+            ('eu',
+             'Fields located in European Platform - Europe, South America '
+             'and South Africa.')]
+        self.assertEqual(regions, expected_regions)
+
     def test_get_coverage(self):
         """Test we can successfully get the coverage."""
         geom = (
