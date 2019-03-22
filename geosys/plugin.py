@@ -24,7 +24,8 @@
 """
 import os.path
 
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
+from PyQt5.QtCore import (
+    QSettings, QTranslator, qVersion, QCoreApplication, Qt)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 
@@ -71,8 +72,8 @@ class GeosysPlugin:
 
         # print "** INITIALIZING GeosysPlugin"
 
-        self.pluginIsActive = False
-        self.dockwidget = None
+        self.plugin_active = False
+        self.dock_widget = None
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -89,106 +90,107 @@ class GeosysPlugin:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('GeosysPlugin', message)
 
-    def add_action(
-            self,
-            icon_path,
-            text,
-            callback,
-            enabled_flag=True,
-            add_to_menu=True,
-            add_to_toolbar=True,
-            status_tip=None,
-            whats_this=None,
-            parent=None):
-        """Add a toolbar icon to the toolbar.
+    def add_action(self, action, add_to_toolbar=True):
+        """Add a toolbar icon to the GEOSYS toolbar.
 
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
+        :param action: The action that should be added to the toolbar.
+        :type action: QAction
 
         :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
+            be added to the GEOSYS toolbar. Defaults to True.
         :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
         """
-
-        icon = QIcon(icon_path)
-        action = QAction(icon, text, parent)
-        action.triggered.connect(callback)
-        action.setEnabled(enabled_flag)
-
-        if status_tip is not None:
-            action.setStatusTip(status_tip)
-
-        if whats_this is not None:
-            action.setWhatsThis(whats_this)
-
+        # store in the class list of actions for easy plugin unloading
+        self.actions.append(action)
+        self.iface.addPluginToMenu(self.menu, action)
         if add_to_toolbar:
             self.toolbar.addAction(action)
 
-        if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
+    def _create_dock_toggle_action(self):
+        """Create action for plugin dockable window (show/hide)."""
+        # pylint: disable=W0201
+        icon = resources_path('img', 'icons', 'icon.png')
+        self.action_dock = QAction(
+            QIcon(icon),
+            self.tr('Toggle GEOSYS Dock'),
+            self.iface.mainWindow())
+        self.action_dock.setStatusTip(self.tr(
+            'Show/hide GEOSYS dock widget'))
+        self.action_dock.setWhatsThis(self.tr(
+            'Show/hide GEOSYS dock widget'))
+        self.action_dock.setCheckable(True)
+        self.action_dock.setChecked(True)
+        self.action_dock.triggered.connect(self.toggle_dock_visibility)
+        self.add_action(self.action_dock)
 
-        self.actions.append(action)
+    def _create_options_dialog_action(self):
+        """Create action for options dialog."""
+        icon = resources_path('img', 'icons', 'icon.png')
+        self.action_options = QAction(
+            QIcon(icon),
+            self.tr('Options'), self.iface.mainWindow())
+        self.action_options.setStatusTip(self.tr(
+            'Open GEOSYS options dialog'))
+        self.action_options.setWhatsThis(self.tr(
+            'Open GEOSYS options dialog'))
+        self.action_options.triggered.connect(self.show_options)
+        self.add_action(self.action_options, add_to_toolbar=False)
 
-        return action
+    def _create_dock(self):
+        """Create GEOSYS dock widget."""
+        if self.dock_widget is None:
+            # Create the dockwidget (after translation) and keep reference
+            from geosys.ui.widgets.geosys_dockwidget import (
+                GeosysPluginDockWidget)
+            self.dock_widget = GeosysPluginDockWidget()
+
+        # connect to provide cleanup on closing of dock widget
+        self.dock_widget.closingPlugin.connect(self.onClosePlugin)
+
+        # show the dock widget
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
+        self.dock_widget.show()
 
     def initGui(self):
-        """Create the menu entries and toolbar icons inside the QGIS GUI."""
+        """Gui initialisation procedure (for QGIS plugin api).
 
-        icon_path = resources_path('img', 'icons', 'icon.png')
-        self.add_action(
-            icon_path,
-            text=self.tr(u'Aggregate imagery products, using GEOSYS API'),
-            callback=self.run,
-            parent=self.iface.mainWindow())
+        .. note:: Don't change the name of this method from initGui!
 
-    # -------------------------------------------------------------------------
+        This method is called by QGIS and should be used to set up
+        any graphical user interface elements that should appear in QGIS by
+        default (i.e. before the user performs any explicit action with the
+        plugin).
+        """
+
+        self._create_dock()
+        self._create_dock_toggle_action()
+        self._create_options_dialog_action()
+
+        # Hook up a slot for when the dock is hidden using its close button
+        # or  view-panels
+        #
+        self.dock_widget.visibilityChanged.connect(self.toggle_geosys_action)
+        # Also deal with the fact that on start of QGIS dock may already be
+        # hidden.
+        self.action_dock.setChecked(self.dock_widget.isVisible())
+
+    # ---------------------------------------------------------------------
 
     def onClosePlugin(self):
-        """Cleanup necessary items here when plugin dockwidget is closed"""
+        """Cleanup necessary items here when plugin dock widget is closed"""
 
         # print "** CLOSING GeosysPlugin"
 
         # disconnects
-        self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
+        self.dock_widget.closingPlugin.disconnect(self.onClosePlugin)
 
-        # remove this statement if dockwidget is to remain
+        # remove this statement if dock widget is to remain
         # for reuse if plugin is reopened
-        # Commented next statement since it causes QGIS crashe
+        # Commented next statement since it causes QGIS crashes
         # when closing the docked window:
-        # self.dockwidget = None
+        # self.dock_widget = None
 
-        self.pluginIsActive = False
+        self.plugin_active = False
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -203,29 +205,57 @@ class GeosysPlugin:
         # remove the toolbar
         del self.toolbar
 
-    # -------------------------------------------------------------------------
+    # ---------------------------------------------------------------------
 
     def run(self):
         """Run method that loads and starts the plugin"""
 
-        if not self.pluginIsActive:
-            self.pluginIsActive = True
+        if not self.plugin_active:
+            self.plugin_active = True
 
             # print "** STARTING GeosysPlugin"
 
-            # dockwidget may not exist if:
+            # dock widget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
-            if self.dockwidget is None:
-                # Create the dockwidget (after translation) and keep reference
+            if self.dock_widget is None:
+                # Create the dock widget (after translation) and keep reference
                 from geosys.ui.widgets.geosys_dockwidget import (
                     GeosysPluginDockWidget)
-                self.dockwidget = GeosysPluginDockWidget()
+                self.dock_widget = GeosysPluginDockWidget()
 
-            # connect to provide cleanup on closing of dockwidget
-            self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+            # connect to provide cleanup on closing of dock widget
+            self.dock_widget.closingPlugin.connect(self.onClosePlugin)
 
-            # show the dockwidget
+            # show the dock widget
             # TODO: fix to allow choice of dock location
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-            self.dockwidget.show()
+            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
+            self.dock_widget.show()
+
+    def toggle_geosys_action(self, checked):
+        """Check or un-check the toggle GEOSYS toolbar button.
+
+        This slot is called when the user hides the GEOSYS panel using its
+        close button or using view->panels.
+
+        :param checked: True if the dock should be shown, otherwise False.
+        :type checked: bool
+        """
+        self.action_dock.setChecked(checked)
+
+    def toggle_dock_visibility(self):
+        """Show or hide the dock widget."""
+        if self.dock_widget.isVisible():
+            self.dock_widget.setVisible(False)
+        else:
+            self.dock_widget.setVisible(True)
+            self.dock_widget.raise_()
+
+    def show_options(self):
+        """Show the options dialog."""
+        # import here only so that it is AFTER i18n set up
+        from geosys.ui.widgets.options_dialog import GeosysOptionsDialog
+
+        dialog = GeosysOptionsDialog(parent=self.iface.mainWindow())
+        if dialog.exec_():  # modal
+            pass
