@@ -10,7 +10,7 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 
-class VegetationTimeSeriesAPIClientV1(ApiClient):
+class VegetationTimeSeriesAPIClient(ApiClient):
     """Vegetation Time Series API Client
 
     Managing vegetation-time-series request to geosys bridge server.
@@ -32,7 +32,7 @@ class VegetationTimeSeriesAPIClientV1(ApiClient):
         :param endpoint_url: The API base url.
         :type endpoint_url: str
         """
-        super(VegetationTimeSeriesAPIClientV1, self).__init__(
+        super(VegetationTimeSeriesAPIClient, self).__init__(
             access_token, endpoint_url)
 
     @property

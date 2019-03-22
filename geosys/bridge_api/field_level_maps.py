@@ -12,7 +12,7 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 
-class FieldLevelMapsAPIClientV4(ApiClient):
+class FieldLevelMapsAPIClient(ApiClient):
     """Field Level Maps API Client
 
     Managing field-level-maps request to geosys bridge server.
@@ -31,7 +31,7 @@ class FieldLevelMapsAPIClientV4(ApiClient):
         :param endpoint_url: The API base url.
         :type endpoint_url: str
         """
-        super(FieldLevelMapsAPIClientV4, self).__init__(
+        super(FieldLevelMapsAPIClient, self).__init__(
                 access_token, endpoint_url)
 
     @property
@@ -68,8 +68,9 @@ class FieldLevelMapsAPIClientV4(ApiClient):
             }
         :type filters: dict
 
-        :return: JSON response
-        :rtype: dict
+        :return: JSON response.
+            List of maps data specification based on given criteria.
+        :rtype: list
         """
         filters = filters if filters else {}
         headers = {
@@ -105,8 +106,9 @@ class FieldLevelMapsAPIClientV4(ApiClient):
             }
         :type data: dict
 
-        :return:
-        :rtype:
+        :return: JSON response.
+            Map data specification based on given parameters.
+        :rtype: dict
         """
         params = params if params else {}
         headers = {
