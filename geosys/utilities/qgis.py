@@ -3,6 +3,11 @@
 
 from qgis.core import Qgis
 
+__copyright__ = "Copyright 2019, Kartoza"
+__license__ = "GPL version 3"
+__email__ = "rohmat@kartoza.com"
+__revision__ = "$Format:%H$"
+
 
 def qgis_version_detailed():
     """Get the detailed version of QGIS.

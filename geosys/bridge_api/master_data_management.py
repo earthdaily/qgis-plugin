@@ -10,7 +10,7 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 
-class MasterDataManagementAPIClientV6(ApiClient):
+class MasterDataManagementAPIClient(ApiClient):
     """Master Data Management API Client
 
     Managing master-data-management request to geosys bridge server.
@@ -32,7 +32,7 @@ class MasterDataManagementAPIClientV6(ApiClient):
         :param endpoint_url: The API base url.
         :type endpoint_url: str
         """
-        super(MasterDataManagementAPIClientV6, self).__init__(
+        super(MasterDataManagementAPIClient, self).__init__(
             access_token, endpoint_url)
 
     @property
