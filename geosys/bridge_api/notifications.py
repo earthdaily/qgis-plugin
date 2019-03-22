@@ -10,7 +10,7 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 
-class NotificationsAPIClientV1(ApiClient):
+class NotificationsAPIClient(ApiClient):
     """Notifications API Client
 
     Managing notifications request to geosys bridge server.
@@ -32,7 +32,7 @@ class NotificationsAPIClientV1(ApiClient):
         :param endpoint_url: The API base url.
         :type endpoint_url: str
         """
-        super(NotificationsAPIClientV1, self).__init__(
+        super(NotificationsAPIClient, self).__init__(
             access_token, endpoint_url)
 
     @property

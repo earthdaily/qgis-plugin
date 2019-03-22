@@ -15,7 +15,7 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 
-class ConnectionAPIClientV2(ApiClient):
+class ConnectionAPIClient(ApiClient):
     """Connection API Client
 
     Managing connection/authentication to geosys identity server.
@@ -24,7 +24,7 @@ class ConnectionAPIClientV2(ApiClient):
     VERSION = 2.1
 
     def __init__(self, endpoint_url=IDENTITY_URLS['na']['prod']):
-        super(ConnectionAPIClientV2, self).__init__(endpoint_url=endpoint_url)
+        super(ConnectionAPIClient, self).__init__(endpoint_url=endpoint_url)
 
     @property
     def base_url(self):

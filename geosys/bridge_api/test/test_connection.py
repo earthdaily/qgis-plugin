@@ -10,7 +10,7 @@
 import unittest
 import os
 
-from geosys.bridge_api.connection import ConnectionAPIClientV2
+from geosys.bridge_api.connection import ConnectionAPIClient
 from geosys.bridge_api.default import IDENTITY_URLS
 
 __copyright__ = "Copyright 2019, Kartoza"
@@ -32,7 +32,7 @@ class BridgeAPIConnectionTest(unittest.TestCase):
 
     def test_access_token(self):
         """Test we can successfully get the access token."""
-        client = ConnectionAPIClientV2(IDENTITY_URLS['na']['test'])
+        client = ConnectionAPIClient(IDENTITY_URLS['na']['test'])
         username = os.environ.get('BRIDGE_API_USERNAME', None)
         password = os.environ.get('BRIDGE_API_PASSWORD', None)
 
