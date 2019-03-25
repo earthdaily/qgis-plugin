@@ -256,6 +256,7 @@ class GeosysPlugin:
         # import here only so that it is AFTER i18n set up
         from geosys.ui.widgets.options_dialog import GeosysOptionsDialog
 
-        dialog = GeosysOptionsDialog(parent=self.iface.mainWindow())
+        dialog = GeosysOptionsDialog(
+            self.iface, parent=self.iface.mainWindow())
         if dialog.exec_():  # modal
             pass

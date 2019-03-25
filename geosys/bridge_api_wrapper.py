@@ -59,7 +59,7 @@ class MapProduct(object):
 class BridgeAPI(object):
     """Wrapper client for bridge api."""
 
-    def __init__(self, username, password, region, debug=False):
+    def __init__(self, username, password, region, use_testing_service=False):
         """Wrapper implementation for bridge api.
 
         :param username: Bridge API username.
@@ -71,19 +71,19 @@ class BridgeAPI(object):
         :param region: Region of fields.
         :type region: str
 
-        :param debug: Debug mode flag.
-        :type debug: bool
+        :param use_testing_service: Testing service flag.
+        :type use_testing_service: bool
         """
         self.username = username
         self.password = password
         self.region = region
-        self.debug = debug
+        self.use_testing_service = use_testing_service
         self.access_token = None
 
         # authenticate user
-        success, message = self.authenticate()
-        if not success:
-            raise Exception(message)
+        self.authenticated, self.authentication_message = self.authenticate()
+        if not self.authenticated:
+            raise Exception(self.authentication_message)
 
     @staticmethod
     def get_crops():
@@ -114,17 +114,17 @@ class BridgeAPI(object):
         """
         try:
             identity_server = (IDENTITY_URLS[self.region]['test']
-                               if self.debug
+                               if self.use_testing_service
                                else IDENTITY_URLS[self.region]['prod'])
             api_client = ConnectionAPIClient(identity_server)
             response = api_client.get_access_token(
                 self.username, self.password)
             if response.get('access_token'):
                 self.access_token = response['access_token']
-                message = 'Authentication complete'
+                message = 'Authentication succeeded.'
                 return True, message
             else:
-                message = 'Authentication failed'
+                message = 'Authentication failed.'
                 return False, message
         except KeyError:
             message = 'Please enter a correct region (NA or EU)'
@@ -156,7 +156,7 @@ class BridgeAPI(object):
         }
 
         bridge_server = (BRIDGE_URLS[self.region]['test']
-                         if self.debug
+                         if self.use_testing_service
                          else BRIDGE_URLS[self.region]['prod'])
         api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
         coverages_json = api_client.get_coverage(request_data)

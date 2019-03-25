@@ -39,7 +39,7 @@
    <property name="geometry">
     <rect>
      <x>270</x>
-     <y>480</y>
+     <y>490</y>
      <width>271</width>
      <height>20</height>
     </rect>
@@ -60,70 +60,12 @@
      <x>21</x>
      <y>10</y>
      <width>519</width>
-     <height>151</height>
+     <height>181</height>
     </rect>
    </property>
    <property name="title">
     <string>User Credentials</string>
    </property>
-   <widget class="QWidget" name="formLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>80</y>
-      <width>461</width>
-      <height>54</height>
-     </rect>
-    </property>
-    <layout class="QFormLayout" name="formLayout_2">
-     <item row="0" column="0">
-      <widget class="QLabel" name="username_label">
-       <property name="text">
-        <string>Username</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="username_form">
-       <property name="minimumSize">
-        <size>
-         <width>391</width>
-         <height>21</height>
-        </size>
-       </property>
-       <property name="placeholderText">
-        <string>Bridge API username</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="password_label">
-       <property name="text">
-        <string>Password</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="password_form">
-       <property name="minimumSize">
-        <size>
-         <width>391</width>
-         <height>21</height>
-        </size>
-       </property>
-       <property name="inputMethodHints">
-        <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-       <property name="placeholderText">
-        <string>Bridge API password</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QLabel" name="credentials_label">
     <property name="geometry">
      <rect>
@@ -140,14 +82,113 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QPushButton" name="connect_button">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>140</y>
+      <width>111</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Connect</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="save_credentials_checkbox">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>140</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save Credentials</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="password_form">
+    <property name="geometry">
+     <rect>
+      <x>99</x>
+      <y>112</y>
+      <width>391</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>391</width>
+      <height>21</height>
+     </size>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::Password</enum>
+    </property>
+    <property name="placeholderText">
+     <string>Bridge API password</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="username_form">
+    <property name="geometry">
+     <rect>
+      <x>99</x>
+      <y>81</y>
+      <width>391</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>391</width>
+      <height>21</height>
+     </size>
+    </property>
+    <property name="placeholderText">
+     <string>Bridge API username</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="username_label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>81</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Username</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="password_label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>112</y>
+      <width>61</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Password</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="region_group">
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>163</y>
+     <y>190</y>
      <width>519</width>
-     <height>161</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="title">
@@ -195,14 +236,27 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QCheckBox" name="testing_service_checkbox">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>140</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Use testing service</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="page_limit_group">
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>330</y>
+     <y>360</y>
      <width>519</width>
-     <height>141</height>
+     <height>121</height>
     </rect>
    </property>
    <property name="title">
