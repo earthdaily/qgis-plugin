@@ -62,6 +62,7 @@ class ConnectionAPIClient(ApiClient):
         }
 
         response = self.post(
-            self.full_url('connect', 'token'), headers=headers, data=data)
+            self.full_url('connect', 'token'),
+            headers=headers, data=data, timeout=10)
 
         return response.json()

@@ -389,6 +389,21 @@
    <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>geometry_combo_box</tabstop>
+  <tabstop>map_product_combo_box</tabstop>
+  <tabstop>sensor_combo_box</tabstop>
+  <tabstop>start_date_edit</tabstop>
+  <tabstop>end_date_edit</tabstop>
+  <tabstop>cancel_push_button</tabstop>
+  <tabstop>help_push_button</tabstop>
+  <tabstop>back_push_button</tabstop>
+  <tabstop>next_push_button</tabstop>
+  <tabstop>coverage_result_search</tabstop>
+  <tabstop>coverage_result_list</tabstop>
+  <tabstop>raster_radio_button</tabstop>
+  <tabstop>vecto_radio_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

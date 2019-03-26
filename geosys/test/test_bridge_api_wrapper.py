@@ -42,7 +42,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             username=self.username,
             password=self.password,
             region='na',
-            debug=True)
+            use_testing_service=True)
         crops = bridge_api.get_crops()
         expected_crops = [
             'SUGARCANE', 'CORN', 'MILLET', 'GRAPES', 'OTHERS', 'COTTON',
@@ -55,7 +55,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             username=self.username,
             password=self.password,
             region='na',
-            debug=True)
+            use_testing_service=True)
         regions = bridge_api.get_regions()
         expected_regions = [
             ('na',
@@ -79,7 +79,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             username=self.username,
             password=self.password,
             region='na',
-            debug=True)
+            use_testing_service=True)
         coverages = bridge_api.get_coverage(
             geometry=geom, crop='CORN', sowing_date='2018-04-15')
         self.assertTrue(len(coverages) > 0)
