@@ -1,9 +1,13 @@
 # coding=utf-8
 """Common functionality used by regression tests."""
-
 import sys
 import logging
 import processing
+
+__copyright__ = "Copyright 2019, Kartoza"
+__license__ = "GPL version 3"
+__email__ = "rohmat@kartoza.com"
+__revision__ = "$Format:%H$"
 
 LOGGER = logging.getLogger('QGIS')
 QGIS_APP = None  # Static variable used to hold hand to running QGIS app

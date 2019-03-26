@@ -211,3 +211,59 @@ SLOPE = {
     'name': 'SLOPE',
     'map_family': topology_map
 }
+
+ARCHIVE_MAP_PRODUCTS = [
+    NDVI,
+    EVI,
+    GNDVI,
+    CVI,
+    OM,
+    YVM,
+    YGM,
+    SAMZ,
+    COLOR_COMPOSITION,
+    ELEVATION
+]
+
+INSEASON_MAP_PRODUCTS = [
+    INSEASON_NDVI,
+    INSEASONFIELD_AVERAGE_NDVI,
+    INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASON_CVI,
+    INSEASON_EVI,
+    INSEASONPARTIAL_NDVI,
+    INSEASONPARTIAL_EVI,
+    INSEASON_GNDVI,
+    COLOR_COMPOSITION
+]
+
+# Sensor definition
+
+DEIMOS = {
+    'key': 'deimos',
+    'name': 'DEIMOS',
+}
+
+DMC = {
+    'key': 'dmc',
+    'name': 'DMC'
+}
+
+LANDSAT_8 = {
+    'key': 'landsat-8',
+    'name': 'LANDSAT_8'
+}
+
+RESOURCESAT2 = {
+    'key': 'resourcesat2',
+    'name': 'RESOURCESAT2'
+}
+
+SENTINEL_2 = {
+    'key': 'sentinel-2',
+    'name': 'SENTINEL_2'
+}
+
+SENSORS = [
+    DEIMOS, DMC, LANDSAT_8, RESOURCESAT2, SENTINEL_2
+]
