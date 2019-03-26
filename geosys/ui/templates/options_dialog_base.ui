@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>566</width>
-    <height>568</height>
+    <height>710</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -23,7 +23,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>520</y>
+     <y>670</y>
      <width>511</width>
      <height>32</height>
     </rect>
@@ -39,7 +39,7 @@
    <property name="geometry">
     <rect>
      <x>270</x>
-     <y>490</y>
+     <y>640</y>
      <width>271</width>
      <height>20</height>
     </rect>
@@ -76,7 +76,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Set the paging limit for the maximum responses to be returned for each request. Larger limits will result in longer processing times and possible API timeouts.</string>
+     <string>Use valid credentials from GEOSYS. The credentials are required to get the access token which will be used for every Bridge API request.</string>
     </property>
     <property name="wordWrap">
      <bool>true</bool>
@@ -254,7 +254,7 @@
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>360</y>
+     <y>510</y>
      <width>519</width>
      <height>121</height>
     </rect>
@@ -308,6 +308,90 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QGroupBox" name="coverage_parameters_group">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>360</y>
+     <width>521</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Coverage Parameters</string>
+   </property>
+   <widget class="QLabel" name="sowing_date_label">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>111</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sowing Date</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="crop_label">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>80</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Crop Type</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="crop_combo_box">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>81</y>
+      <width>341</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="insertPolicy">
+     <enum>QComboBox::InsertAlphabetically</enum>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="sowing_date_edit">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>111</y>
+      <width>341</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="displayFormat">
+     <string>yyyy-MM-dd</string>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="coverage_parameters_label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>40</y>
+      <width>471</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Set the desired coverage parameters for each request. This parameters are required and will be applied to each coverage request</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>username_form</tabstop>
@@ -317,6 +401,8 @@
   <tabstop>us_radio_button</tabstop>
   <tabstop>eu_radio_button</tabstop>
   <tabstop>testing_service_checkbox</tabstop>
+  <tabstop>crop_combo_box</tabstop>
+  <tabstop>sowing_date_edit</tabstop>
   <tabstop>page_limit_form</tabstop>
  </tabstops>
  <resources/>
