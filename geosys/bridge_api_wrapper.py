@@ -82,8 +82,6 @@ class BridgeAPI(object):
 
         # authenticate user
         self.authenticated, self.authentication_message = self.authenticate()
-        if not self.authenticated:
-            raise Exception(self.authentication_message)
 
     @staticmethod
     def get_crops():
@@ -124,7 +122,9 @@ class BridgeAPI(object):
                 message = 'Authentication succeeded.'
                 return True, message
             else:
-                message = 'Authentication failed.'
+                message = (
+                    'Authentication failed. Ensure your username and password '
+                    'are valid for the selected region service.')
                 return False, message
         except KeyError:
             message = 'Please enter a correct region (NA or EU)'

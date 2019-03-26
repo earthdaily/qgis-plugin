@@ -2,6 +2,7 @@
 """Implementation of GEOSYS options dialog.
 """
 from PyQt5 import QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import QSettings
 
 from geosys.bridge_api_wrapper import BridgeAPI
@@ -68,12 +69,19 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def request_token(self):
         """Request access token to GEOSYS's identity server."""
-        bridge_api = BridgeAPI(
-            username=self.username(),
-            password=self.password(),
-            region=self.region(),
-            use_testing_service=self.use_testing_service())
+        message_title = "Bridge API Authentication Status"
+        try:
+            bridge_api = BridgeAPI(
+                username=self.username(),
+                password=self.password(),
+                region=self.region(),
+                use_testing_service=self.use_testing_service())
 
-        QtWidgets.QMessageBox.information(
-            self, "Bridge API Authentication Status",
-            bridge_api.authentication_message)
+            if not bridge_api.authenticated:
+                QMessageBox.critical(
+                    self, message_title, bridge_api.authentication_message)
+            else:
+                QMessageBox.information(
+                    self, message_title, bridge_api.authentication_message)
+        except Exception as e:
+            QMessageBox.critical(self, message_title, str(e))
