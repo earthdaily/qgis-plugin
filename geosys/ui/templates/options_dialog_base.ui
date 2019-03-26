@@ -309,6 +309,16 @@
    </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>username_form</tabstop>
+  <tabstop>password_form</tabstop>
+  <tabstop>save_credentials_checkbox</tabstop>
+  <tabstop>connect_button</tabstop>
+  <tabstop>us_radio_button</tabstop>
+  <tabstop>eu_radio_button</tabstop>
+  <tabstop>testing_service_checkbox</tabstop>
+  <tabstop>page_limit_form</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
