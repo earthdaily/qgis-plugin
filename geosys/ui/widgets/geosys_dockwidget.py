@@ -29,7 +29,7 @@ from qgis.core import QgsProject
 
 from geosys.bridge_api.definitions import INSEASON_MAP_PRODUCTS, SENSORS
 from geosys.utilities.gui_utilities import (
-    add_ordered_combo_item, layer_icon, is_polygon_layer)
+    add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo)
 from geosys.utilities.resources import get_ui_class
 
 FORM_CLASS = get_ui_class('geosys_dockwidget_base.ui')
@@ -53,6 +53,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.iface = iface
         self.parent = parent
         self.settings = QSettings()
+        self.max_stacked_widget_index = self.stacked_widget.count() - 1
+        self.current_stacked_widget_index = 0
 
         # Input values
         self.layer = None
@@ -64,6 +66,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Flag used to prevent recursion and allow bulk loads of layers to
         # trigger a single event only
         self.get_layers_lock = False
+
+        # Set button connectors
+        self.setup_button_connectors()
 
         # Populate layer combo box
         self.connect_layer_listener()
@@ -77,7 +82,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Set default behaviour
         self.help_push_button.setEnabled(False)
         self.back_push_button.setEnabled(False)
-        self.next_push_button.setEnabled(False)
+        self.next_push_button.setEnabled(True)
+        self.stacked_widget.setCurrentIndex(self.current_stacked_widget_index)
 
     def populate_sensors(self):
         """Obtain a list of sensors from Bridge API definition."""
@@ -92,6 +98,31 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 self.map_product_combo_box,
                 map_product['name'],
                 map_product['key'])
+
+    def show_help(self):
+        """Open the help dialog."""
+        # noinspection PyTypeChecker
+        pass  # not implemented yet
+
+    def show_previous_page(self):
+        """Open previous page of stacked widget."""
+        if self.current_stacked_widget_index > 0:
+            self.current_stacked_widget_index -= 1
+            self.stacked_widget.setCurrentIndex(
+                self.current_stacked_widget_index)
+            self.next_push_button.setEnabled(True)
+        if self.current_stacked_widget_index == 0:
+            self.back_push_button.setEnabled(False)
+
+    def show_next_page(self):
+        """Open next page of stacked widget."""
+        if self.current_stacked_widget_index < self.max_stacked_widget_index:
+            self.current_stacked_widget_index += 1
+            self.stacked_widget.setCurrentIndex(
+                self.current_stacked_widget_index)
+            self.back_push_button.setEnabled(True)
+        if self.current_stacked_widget_index == self.max_stacked_widget_index:
+            self.next_push_button.setEnabled(False)
 
     def get_layers(self, *args):
         """Obtain a list of layers currently loaded in QGIS.
@@ -119,7 +150,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.get_layers_lock = True
 
         # Make sure this comes after the checks above to prevent signal
-        # disconnection without reconnection
+        # disconnection without reconnection.
         self.block_signals()
         self.geometry_combo_box.clear()
 
@@ -165,6 +196,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         project.layersRemoved.disconnect(self.get_layers)
 
         self.iface.mapCanvas().layersChanged.disconnect(self.get_layers)
+
+    def setup_button_connectors(self):
+        """Setup signal/slot mechanisms for dock buttons."""
+        self.help_push_button.clicked.connect(self.show_help)
+        self.back_push_button.clicked.connect(self.show_previous_page)
+        self.next_push_button.clicked.connect(self.show_next_page)
 
     def unblock_signals(self):
         """Let the combos listen for event changes again."""
