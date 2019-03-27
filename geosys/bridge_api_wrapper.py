@@ -59,7 +59,14 @@ class MapProduct(object):
 class BridgeAPI(object):
     """Wrapper client for bridge api."""
 
-    def __init__(self, username, password, region, use_testing_service=False):
+    def __init__(
+            self,
+            username,
+            password,
+            region,
+            client_id,
+            client_secret,
+            use_testing_service=False):
         """Wrapper implementation for bridge api.
 
         :param username: Bridge API username.
@@ -71,12 +78,20 @@ class BridgeAPI(object):
         :param region: Region of fields.
         :type region: str
 
+        :param client_id: Client ID
+        :type client_id: str
+
+        :param client_secret: Client Secret
+        :type client_secret: str
+
         :param use_testing_service: Testing service flag.
         :type use_testing_service: bool
         """
         self.username = username
         self.password = password
         self.region = region
+        self.client_id = client_id
+        self.client_secret = client_secret
         self.use_testing_service = use_testing_service
         self.access_token = None
 
@@ -116,15 +131,19 @@ class BridgeAPI(object):
                                else IDENTITY_URLS[self.region]['prod'])
             api_client = ConnectionAPIClient(identity_server)
             response = api_client.get_access_token(
-                self.username, self.password)
+                self.username,
+                self.password,
+                self.client_id,
+                self.client_secret)
             if response.get('access_token'):
                 self.access_token = response['access_token']
                 message = 'Authentication succeeded.'
                 return True, message
             else:
                 message = (
-                    'Authentication failed. Ensure your username and password '
-                    'are valid for the selected region service.')
+                    'Authentication failed. Ensure your username, password, '
+                    'client id, and client secret are valid for the selected '
+                    'region service.')
                 return False, message
         except KeyError:
             message = 'Please enter a correct region (NA or EU)'

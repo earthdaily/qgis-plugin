@@ -45,7 +45,9 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         }
         self.credentials_settings = {
             'bridge_api_username': self.username_form,
-            'bridge_api_password': self.password_form
+            'bridge_api_password': self.password_form,
+            'bridge_api_client_id': self.client_id_form,
+            'bridge_api_client_password': self.client_secret_form
         }
         self.text_settings = {
             'bridge_api_page_limit': self.page_limit_form
@@ -76,6 +78,14 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         """Get current value of password."""
         return self.password_form.text()
 
+    def client_id(self):
+        """Get current value of client id."""
+        return self.client_id_form.text()
+
+    def client_secret(self):
+        """Get current value of client secret."""
+        return self.client_secret_form.text()
+
     def region(self):
         """Get current value of region."""
         if self.eu_radio_button.isChecked():
@@ -94,6 +104,8 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
                 username=self.username(),
                 password=self.password(),
                 region=self.region(),
+                client_id=self.client_id(),
+                client_secret=self.client_secret(),
                 use_testing_service=self.use_testing_service())
 
             if not bridge_api.authenticated:

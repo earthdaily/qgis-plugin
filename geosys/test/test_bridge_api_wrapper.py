@@ -38,12 +38,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
 
     def test_get_crops(self):
         """Test we can get all available crops from definition"""
-        bridge_api = BridgeAPI(
-            username=self.username,
-            password=self.password,
-            region='na',
-            use_testing_service=True)
-        crops = bridge_api.get_crops()
+        crops = BridgeAPI.get_crops()
         expected_crops = [
             'SUGARCANE', 'CORN', 'MILLET', 'GRAPES', 'OTHERS', 'COTTON',
             'SUNFLOWER', 'PEANUT', 'SOYBEANS', 'ORANGE', 'RICE', 'SORGHUM']
@@ -51,12 +46,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
 
     def test_get_regions(self):
         """Test we can get all available regions from definition"""
-        bridge_api = BridgeAPI(
-            username=self.username,
-            password=self.password,
-            region='na',
-            use_testing_service=True)
-        regions = bridge_api.get_regions()
+        regions = BridgeAPI.get_regions()
         expected_regions = [
             ('na',
              'US Platform - Fields located in USA, Canada, and Australia.'),
@@ -79,6 +69,8 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             username=self.username,
             password=self.password,
             region='na',
+            client_id='mapproduct_api',
+            client_secret='mapproduct_api.secret',
             use_testing_service=True)
         coverages = bridge_api.get_coverage(
             geometry=geom, crop='CORN', sowing_date='2018-04-15')

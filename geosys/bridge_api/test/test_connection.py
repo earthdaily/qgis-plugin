@@ -11,7 +11,7 @@ import unittest
 import os
 
 from geosys.bridge_api.connection import ConnectionAPIClient
-from geosys.bridge_api.default import IDENTITY_URLS
+from geosys.bridge_api.default import IDENTITY_URLS, CLIENT_ID, CLIENT_SECRET
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -42,7 +42,8 @@ class BridgeAPIConnectionTest(unittest.TestCase):
         self.assertIsNotNone(username, message)
         self.assertIsNotNone(password, message)
 
-        response = client.get_access_token(username, password)
+        response = client.get_access_token(
+            username, password, CLIENT_ID, CLIENT_SECRET)
         self.assertTrue('access_token' in response)
 
 

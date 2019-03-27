@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>566</width>
-    <height>710</height>
+    <height>776</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -23,7 +23,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>670</y>
+     <y>730</y>
      <width>511</width>
      <height>32</height>
     </rect>
@@ -39,7 +39,7 @@
    <property name="geometry">
     <rect>
      <x>270</x>
-     <y>640</y>
+     <y>700</y>
      <width>271</width>
      <height>20</height>
     </rect>
@@ -60,7 +60,7 @@
      <x>21</x>
      <y>10</y>
      <width>519</width>
-     <height>181</height>
+     <height>241</height>
     </rect>
    </property>
    <property name="title">
@@ -86,7 +86,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>140</y>
+      <y>200</y>
       <width>111</width>
       <height>32</height>
      </rect>
@@ -99,7 +99,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>140</y>
+      <y>200</y>
       <width>131</width>
       <height>20</height>
      </rect>
@@ -111,15 +111,15 @@
    <widget class="QLineEdit" name="password_form">
     <property name="geometry">
      <rect>
-      <x>99</x>
+      <x>119</x>
       <y>112</y>
-      <width>391</width>
+      <width>371</width>
       <height>21</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>391</width>
+      <width>371</width>
       <height>21</height>
      </size>
     </property>
@@ -136,15 +136,15 @@
    <widget class="QLineEdit" name="username_form">
     <property name="geometry">
      <rect>
-      <x>99</x>
+      <x>119</x>
       <y>81</y>
-      <width>391</width>
+      <width>371</width>
       <height>21</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>391</width>
+      <width>371</width>
       <height>21</height>
      </size>
     </property>
@@ -181,12 +181,94 @@
      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
+   <widget class="QLineEdit" name="client_id_form">
+    <property name="geometry">
+     <rect>
+      <x>119</x>
+      <y>140</y>
+      <width>371</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>371</width>
+      <height>21</height>
+     </size>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::Normal</enum>
+    </property>
+    <property name="placeholderText">
+     <string>Client ID</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="client_id_label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>140</y>
+      <width>61</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Client ID</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="client_secret_form">
+    <property name="geometry">
+     <rect>
+      <x>119</x>
+      <y>170</y>
+      <width>371</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>371</width>
+      <height>21</height>
+     </size>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhNone</set>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::Normal</enum>
+    </property>
+    <property name="placeholderText">
+     <string>Client Secret</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="client_secret_label">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>170</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Client Secret</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="region_group">
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>190</y>
+     <y>250</y>
      <width>519</width>
      <height>171</height>
     </rect>
@@ -254,7 +336,7 @@
    <property name="geometry">
     <rect>
      <x>21</x>
-     <y>510</y>
+     <y>570</y>
      <width>519</width>
      <height>121</height>
     </rect>
@@ -312,7 +394,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>360</y>
+     <y>420</y>
      <width>521</width>
      <height>151</height>
     </rect>
