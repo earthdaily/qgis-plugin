@@ -85,7 +85,7 @@ class BridgeAPI(object):
 
     @staticmethod
     def get_crops():
-        """Get default crops available.
+        """Get default crops.
 
         :return: List of crops available.
         :rtype: list
@@ -94,7 +94,7 @@ class BridgeAPI(object):
 
     @staticmethod
     def get_regions():
-        """Get default regions available
+        """Get default regions.
 
         :return: List of tuple of regions available.
         :rtype: list

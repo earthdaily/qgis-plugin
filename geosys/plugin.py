@@ -142,7 +142,7 @@ class GeosysPlugin:
             # Create the dockwidget (after translation) and keep reference
             from geosys.ui.widgets.geosys_dockwidget import (
                 GeosysPluginDockWidget)
-            self.dock_widget = GeosysPluginDockWidget()
+            self.dock_widget = GeosysPluginDockWidget(self.iface)
 
         # connect to provide cleanup on closing of dock widget
         self.dock_widget.closingPlugin.connect(self.onClosePlugin)
