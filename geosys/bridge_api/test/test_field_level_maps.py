@@ -11,7 +11,8 @@ import os
 import unittest
 
 from geosys.bridge_api.connection import ConnectionAPIClient
-from geosys.bridge_api.default import IDENTITY_URLS, BRIDGE_URLS
+from geosys.bridge_api.default import (
+    IDENTITY_URLS, BRIDGE_URLS, CLIENT_ID, CLIENT_SECRET)
 from geosys.bridge_api.field_level_maps import FieldLevelMapsAPIClient
 
 __copyright__ = "Copyright 2019, Kartoza"
@@ -35,7 +36,8 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
         self.assertIsNotNone(username, message)
         self.assertIsNotNone(password, message)
 
-        json = client.get_access_token(username, password)
+        json = client.get_access_token(
+            username, password, CLIENT_ID, CLIENT_SECRET)
         self.assertTrue('access_token' in json)
         self.access_token = json['access_token']
 
