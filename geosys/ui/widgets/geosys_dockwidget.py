@@ -24,7 +24,7 @@
 """
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, QSettings, QMutex
-from PyQt5.QtWidgets import QLabel, QListWidgetItem
+from PyQt5.QtWidgets import QLabel, QListWidgetItem, QMessageBox
 
 from qgis.core import QgsProject, QgsFeatureRequest
 from qgis.PyQt.QtCore import Qt
@@ -59,6 +59,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.parent = parent
         self.settings = QSettings()
         self.one_process_work = QMutex()
+        self.search_threads = None
         self.max_stacked_widget_index = self.stacked_widget.count() - 1
         self.current_stacked_widget_index = 0
 
@@ -68,6 +69,15 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.sensor_type = None
         self.start_date = None
         self.end_date = None
+
+        # Map creation parameters from input values
+        self.yield_average = None
+        self.yield_minimum = None
+        self.yield_maximum = None
+        self.organic_average = None
+        self.samz_zone = None
+        self.raster_output = False
+        self.vector_output = False
 
         # Coverage parameters from settings
         self.crop_type = setting(
@@ -79,8 +89,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # trigger a single event only
         self.get_layers_lock = False
 
-        # Set button connectors
-        self.setup_button_connectors()
+        # Set connectors
+        self.setup_connectors()
 
         # Populate layer combo box
         self.connect_layer_listener()
@@ -96,6 +106,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.back_push_button.setEnabled(False)
         self.next_push_button.setEnabled(True)
         self.stacked_widget.setCurrentIndex(self.current_stacked_widget_index)
+        self.set_next_button_text(self.current_stacked_widget_index)
 
     def populate_sensors(self):
         """Obtain a list of sensors from Bridge API definition."""
@@ -128,6 +139,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def show_next_page(self):
         """Open next page of stacked widget."""
+        # If current page is map creation parameter page, create map without
+        # increasing index.
+        if self.current_stacked_widget_index == 2:
+            self.start_map_creation()
+            return
+
         if self.current_stacked_widget_index < self.max_stacked_widget_index:
             self.current_stacked_widget_index += 1
             self.stacked_widget.setCurrentIndex(
@@ -136,9 +153,18 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.current_stacked_widget_index == self.max_stacked_widget_index:
             self.next_push_button.setEnabled(False)
 
-        # If coverage results page, run coverage searcher
+        # If current page is coverage results page, run coverage searcher
         if self.current_stacked_widget_index == 1:
             self.start_coverage_search()
+
+    def set_next_button_text(self, index):
+        """Programmatically changed next button text based on current page."""
+        text_rule = {
+            0: 'Search Map',
+            1: 'Next',
+            2: 'Create Map'
+        }
+        self.next_push_button.setText(text_rule[index])
 
     def get_layers(self, *args):
         """Obtain a list of layers currently loaded in QGIS.
@@ -188,6 +214,16 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.connect_layer_listener()
         self.get_layers_lock = False
 
+    def validate_map_creation_parameters(self):
+        """Check current state of map creation parameters."""
+        self.yield_average = self.yield_average_form.value()
+        self.yield_minimum = self.yield_minimum_form.value()
+        self.yield_maximum = self.yield_maximum_form.value()
+        self.organic_average = self.organic_average_form.value()
+        self.samz_zone = self.samz_zone_form.value()
+        self.raster_output = self.raster_radio_button.isChecked()
+        self.vector_output = not self.raster_output
+
     def validate_coverage_parameters(self):
         """Check current state of coverage parameters."""
         # Get geometry in WKT format
@@ -230,12 +266,28 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         return True
 
+    def start_map_creation(self):
+        """Map creation starts here."""
+        # validate map creation parameters before creating the map
+        if not self.validate_map_creation_parameters():
+            QMessageBox.critical(
+                self, 'Map Creation Status',
+                'Error validating map creation parameters.')
+            return
+
     def start_coverage_search(self):
         """Coverage search starts here."""
         # validate coverage parameters before run the coverage searcher
         if not self.validate_coverage_parameters():
             self.show_error('Error validating coverage parameters.')
             return
+
+        if self.search_threads:
+            self.search_threads.data_downloaded.disconnect()
+            self.search_threads.search_finished.disconnect()
+            self.search_threads.stop()
+            self.search_threads.wait()
+            self.coverage_result_list.clear()
 
         # start search thread
         searcher = CoverageSearchThread(
@@ -283,6 +335,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 new_item,
                 new_widget
             )
+        else:
+            self.coverage_result_list.setCurrentRow(0)
 
     def show_coverage_result(self, coverage_map_json, thumbnail_ba):
         """Translate coverage map result into widget item.
@@ -381,11 +435,15 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.iface.mapCanvas().layersChanged.disconnect(self.get_layers)
 
-    def setup_button_connectors(self):
-        """Setup signal/slot mechanisms for dock buttons."""
+    def setup_connectors(self):
+        """Setup signal/slot mechanisms for dock elements."""
+        # Button connector
         self.help_push_button.clicked.connect(self.show_help)
         self.back_push_button.clicked.connect(self.show_previous_page)
         self.next_push_button.clicked.connect(self.show_next_page)
+
+        # Stacked widget connector
+        self.stacked_widget.currentChanged.connect(self.set_next_button_text)
 
     def unblock_signals(self):
         """Let the combos listen for event changes again."""

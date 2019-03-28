@@ -120,7 +120,10 @@ class CoverageSearchThread(QThread):
             if isinstance(results, dict) and results.get('message'):
                 raise Exception(results['message'])
 
+            collected_results = []
             for result in results:
+                if self.need_stop:
+                    break
                 # get thumbnail content
                 requested_map = None
                 for map_result in result['maps']:
@@ -132,13 +135,19 @@ class CoverageSearchThread(QThread):
                     continue
 
                 thumbnail_url = requested_map['_links']['thumbnail']
-                thumbnail_url = (
-                    'https://qms.nextgis.com/api/v1/icons/72/content')
                 thumbnail_content = self.searcher_client.get_content(
                     thumbnail_url)
                 thumbnail_ba = QByteArray(thumbnail_content)
 
-                self.data_downloaded.emit(result, thumbnail_ba)
+                collected_results.append({
+                    'data': result,
+                    'thumbnail': thumbnail_ba
+                })
+
+            # Using this trick, rendering each list item will not be delayed
+            # by thumbnail request.
+            for result in collected_results:
+                self.data_downloaded.emit(result['data'], result['thumbnail'])
 
             self.search_finished.emit()
         except Exception as e:

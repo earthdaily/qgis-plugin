@@ -100,6 +100,9 @@ class BridgeAPI(ApiClient):
         # authenticate user
         self.authenticated, self.authentication_message = self.authenticate()
 
+        if self.authenticated:
+            super(BridgeAPI, self).__init__(access_token=self.access_token)
+
     @staticmethod
     def get_crops():
         """Get default crops.

@@ -95,7 +95,7 @@ class ApiClient(object):
         :type kwargs: dict
 
         :return: The API response.
-        :rtype: dict
+        :rtype: response object
         """
         if kwargs.get('headers'):
             kwargs['headers'].update(self.headers)
@@ -113,7 +113,7 @@ class ApiClient(object):
         :type kwargs: dict
 
         :return: The API response.
-        :rtype: dict
+        :rtype: response object
         """
         if kwargs.get('headers'):
             kwargs['headers'].update(self.headers)
@@ -133,5 +133,5 @@ class ApiClient(object):
         :return: Response content.
         :rtype: str
         """
-        response = get(url, params=params, stream=True)
+        response = get(url, headers=self.headers, params=params, stream=True)
         return response.content

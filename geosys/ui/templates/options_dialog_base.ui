@@ -288,6 +288,9 @@
     <property name="text">
      <string>US (Fields located in USA, Canada and Australia.)</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QRadioButton" name="eu_radio_button">
     <property name="geometry">
@@ -300,6 +303,9 @@
     </property>
     <property name="text">
      <string>Europe (Fields located in Europe, South America and South Africa)</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QLabel" name="region_label">
