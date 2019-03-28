@@ -23,14 +23,19 @@
  ***************************************************************************/
 """
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSignal, QSettings
+from PyQt5.QtCore import pyqtSignal, QSettings, QMutex
+from PyQt5.QtWidgets import QLabel, QListWidgetItem
 
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsFeatureRequest
+from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.definitions import INSEASON_MAP_PRODUCTS, SENSORS
+from geosys.ui.widgets.geosys_coverage_downloader import CoverageSearchThread
+from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo)
 from geosys.utilities.resources import get_ui_class
+from geosys.utilities.settings import setting
 
 FORM_CLASS = get_ui_class('geosys_dockwidget_base.ui')
 
@@ -53,15 +58,22 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.iface = iface
         self.parent = parent
         self.settings = QSettings()
+        self.one_process_work = QMutex()
         self.max_stacked_widget_index = self.stacked_widget.count() - 1
         self.current_stacked_widget_index = 0
 
-        # Input values
-        self.layer = None
+        # Coverage parameters from input values
+        self.geometry_wkt = None
         self.map_product = None
-        self.sensor = None
+        self.sensor_type = None
         self.start_date = None
         self.end_date = None
+
+        # Coverage parameters from settings
+        self.crop_type = setting(
+            'crop_type', expected_type=str, qsettings=self.settings)
+        self.sowing_date = setting(
+            'sowing_date', expected_type=str, qsettings=self.settings)
 
         # Flag used to prevent recursion and allow bulk loads of layers to
         # trigger a single event only
@@ -124,6 +136,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.current_stacked_widget_index == self.max_stacked_widget_index:
             self.next_push_button.setEnabled(False)
 
+        # If coverage results page, run coverage searcher
+        if self.current_stacked_widget_index == 1:
+            self.start_coverage_search()
+
     def get_layers(self, *args):
         """Obtain a list of layers currently loaded in QGIS.
 
@@ -171,6 +187,174 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # will be a lot of unneeded looping around as the signal is handled
         self.connect_layer_listener()
         self.get_layers_lock = False
+
+    def validate_coverage_parameters(self):
+        """Check current state of coverage parameters."""
+        # Get geometry in WKT format
+        layer = layer_from_combo(self.geometry_combo_box)
+        use_selected_features = layer.selectedFeatureCount() > 0
+
+        feature_iterator = layer.getFeatures()
+        if use_selected_features:
+            request = QgsFeatureRequest()
+            request.setFilterFids(layer.selectedFeatureIds())
+            feature_iterator = layer.getFeatures(request)
+
+        # Handle multi features
+        # Merge features into multi-part polygon
+        # TODO use Collect Geometries processing algorithm
+        geom = None
+        for index, feature in enumerate(feature_iterator):
+            if not feature.hasGeometry():
+                continue
+            if not geom:
+                geom = feature.geometry()
+            else:
+                geom = geom.combine(feature.geometry())
+
+        if geom:
+            self.geometry_wkt = geom.asWkt()
+        else:
+            # geometry is not valid
+            return False
+
+        # Get map product
+        self.map_product = self.map_product_combo_box.currentText()
+
+        # Get the sensor type
+        self.sensor_type = self.sensor_combo_box.currentText()
+
+        # Get the start and end date
+        self.start_date = self.start_date_edit.date().toString('yyyy-MM-dd')
+        self.end_date = self.end_date_edit.date().toString('yyyy-MM-dd')
+
+        return True
+
+    def start_coverage_search(self):
+        """Coverage search starts here."""
+        # validate coverage parameters before run the coverage searcher
+        if not self.validate_coverage_parameters():
+            self.show_error('Error validating coverage parameters.')
+            return
+
+        # start search thread
+        searcher = CoverageSearchThread(
+            geometry=self.geometry_wkt,
+            crop_type=self.crop_type,
+            sowing_date=self.sowing_date,
+            map_product=self.map_product,
+            sensor_type=self.sensor_type,
+            end_date=self.end_date,
+            start_date=self.start_date,
+            mutex=self.one_process_work,
+            parent=self.iface.mainWindow())
+        searcher.data_downloaded.connect(self.show_coverage_result)
+        searcher.error_occurred.connect(self.show_error)
+        searcher.search_started.connect(self.coverage_search_started)
+        searcher.search_finished.connect(self.coverage_search_finished)
+        self.search_threads = searcher
+        searcher.start()
+
+    def coverage_search_started(self):
+        """Action after search thread started."""
+        self.coverage_result_list.clear()
+        self.coverage_result_list.insertItem(0, self.tr('Searching...'))
+
+    def coverage_search_finished(self):
+        """Action after search thread finished."""
+        self.coverage_result_list.takeItem(0)
+        if self.coverage_result_list.count() == 0:
+            new_widget = QLabel()
+            new_widget.setTextFormat(Qt.RichText)
+            new_widget.setOpenExternalLinks(True)
+            new_widget.setWordWrap(True)
+            new_widget.setText(
+                u"<div align='center'> <strong>{}</strong> </div>"
+                u"<div align='center' style='margin-top: 3px'> {} "
+                u"</div>".format(
+                    self.tr(u"No results."),
+                    self.tr(
+                        u"No coverage results available with given "
+                        u"parameters.")))
+            new_item = QListWidgetItem(self.coverage_result_list)
+            new_item.setSizeHint(new_widget.sizeHint())
+            self.coverage_result_list.addItem(new_item)
+            self.coverage_result_list.setItemWidget(
+                new_item,
+                new_widget
+            )
+
+    def show_coverage_result(self, coverage_map_json, thumbnail_ba):
+        """Translate coverage map result into widget item.
+
+        :param coverage_map_json: Result of single map coverage.
+            example: {
+                "seasonField": {
+                    "id": "zgzmbrm",
+                    "customerExternalId": "..."
+                },
+                "image": {
+                    "date": "2018-10-18",
+                    "sensor": "SENTINEL_2",
+                    "weather": "HOT",
+                    "soilMaterial": "BARE"
+                },
+                "maps": [
+                    {
+                        "type": "INSEASON_NDVI",
+                        "_links": {
+                            "self": "the_url",
+                            "worldFile": "the_url",
+                            "thumbnail": "the_url",
+                            "legend": "the_url",
+                            "image:image/png": "the_url",
+                            "image:image/tiff+zip": "the_url",
+                            "image:application/shp+zip": "the_url",
+                            "image:application/vnd.google-earth.kmz": "the_url"
+                        }
+                    }
+                ],
+                "coverageType": "CLEAR"
+            }
+        :type coverage_map_json: dict
+
+        :param thumbnail_ba: Thumbnail image data in byte array format.
+        :type thumbnail_ba: QByteArray
+        """
+        if coverage_map_json:
+            custom_widget = CoverageSearchResultItemWidget(
+                coverage_map_json, thumbnail_ba)
+            new_item = QListWidgetItem(self.coverage_result_list)
+            new_item.setSizeHint(custom_widget.sizeHint())
+            self.coverage_result_list.addItem(new_item)
+            self.coverage_result_list.setItemWidget(new_item, custom_widget)
+
+        else:
+            new_item = QListWidgetItem()
+            new_item.setText(self.tr('No results!'))
+            new_item.setData(Qt.UserRole, None)
+            self.coverage_result_list.addItem(new_item)
+        self.coverage_result_list.update()
+
+    def show_error(self, error_message):
+        """Show error message as widget item.
+
+        :param error_message: Error message.
+        :type error_message: str
+        """
+        self.coverage_result_list.clear()
+        new_widget = QLabel()
+        new_widget.setTextFormat(Qt.RichText)
+        new_widget.setOpenExternalLinks(True)
+        new_widget.setWordWrap(True)
+        new_widget.setText(
+            u"<div align='center'> <strong>{}</strong> </div>"
+            u"<div align='center' style='margin-top: 3px'> {} </div>".format(
+                self.tr('Error'), error_message))
+        new_item = QListWidgetItem(self.coverage_result_list)
+        new_item.setSizeHint(new_widget.sizeHint())
+        self.coverage_result_list.addItem(new_item)
+        self.coverage_result_list.setItemWidget(new_item, new_widget)
 
     def connect_layer_listener(self):
         """Establish a signal/slot to listen for layers loaded in QGIS.

@@ -31,6 +31,12 @@
       </property>
       <item>
        <widget class="QStackedWidget" name="stacked_widget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
@@ -96,6 +102,9 @@
            <property name="buttonSymbols">
             <enum>QAbstractSpinBox::UpDownArrows</enum>
            </property>
+           <property name="displayFormat">
+            <string>yyyy-MM-dd</string>
+           </property>
            <property name="calendarPopup">
             <bool>true</bool>
            </property>
@@ -121,6 +130,9 @@
              <width>381</width>
              <height>31</height>
             </rect>
+           </property>
+           <property name="displayFormat">
+            <string>yyyy-MM-dd</string>
            </property>
            <property name="calendarPopup">
             <bool>true</bool>
@@ -224,9 +236,9 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QgsFilterLineEdit" name="coverage_result_search">
-             <property name="toolTip">
-              <string>Enter part of service's name</string>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Coverage search results</string>
              </property>
             </widget>
            </item>
@@ -240,6 +252,9 @@
              </property>
              <property name="alternatingRowColors">
               <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
              </property>
              <property name="iconSize">
               <size>
@@ -375,13 +390,6 @@
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QgsFilterLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>qgis.gui</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>geometry_combo_box</tabstop>
   <tabstop>map_product_combo_box</tabstop>
@@ -391,7 +399,6 @@
   <tabstop>help_push_button</tabstop>
   <tabstop>back_push_button</tabstop>
   <tabstop>next_push_button</tabstop>
-  <tabstop>coverage_result_search</tabstop>
   <tabstop>coverage_result_list</tabstop>
   <tabstop>raster_radio_button</tabstop>
   <tabstop>vecto_radio_button</tabstop>

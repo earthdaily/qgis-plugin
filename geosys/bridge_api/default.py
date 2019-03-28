@@ -48,6 +48,14 @@ CLIENT_SECRET = 'mapproduct_api.secret'
 GRANT_TYPE = 'password'
 SCOPE = 'openid offline_access'
 
+# coverage filters
+COVERAGE_TYPE = 'CoverageType'
+IMAGE_DATE = 'Image.Date'
+IMAGE_SENSOR = 'Image.Sensor'
+IMAGE_SOIL_MATERIAL = 'Image.SoilMaterial'
+IMAGE_WEATHER = 'Image.Weather'
+MAPS_TYPE = 'Maps.Type'
+
 # map output format
 THUMBNAIL = 'thumbnail'
 LEGEND = 'legend'
