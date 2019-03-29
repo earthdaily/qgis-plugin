@@ -1,6 +1,7 @@
 # coding=utf-8
 """Implementation of Bridge API Wrapper.
 """
+from geosys.bridge_api.api_abstract import ApiClient
 from geosys.bridge_api.connection import ConnectionAPIClient
 from geosys.bridge_api.default import IDENTITY_URLS, BRIDGE_URLS, ALL_REGIONS
 from geosys.bridge_api.definitions import CROPS
@@ -56,7 +57,7 @@ class MapProduct(object):
         return self.map_data.get('_links', {}).get(output_format, {})
 
 
-class BridgeAPI(object):
+class BridgeAPI(ApiClient):
     """Wrapper client for bridge api."""
 
     def __init__(
@@ -87,6 +88,7 @@ class BridgeAPI(object):
         :param use_testing_service: Testing service flag.
         :type use_testing_service: bool
         """
+        super(BridgeAPI, self).__init__()
         self.username = username
         self.password = password
         self.region = region
@@ -97,6 +99,9 @@ class BridgeAPI(object):
 
         # authenticate user
         self.authenticated, self.authentication_message = self.authenticate()
+
+        if self.authenticated:
+            super(BridgeAPI, self).__init__(access_token=self.access_token)
 
     @staticmethod
     def get_crops():
@@ -149,7 +154,7 @@ class BridgeAPI(object):
             message = 'Please enter a correct region (NA or EU)'
             return False, message
 
-    def get_coverage(self, geometry, crop, sowing_date):
+    def get_coverage(self, geometry, crop, sowing_date, filters=None):
         """Get fields coverage for given parameters.
 
         :param geometry: A geometry in WKT format.
@@ -160,6 +165,13 @@ class BridgeAPI(object):
 
         :param sowing_date: Sowing date. YYYY-MM-DD
         :type sowing_date: str
+
+        :param filters: Filter coverage results.
+            example: {
+                "Image.Date": "$gte:2010-01-01",
+                "coverageType": "CLEAR"
+            }
+        :type filters: dict
 
         :return: JSON response.
             List of maps data specification based on given criteria.
@@ -178,6 +190,6 @@ class BridgeAPI(object):
                          if self.use_testing_service
                          else BRIDGE_URLS[self.region]['prod'])
         api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
-        coverages_json = api_client.get_coverage(request_data)
+        coverages_json = api_client.get_coverage(request_data, filters=filters)
 
         return coverages_json

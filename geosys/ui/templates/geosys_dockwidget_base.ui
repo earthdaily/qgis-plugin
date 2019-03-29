@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>426</width>
+    <width>450</width>
     <height>657</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>426</width>
-    <height>452</height>
+    <width>450</width>
+    <height>474</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -31,8 +31,14 @@
       </property>
       <item>
        <widget class="QStackedWidget" name="stacked_widget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="coverage_form_page">
          <property name="minimumSize">
@@ -41,270 +47,319 @@
            <height>0</height>
           </size>
          </property>
-         <widget class="QGroupBox" name="group_box">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>20</y>
-            <width>401</width>
-            <height>361</height>
-           </rect>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>524287</width>
-            <height>524287</height>
-           </size>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="title">
-           <string>Coverage Parameters</string>
-          </property>
-          <widget class="QLabel" name="start_date_label">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>209</y>
-             <width>381</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Choose start date</string>
-           </property>
-          </widget>
-          <widget class="QDateEdit" name="start_date_edit">
-           <property name="geometry">
-            <rect>
-             <x>7</x>
-             <y>230</y>
-             <width>381</width>
-             <height>31</height>
-            </rect>
-           </property>
-           <property name="wrapping">
-            <bool>false</bool>
-           </property>
-           <property name="buttonSymbols">
-            <enum>QAbstractSpinBox::UpDownArrows</enum>
-           </property>
-           <property name="calendarPopup">
-            <bool>true</bool>
-           </property>
-          </widget>
-          <widget class="QLabel" name="end_date_label">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>269</y>
-             <width>381</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Choose end date</string>
-           </property>
-          </widget>
-          <widget class="QDateEdit" name="end_date_edit">
-           <property name="geometry">
-            <rect>
-             <x>7</x>
-             <y>290</y>
-             <width>381</width>
-             <height>31</height>
-            </rect>
-           </property>
-           <property name="calendarPopup">
-            <bool>true</bool>
-           </property>
-          </widget>
-          <widget class="QLabel" name="geometry_label">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>29</y>
-             <width>371</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Select a coverage boundary from active layers</string>
-           </property>
-          </widget>
-          <widget class="QComboBox" name="map_product_combo_box">
-           <property name="geometry">
-            <rect>
-             <x>7</x>
-             <y>111</y>
-             <width>381</width>
-             <height>32</height>
-            </rect>
-           </property>
-           <property name="insertPolicy">
-            <enum>QComboBox::InsertAlphabetically</enum>
-           </property>
-          </widget>
-          <widget class="QLabel" name="map_product_label">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>89</y>
-             <width>371</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Choose a map product type</string>
-           </property>
-          </widget>
-          <widget class="QComboBox" name="geometry_combo_box">
-           <property name="geometry">
-            <rect>
-             <x>7</x>
-             <y>51</y>
-             <width>381</width>
-             <height>32</height>
-            </rect>
-           </property>
-           <property name="insertPolicy">
-            <enum>QComboBox::InsertAlphabetically</enum>
-           </property>
-          </widget>
-          <widget class="QLabel" name="sensor_label">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>149</y>
-             <width>371</width>
-             <height>16</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Choose a sensor</string>
-           </property>
-          </widget>
-          <widget class="QComboBox" name="sensor_combo_box">
-           <property name="geometry">
-            <rect>
-             <x>7</x>
-             <y>171</y>
-             <width>381</width>
-             <height>32</height>
-            </rect>
-           </property>
-           <property name="insertPolicy">
-            <enum>QComboBox::InsertAlphabetically</enum>
-           </property>
-          </widget>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QGroupBox" name="group_box">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>524287</width>
+              <height>524287</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="title">
+             <string>Coverage Parameters</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QLabel" name="geometry_label">
+               <property name="text">
+                <string>Select a coverage boundary from active layers</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="geometry_combo_box">
+               <property name="insertPolicy">
+                <enum>QComboBox::InsertAlphabetically</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="map_product_label">
+               <property name="text">
+                <string>Choose a map product type</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="map_product_combo_box">
+               <property name="insertPolicy">
+                <enum>QComboBox::InsertAlphabetically</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="sensor_label">
+               <property name="text">
+                <string>Choose a sensor</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="sensor_combo_box">
+               <property name="insertPolicy">
+                <enum>QComboBox::InsertAlphabetically</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="start_date_label">
+               <property name="text">
+                <string>Choose start date</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDateEdit" name="start_date_edit">
+               <property name="wrapping">
+                <bool>false</bool>
+               </property>
+               <property name="buttonSymbols">
+                <enum>QAbstractSpinBox::UpDownArrows</enum>
+               </property>
+               <property name="displayFormat">
+                <string>yyyy-MM-dd</string>
+               </property>
+               <property name="calendarPopup">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="end_date_label">
+               <property name="text">
+                <string>Choose end date</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDateEdit" name="end_date_edit">
+               <property name="displayFormat">
+                <string>yyyy-MM-dd</string>
+               </property>
+               <property name="calendarPopup">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="coverage_result_page">
-         <widget class="QWidget" name="layoutWidget_2">
-          <property name="geometry">
-           <rect>
-            <x>15</x>
-            <y>24</y>
-            <width>371</width>
-            <height>501</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="coverage_result_vertical_layout">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QgsFilterLineEdit" name="coverage_result_search">
-             <property name="toolTip">
-              <string>Enter part of service's name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QListWidget" name="coverage_result_list">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QVBoxLayout" name="coverage_result_vertical_layout">
+            <property name="spacing">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Coverage search results</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QListWidget" name="coverage_result_list">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::SingleSelection</enum>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
         <widget class="QWidget" name="map_creation_page">
-         <widget class="QGroupBox" name="map_format_group">
-          <property name="geometry">
-           <rect>
-            <x>11</x>
-            <y>420</y>
-            <width>379</width>
-            <height>91</height>
-           </rect>
-          </property>
-          <property name="title">
-           <string>Map Format</string>
-          </property>
-          <widget class="QRadioButton" name="raster_radio_button">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>30</y>
-             <width>97</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Raster</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="vecto_radio_button">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>60</y>
-             <width>97</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Vector</string>
-           </property>
-          </widget>
-         </widget>
-         <widget class="QGroupBox" name="parameters_group">
-          <property name="geometry">
-           <rect>
-            <x>11</x>
-            <y>20</y>
-            <width>379</width>
-            <height>401</height>
-           </rect>
-          </property>
-          <property name="title">
-           <string>Parameters</string>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QGroupBox" name="parameters_group">
+            <property name="title">
+             <string>Parameters</string>
+            </property>
+            <layout class="QFormLayout" name="formLayout">
+             <item row="0" column="1">
+              <widget class="QDoubleSpinBox" name="yield_average_form">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="yield_minimum_label">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Yield minimum</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QDoubleSpinBox" name="yield_minimum_form">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="yield_maximum_label">
+               <property name="text">
+                <string>Yield maximum</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QDoubleSpinBox" name="yield_maximum_form">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="organic_average_label">
+               <property name="text">
+                <string>Organic average</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QDoubleSpinBox" name="organic_average_form">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="samz_zone_label">
+               <property name="text">
+                <string>SAMZ zone</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QSpinBox" name="samz_zone_form">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="yield_average_label">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Yield average</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="map_format_group">
+            <property name="title">
+             <string>Map Format</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QRadioButton" name="raster_radio_button">
+               <property name="text">
+                <string>Raster</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="vecto_radio_button">
+               <property name="text">
+                <string>Vector</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </widget>
        </widget>
       </item>
@@ -375,13 +430,6 @@
    </layout>
   </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QgsFilterLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>qgis.gui</header>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>geometry_combo_box</tabstop>
   <tabstop>map_product_combo_box</tabstop>
@@ -391,7 +439,6 @@
   <tabstop>help_push_button</tabstop>
   <tabstop>back_push_button</tabstop>
   <tabstop>next_push_button</tabstop>
-  <tabstop>coverage_result_search</tabstop>
   <tabstop>coverage_result_list</tabstop>
   <tabstop>raster_radio_button</tabstop>
   <tabstop>vecto_radio_button</tabstop>

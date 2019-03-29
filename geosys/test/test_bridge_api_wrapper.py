@@ -76,6 +76,24 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             geometry=geom, crop='CORN', sowing_date='2018-04-15')
         self.assertTrue(len(coverages) > 0)
 
+    def test_get_content(self):
+        """Test we can successfully get the content of png response."""
+        thumbnail_url = (
+            'https://bridge.preprod.geosys-na.com/field-level-maps/v4/'
+            'season-fields/zgzmbrm/coverage/2018-11-02/base-reference-map/'
+            'INSEASONPARTIAL_NDVI/thumbnail.png')
+
+        bridge_api = BridgeAPI(
+            username=self.username,
+            password=self.password,
+            region='na',
+            client_id='mapproduct_api',
+            client_secret='mapproduct_api.secret',
+            use_testing_service=True)
+
+        content = bridge_api.get_content(thumbnail_url)
+        self.assertTrue(isinstance(content, str))
+
 
 if __name__ == "__main__":
     suite = unittest.makeSuite(BridgeAPIWrapperTest)

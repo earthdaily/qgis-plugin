@@ -1,9 +1,11 @@
 # coding=utf-8
 """Implementation of GEOSYS options dialog.
 """
+import os
+
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QFileDialog
 from qgis.PyQt.QtCore import QSettings
 
 from geosys.bridge_api_wrapper import BridgeAPI
@@ -47,10 +49,11 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
             'bridge_api_username': self.username_form,
             'bridge_api_password': self.password_form,
             'bridge_api_client_id': self.client_id_form,
-            'bridge_api_client_password': self.client_secret_form
+            'bridge_api_client_secret': self.client_secret_form
         }
         self.text_settings = {
-            'bridge_api_page_limit': self.page_limit_form
+            'bridge_api_page_limit': self.page_limit_form,
+            'output_directory': self.output_directory_form
         }
         self.text_settings.update(self.credentials_settings)
         self.combo_box_settings = {
@@ -69,6 +72,8 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.restore_settings()
 
         self.connect_button.clicked.connect(self.request_token)
+        self.output_directory_chooser.clicked.connect(
+            self.open_output_directory_dialog)
 
     def username(self):
         """Get current value of username."""
@@ -116,6 +121,30 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
                     self, message_title, bridge_api.authentication_message)
         except Exception as e:
             QMessageBox.critical(self, message_title, str(e))
+
+    def choose_directory(self, line_edit, title):
+        """Show a directory selection dialog.
+
+        This function will show the dialog then set line_edit widget
+        text with output from the dialog.
+
+        :param line_edit: Widget whose text should be updated.
+        :type line_edit: QLineEdit
+
+        :param title: title of dialog
+        :type title: str
+        """
+        path = line_edit.text()
+        # noinspection PyCallByClass,PyTypeChecker
+        new_path = QFileDialog.getExistingDirectory(
+            self, title, path, QFileDialog.ShowDirsOnly)
+        if new_path is not None and os.path.exists(new_path):
+            line_edit.setText(new_path)
+
+    def open_output_directory_dialog(self):
+        """Open directory dialog."""
+        title = self.tr('Set the output directory for map creation')
+        self.choose_directory(self.output_directory_form, title)
 
     def restore_boolean_setting(self, key, check_box):
         """Set check_box according to setting of key.
