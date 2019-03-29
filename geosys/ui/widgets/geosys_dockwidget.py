@@ -79,6 +79,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.raster_output = False
         self.vector_output = False
 
+        self.selected_coverage_results = []
+
         # Coverage parameters from settings
         self.crop_type = setting(
             'crop_type', expected_type=str, qsettings=self.settings)
@@ -139,7 +141,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def show_next_page(self):
         """Open next page of stacked widget."""
-        # If current page is map creation parameter page, create map without
+        # If current page is map creation parameters page, create map without
         # increasing index.
         if self.current_stacked_widget_index == 2:
             self.start_map_creation()
@@ -153,8 +155,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.current_stacked_widget_index == self.max_stacked_widget_index:
             self.next_push_button.setEnabled(False)
 
-        # If current page is coverage results page, run coverage searcher
+        # If previous page is coverage parameters page and current page is
+        # coverage results page, run coverage searcher.
         if self.current_stacked_widget_index == 1:
+            self.next_push_button.setEnabled(False)
             self.start_coverage_search()
 
     def set_next_button_text(self, index):
@@ -224,6 +228,15 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.raster_output = self.raster_radio_button.isChecked()
         self.vector_output = not self.raster_output
 
+        # check for selected coverage results
+        for item in self.coverage_result_list.selectedItems():
+            self.selected_coverage_results.append(item.coverage_map_json)
+
+        if len(self.selected_coverage_results) == 0:
+            return False, 'Please select at least one coverage result.'
+
+        return True, ''
+
     def validate_coverage_parameters(self):
         """Check current state of coverage parameters."""
         # Get geometry in WKT format
@@ -252,7 +265,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.geometry_wkt = geom.asWkt()
         else:
             # geometry is not valid
-            return False
+            return False, 'Geometry is not valid.'
 
         # Get map product
         self.map_product = self.map_product_combo_box.currentText()
@@ -264,22 +277,28 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.start_date = self.start_date_edit.date().toString('yyyy-MM-dd')
         self.end_date = self.end_date_edit.date().toString('yyyy-MM-dd')
 
-        return True
+        return True, ''
 
     def start_map_creation(self):
         """Map creation starts here."""
         # validate map creation parameters before creating the map
-        if not self.validate_map_creation_parameters():
+        is_success, message = self.validate_map_creation_parameters()
+        if not is_success:
             QMessageBox.critical(
-                self, 'Map Creation Status',
-                'Error validating map creation parameters.')
+                self,
+                'Map Creation Status',
+                'Error validating map creation parameters. {}'.format(message))
             return
+
+        # start map creation job
 
     def start_coverage_search(self):
         """Coverage search starts here."""
         # validate coverage parameters before run the coverage searcher
-        if not self.validate_coverage_parameters():
-            self.show_error('Error validating coverage parameters.')
+        is_success, message = self.validate_coverage_parameters()
+        if not is_success:
+            self.show_error(
+                'Error validating coverage parameters. {}'.format(message))
             return
 
         if self.search_threads:
@@ -315,7 +334,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def coverage_search_finished(self):
         """Action after search thread finished."""
         self.coverage_result_list.takeItem(0)
-        if self.coverage_result_list.count() == 0:
+        coverage_result_empty = self.coverage_result_list.count() == 0
+        self.next_push_button.setEnabled(not coverage_result_empty)
+        if coverage_result_empty:
             new_widget = QLabel()
             new_widget.setTextFormat(Qt.RichText)
             new_widget.setOpenExternalLinks(True)
