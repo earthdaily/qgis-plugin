@@ -70,27 +70,27 @@ yield_variability_map = {
 # NDVI (Normalized Difference Vegetation Index)
 # https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index
 NDVI = {
-    'key': 'ndvi',
+    'key': 'NDVI',
     'name': 'NDVI',
     'map_family': base_reference_map
 }
 INSEASON_NDVI = {
-    'key': 'inseason-ndvi',
+    'key': 'INSEASON_NDVI',
     'name': 'INSEASON_NDVI',
     'map_family': base_reference_map
 }
 INSEASONPARTIAL_NDVI = {
-    'key': 'inseason-partial-ndvi',
+    'key': 'INSEASON_PARTIAL_NDVI',
     'name': 'INSEASON_PARTIAL_NDVI',
     'map_family': base_reference_map
 }
 INSEASONFIELD_AVERAGE_NDVI = {
-    'key': 'inseason-field-average-ndvi',
+    'key': 'INSEASONFIELD_AVERAGE_NDVI',
     'name': 'INSEASONFIELD_AVERAGE_NDVI',
     'map_family': model_map
 }
 INSEASONFIELD_AVERAGE_REVERSE_NDVI = {
-    'key': 'inseason-field-average-reverse-ndvi',
+    'key': 'INSEASONFIELD_AVERAGE_REVERSE_NDVI',
     'name': 'INSEASONFIELD_AVERAGE_REVERSE_NDVI',
     'map_family': model_map
 }
@@ -98,63 +98,63 @@ INSEASONFIELD_AVERAGE_REVERSE_NDVI = {
 # EVI (Enhanced Vegetation Index)
 # https://en.wikipedia.org/wiki/Enhanced_vegetation_index
 EVI = {
-    'key': 'evi',
+    'key': 'EVI',
     'name': 'EVI',
     'map_family': base_reference_map
 }
 INSEASON_EVI = {
-    'key': 'inseason-evi',
+    'key': 'INSEASON_EVI',
     'name': 'INSEASON_EVI',
     'map_family': base_reference_map
 }
 INSEASONPARTIAL_EVI = {
-    'key': 'inseason-partial-evi',
+    'key': 'INSEASONPARTIAL_EVI',
     'name': 'INSEASONPARTIAL_EVI',
     'map_family': base_reference_map
 }
 
 # CVI (Chlorophyll Vegetation Index)
 CVI = {
-    'key': 'cvi',
+    'key': 'CVI',
     'name': 'CVI',
     'map_family': base_reference_map
 }
 INSEASON_CVI = {
-    'key': 'inseason-cvi',
+    'key': 'INSEASON_CVI',
     'name': 'INSEASON_CVI',
     'map_family': base_reference_map
 }
 
 # GNDVI (Green Normalized Difference Vegetation Index)
 GNDVI = {
-    'key': 'gndvi',
+    'key': 'GNDVI',
     'name': 'GNDVI',
     'map_family': base_reference_map
 }
 INSEASON_GNDVI = {
-    'key': 'inseason-gndvi',
+    'key': 'INSEASON_GNDVI',
     'name': 'INSEASON_GNDVI',
     'map_family': base_reference_map
 }
 
 # LAI (Leaf Area Index)
 INSEASON_LAI = {
-    'key': 'inseason-lai',
+    'key': 'INSEASON_LAI',
     'name': 'INSEASON_LAI',
     'map_family': base_reference_map
 }
 INSEASONCANOPY_N_REVERSE_LAI = {
-    'key': 'inseasoncanopy-n-reverse-lai',
+    'key': 'INSEASONCANOPY_N_REVERSE_LAI',
     'name': 'INSEASONCANOPY_N_REVERSE_LAI',
     'map_family': model_map
 }
 INSEASONFIELD_AVERAGE_LAI = {
-    'key': 'inseasonfield-average-lai',
+    'key': 'INSEASONFIELD_AVERAGE_LAI',
     'name': 'INSEASONFIELD_AVERAGE_LAI',
     'map_family': model_map
 }
 INSEASONFIELD_AVERAGE_REVERSE_LAI = {
-    'key': 'inseasonfield-average-reverse-lai',
+    'key': 'INSEASONFIELD_AVERAGE_REVERSE_LAI',
     'name': 'INSEASONFIELD_AVERAGE_REVERSE_LAI',
     'map_family': model_map
 }
@@ -162,52 +162,52 @@ INSEASONFIELD_AVERAGE_REVERSE_LAI = {
 
 # OM (Organic Matter)
 OM = {
-    'key': 'om',
+    'key': 'OM',
     'name': 'OM',
     'map_family': organic_matter_map
 }
 
 # YGM (Yield Goal Map)
 YGM = {
-    'key': 'ygm',
+    'key': 'YGM',
     'name': 'YGM',
     'map_family': yield_goal_map
 }
 
 # YVM (Yield Variability Map)
 YVM = {
-    'key': 'yvm',
+    'key': 'YPM',
     'name': 'YPM',
     'map_family': yield_variability_map
 }
 
 # SaMZ
 SAMZ = {
-    'key': 'samz',
+    'key': 'SAMZ',
     'name': 'SAMZ',
     'map_family': management_zones_map
 }
 
 # Color Composition
 COLOR_COMPOSITION = {
-    'key': 'color-composition',
+    'key': 'COLORCOMPOSITION',
     'name': 'COLORCOMPOSITION',
     'map_family': base_reference_map
 }
 
 # Topology
 ELEVATION = {
-    'key': 'elevation',
+    'key': 'ELEVATION',
     'name': 'ELEVATION',
     'map_family': topology_map
 }
 EROSION = {
-    'key': 'erosion',
+    'key': 'EROSION',
     'name': 'EROSION',
     'map_family': topology_map
 }
 SLOPE = {
-    'key': 'slope',
+    'key': 'SLOPE',
     'name': 'SLOPE',
     'map_family': topology_map
 }
@@ -240,27 +240,27 @@ INSEASON_MAP_PRODUCTS = [
 # Sensor definition
 
 DEIMOS = {
-    'key': 'deimos',
+    'key': 'DEIMOS',
     'name': 'DEIMOS',
 }
 
 DMC = {
-    'key': 'dmc',
+    'key': 'DMC',
     'name': 'DMC'
 }
 
 LANDSAT_8 = {
-    'key': 'landsat-8',
+    'key': 'LANDSAT_8',
     'name': 'LANDSAT_8'
 }
 
 RESOURCESAT2 = {
-    'key': 'resourcesat2',
+    'key': 'RESOURCESAT2',
     'name': 'RESOURCESAT2'
 }
 
 SENTINEL_2 = {
-    'key': 'sentinel-2',
+    'key': 'SENTINEL_2',
     'name': 'SENTINEL_2'
 }
 

@@ -76,6 +76,7 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
             self.access_token, endpoint_url=BRIDGE_URLS['na']['test'])
 
         # Test INSEASONFIELD_AVERAGE_NDVI map creation
+        map_type_key = 'INSEASONFIELD_AVERAGE_NDVI'
         data = {
             "SeasonField": {
                 "Id": "zgzmbrm"
@@ -87,8 +88,7 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
             "NMin": 20,
             "NMax": 70
         }
-        response = client.get_field_map(
-            'inseason-field-average-ndvi', data=data)
+        response = client.get_field_map(map_type_key, data=data)
         self.assertTrue('seasonField' in response)
 
 

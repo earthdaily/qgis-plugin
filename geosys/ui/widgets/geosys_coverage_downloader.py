@@ -1,17 +1,24 @@
 # coding=utf-8
-"""Implementation of custom GEOSYS item widget.
+"""Implementation of custom GEOSYS coverage downloader.
 """
+import os
 import sys
+import tempfile
+
 from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings
 
-from geosys.bridge_api.default import MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE
+from geosys.bridge_api.default import MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, \
+    ZIPPED_SHP, ZIPPED_TIFF, SHP_EXT, TIFF_EXT
 from geosys.bridge_api_wrapper import BridgeAPI
+from geosys.utilities.downloader import fetch_zip, extract_zip
 from geosys.utilities.settings import setting
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
 __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
+
+settings = QSettings()
 
 
 class CoverageSearchThread(QThread):
@@ -74,34 +81,8 @@ class CoverageSearchThread(QThread):
 
         self.settings = QSettings()
 
-        # define credentials
-        username = setting(
-            'bridge_api_username',
-            expected_type=str, qsettings=self.settings)
-        password = setting(
-            'bridge_api_password',
-            expected_type=str, qsettings=self.settings)
-        client_id = setting(
-            'bridge_api_client_id',
-            expected_type=str, qsettings=self.settings)
-        client_secret = setting(
-            'bridge_api_client_secret',
-            expected_type=str, qsettings=self.settings)
-
-        # define geosys region
-        is_region_eu = setting(
-            'geosys_region_eu',
-            expected_type=bool, qsettings=self.settings)
-        region = 'eu' if is_region_eu else 'na'
-
-        # define prod or testing service
-        use_testing_service = setting(
-            'use_testing_service',
-            expected_type=bool, qsettings=self.settings)
-
         self.searcher_client = BridgeAPI(
-            username, password, region, client_id, client_secret,
-            use_testing_service=use_testing_service)
+            *credentials_parameters_from_settings())
         # TODO set QGIS proxy to the searcher
 
         self.need_stop = False
@@ -163,3 +144,134 @@ class CoverageSearchThread(QThread):
     def stop(self):
         """Stop thread job."""
         self.need_stop = True
+
+
+def create_map(
+        map_specifications,
+        output_dir,
+        filename,
+        vector_format=False,
+        data=None,
+        params=None):
+    """Create map based on given parameters.
+
+    :param map_specifications: Result of single map coverage specifications.
+        example: {   
+            "seasonField": {
+                "id": "zgzmbrm",
+                "customerExternalId": "..."
+            },
+            "image": {
+                "date": "2018-10-18",
+                "sensor": "SENTINEL_2",
+                "weather": "HOT",
+                "soilMaterial": "BARE"
+            }
+            "type": "INSEASON_NDVI",
+            "_links": {
+                "self": "the_url",
+                "worldFile": "the_url",
+                "thumbnail": "the_url",
+                "legend": "the_url",
+                "image:image/png": "the_url",
+                "image:image/tiff+zip": "the_url",
+                "image:application/shp+zip": "the_url",
+                "image:application/vnd.google-earth.kmz": "the_url"
+            },
+            "coverageType": "CLEAR"
+        }
+    :type map_specifications: dict
+
+    :param output_dir: Base directory of the output.
+    :type output_dir: str
+    
+    :param filename: Filename of the output.
+    :type filename: str
+    
+    :param vector_format: Flag indicating to create the map in vector format.
+        If this set to False (default value), it will create map in 
+        raster format.
+    :type vector_format: bool
+    
+    :param data: Map creation data.
+        example: {
+            "MinYieldGoal": 0,
+            "MaxYieldGoal": 0,
+            "HistoricalYieldAverage": 0
+        }
+    :type data: dict
+    
+    :param params: Map creation parameters.
+    :type params: dict
+    """""
+    # Construct map creation parameters
+    map_type_key = map_specifications['type']
+    season_field_id = map_specifications['seasonField']['id']
+    image_date = map_specifications['image']['date']
+    data = data if data else {}
+    params = params if params else {}
+    data.update(params)
+
+    bridge_api = BridgeAPI(*credentials_parameters_from_settings())
+    field_map_json = bridge_api.get_field_map(
+        map_type_key, season_field_id, image_date, **data)
+
+    message = 'Field map successfully created.'
+    if not field_map_json.get('seasonField'):
+        # field map request error
+        message = 'Field map request failed.'
+        return False, message
+
+    # If request succeeded, download zipped map and extract it
+    # in requested format.
+    map_format = ZIPPED_SHP if vector_format else ZIPPED_TIFF
+    map_extension = SHP_EXT if vector_format else TIFF_EXT
+    zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
+    url = field_map_json['_links'][map_format]
+    try:
+        fetch_zip(url, zip_path, headers=bridge_api.headers)
+        extract_zip(zip_path, os.path.join(output_dir, filename))
+    except:
+        # zip extraction error
+        message = 'Failed to extract zip file.'
+        return False, message
+
+    return True, message
+
+
+def credentials_parameters_from_settings():
+    """Credentials parameters for Bridge API
+
+    :return: Credentials parameters.
+    :rtype: tuple
+    """
+    # Retrieve user's settings credentials.
+    username = setting(
+        'bridge_api_username',
+        expected_type=str, qsettings=settings)
+    password = setting(
+        'bridge_api_password',
+        expected_type=str, qsettings=settings)
+    client_id = setting(
+        'bridge_api_client_id',
+        expected_type=str, qsettings=settings)
+    client_secret = setting(
+        'bridge_api_client_secret',
+        expected_type=str, qsettings=settings)
+
+    # define geosys region
+    is_region_eu = setting(
+        'geosys_region_eu',
+        expected_type=bool, qsettings=settings)
+    region = 'eu' if is_region_eu else 'na'
+
+    # define prod or testing service
+    use_testing_service = setting(
+        'use_testing_service',
+        expected_type=bool, qsettings=settings)
+
+    # RETURNED VALUES ORDER FOLLOWS BRIDGE API WRAPPER CLASS PARAMETERS ORDER
+    return (
+        username, password, region, client_id, client_secret,
+        use_testing_service
+    )

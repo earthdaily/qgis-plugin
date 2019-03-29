@@ -22,18 +22,24 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
+
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, QSettings, QMutex
 from PyQt5.QtWidgets import QLabel, QListWidgetItem, QMessageBox
 
-from qgis.core import QgsProject, QgsFeatureRequest
+from qgis.core import (
+    QgsProject, QgsFeatureRequest, QgsVectorLayer, QgsRasterLayer)
 from qgis.PyQt.QtCore import Qt
 
+from geosys.bridge_api.default import SHP_EXT, TIFF_EXT
 from geosys.bridge_api.definitions import INSEASON_MAP_PRODUCTS, SENSORS
-from geosys.ui.widgets.geosys_coverage_downloader import CoverageSearchThread
+from geosys.ui.widgets.geosys_coverage_downloader import (
+    CoverageSearchThread, create_map)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
-    add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo)
+    add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
+    add_layer_to_canvas)
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting
 
@@ -86,6 +92,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             'crop_type', expected_type=str, qsettings=self.settings)
         self.sowing_date = setting(
             'sowing_date', expected_type=str, qsettings=self.settings)
+        self.output_directory = setting(
+            'output_directory', expected_type=str, qsettings=self.settings)
 
         # Flag used to prevent recursion and allow bulk loads of layers to
         # trigger a single event only
@@ -152,8 +160,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.stacked_widget.setCurrentIndex(
                 self.current_stacked_widget_index)
             self.back_push_button.setEnabled(True)
-        if self.current_stacked_widget_index == self.max_stacked_widget_index:
-            self.next_push_button.setEnabled(False)
 
         # If previous page is coverage parameters page and current page is
         # coverage results page, run coverage searcher.
@@ -169,6 +175,13 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             2: 'Create Map'
         }
         self.next_push_button.setText(text_rule[index])
+
+    def update_selection_data(self):
+        """Update current selection data."""
+        # update data based on selected coverage results
+        self.selected_coverage_results = []
+        for item in self.coverage_result_list.selectedItems():
+            self.selected_coverage_results.append(item.data(Qt.UserRole))
 
     def get_layers(self, *args):
         """Obtain a list of layers currently loaded in QGIS.
@@ -227,10 +240,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.samz_zone = self.samz_zone_form.value()
         self.raster_output = self.raster_radio_button.isChecked()
         self.vector_output = not self.raster_output
-
-        # check for selected coverage results
-        for item in self.coverage_result_list.selectedItems():
-            self.selected_coverage_results.append(item.coverage_map_json)
 
         if len(self.selected_coverage_results) == 0:
             return False, 'Please select at least one coverage result.'
@@ -291,6 +300,71 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             return
 
         # start map creation job
+
+        # construct map specification
+        map_specifications = None
+        if len(self.selected_coverage_results) > 1:
+            # map specification for difference map
+            pass
+        else:
+            # Place the requested map specification on the top level of
+            # coverage result dict. coverage_result['maps'][0] is the requested
+            # map specification.
+            # example:
+            #   before = {
+            #       'seasonField': {...},
+            #       'image': {...},
+            #       'maps': [
+            #           {
+            #               'type': 'INSEASON_NDVI',
+            #               '_links': {...}
+            #           }
+            #       ],
+            #       'coverageType': 'CLEAR'
+            #   }
+            #
+            #   after = {
+            #       'seasonField': {...},
+            #       'image': {...},
+            #       'type': 'INSEASON_NDVI',
+            #       '_links': {...},
+            #       'coverageType': 'CLEAR',
+            #       'maps': [
+            #           {
+            #               'type': 'INSEASON_NDVI',
+            #               '_links': {...}
+            #           }
+            #       ]
+            #   }
+            map_specifications = self.selected_coverage_results[0]
+            map_specifications.update(map_specifications['maps'][0])
+
+        if map_specifications:
+            filename = '{}_{}_{}'.format(
+                map_specifications['type'],
+                map_specifications['seasonField']['id'],
+                map_specifications['image']['date']
+            )
+            is_success, message = create_map(
+                map_specifications, self.output_directory, filename,
+                vector_format=self.vector_output)
+            if not is_success:
+                QMessageBox.critical(
+                    self,
+                    'Map Creation Status',
+                    'Error creating the map. {}'.format(message))
+                return
+
+            # Add map to qgis canvas
+            if self.vector_output:
+                map_layer = QgsVectorLayer(
+                    os.path.join(self.output_directory, filename + SHP_EXT),
+                    filename)
+            else:
+                map_layer = QgsRasterLayer(
+                    os.path.join(self.output_directory, filename + TIFF_EXT),
+                    filename)
+            add_layer_to_canvas(map_layer, filename)
 
     def start_coverage_search(self):
         """Coverage search starts here."""
@@ -401,6 +475,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 coverage_map_json, thumbnail_ba)
             new_item = QListWidgetItem(self.coverage_result_list)
             new_item.setSizeHint(custom_widget.sizeHint())
+            new_item.setData(Qt.UserRole, coverage_map_json)
             self.coverage_result_list.addItem(new_item)
             self.coverage_result_list.setItemWidget(new_item, custom_widget)
 
@@ -465,6 +540,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # Stacked widget connector
         self.stacked_widget.currentChanged.connect(self.set_next_button_text)
+
+        # List widget item connector
+        self.coverage_result_list.itemSelectionChanged.connect(
+            self.update_selection_data)
 
     def unblock_signals(self):
         """Let the combos listen for event changes again."""

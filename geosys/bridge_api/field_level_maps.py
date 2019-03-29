@@ -92,9 +92,6 @@ class FieldLevelMapsAPIClient(ApiClient):
         :param map_type_key: Map type key.
         :type map_type_key: str
 
-        :param params: Map creation parameters.
-        :type params: dict
-
         :param data: Map creation data.
             example: {
                 "SeasonField": {
@@ -105,6 +102,9 @@ class FieldLevelMapsAPIClient(ApiClient):
                 }
             }
         :type data: dict
+
+        :param params: Map creation parameters.
+        :type params: dict
 
         :return: JSON response.
             Map data specification based on given parameters.

@@ -56,7 +56,9 @@ IMAGE_SOIL_MATERIAL = 'Image.SoilMaterial'
 IMAGE_WEATHER = 'Image.Weather'
 MAPS_TYPE = 'Maps.Type'
 
-# map output format
+# map output format based on Bridge API
+TIFF_EXT = '.tif'
+SHP_EXT = '.shp'
 THUMBNAIL = 'thumbnail'
 LEGEND = 'legend'
 PNG = 'image:image/png'

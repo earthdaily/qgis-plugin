@@ -5,6 +5,8 @@ from past.builtins import cmp
 from qgis.core import QgsProject, QgsMapLayer, QgsLayerItem, QgsWkbTypes
 from qgis.PyQt.QtCore import Qt
 
+from geosys.utilities.qgis import qgis_version
+
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
 __email__ = "rohmat@kartoza.com"
@@ -174,3 +176,21 @@ def layer_icon(layer):
         return QgsLayerItem.iconPolygon()
     else:
         return QgsLayerItem.iconDefault()
+
+
+def add_layer_to_canvas(layer, name):
+    """Helper method to add layer to QGIS.
+
+    :param layer: The layer.
+    :type layer: QgsMapLayer
+
+    :param name: Layer name.
+    :type name: str
+
+    """
+    if qgis_version() >= 21800:
+        layer.setName(name)
+    else:
+        layer.setLayerName(name)
+
+    QgsProject.instance().addMapLayer(layer)

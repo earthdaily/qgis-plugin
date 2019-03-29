@@ -193,3 +193,45 @@ class BridgeAPI(ApiClient):
         coverages_json = api_client.get_coverage(request_data, filters=filters)
 
         return coverages_json
+
+    def get_field_map(
+            self, map_type_key, season_field_id, image_date, **kwargs):
+        """Get requested field map.
+
+        :param map_type_key: Map type key.
+        :type map_type_key: str
+
+        :param season_field_id: ID of the season field.
+        :param season_field_id: str
+
+        :param image_date: Date of the image. yyyy-MM-dd
+        :type image_date: str
+
+        :param kwargs: Other map creation and request parameters.
+
+        :return: JSON response.
+            Map data specification based on given criteria.
+        :rtype: dict
+        """
+        # Construct map creation parameters
+        request_data = {
+            'SeasonField': {
+                'Id': season_field_id
+            },
+            'Image': {
+                'Date': image_date
+            }
+        }
+        request_data.update(kwargs)
+
+        # Get request parameters
+        params = kwargs.get('params')
+
+        bridge_server = (BRIDGE_URLS[self.region]['test']
+                         if self.use_testing_service
+                         else BRIDGE_URLS[self.region]['prod'])
+        api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
+        field_map_json = api_client.get_field_map(
+            map_type_key, request_data, params)
+
+        return field_map_json
