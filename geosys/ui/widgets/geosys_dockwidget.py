@@ -30,7 +30,11 @@ from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QLabel, QListWidgetItem, QMessageBox, QApplication
 
 from qgis.core import (
-    QgsProject, QgsFeatureRequest, QgsVectorLayer, QgsRasterLayer)
+    QgsProject,
+    QgsFeatureRequest,
+    QgsVectorLayer,
+    QgsRasterLayer,
+    QgsCoordinateReferenceSystem)
 from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.default import SHP_EXT, TIFF_EXT
@@ -42,7 +46,7 @@ from geosys.ui.widgets.geosys_coverage_downloader import (
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
-    add_layer_to_canvas)
+    add_layer_to_canvas, reproject)
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting
 
@@ -254,6 +258,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Get geometry in WKT format
         layer = layer_from_combo(self.geometry_combo_box)
         use_selected_features = layer.selectedFeatureCount() > 0
+
+        # Reproject layer to EPSG:4326
+        if layer.crs().authid() != 'EPSG:4326':
+            layer = reproject(
+                layer, QgsCoordinateReferenceSystem('EPSG:4326'))
 
         feature_iterator = layer.getFeatures()
         if use_selected_features:
