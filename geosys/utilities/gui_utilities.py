@@ -2,7 +2,16 @@
 """GUI utilities for the dock and the multi Exposure Tool."""
 from past.builtins import cmp
 
-from qgis.core import QgsProject, QgsMapLayer, QgsLayerItem, QgsWkbTypes
+from qgis.core import (
+    QgsProject,
+    QgsMapLayer,
+    QgsLayerItem,
+    QgsWkbTypes,
+    QgsCoordinateTransform,
+    QgsFeature,
+    QgsMemoryProviderUtils,
+    QgsFields,
+    QgsCoordinateReferenceSystem)
 from qgis.PyQt.QtCore import Qt
 
 from geosys.utilities.qgis import qgis_version
@@ -194,3 +203,94 @@ def add_layer_to_canvas(layer, name):
         layer.setLayerName(name)
 
     QgsProject.instance().addMapLayer(layer)
+
+
+def create_memory_layer(
+        layer_name, geometry, coordinate_reference_system=None, fields=None):
+    """Create a vector memory layer.
+
+    :param layer_name: The name of the layer.
+    :type layer_name: str
+
+    :param geometry: The geometry of the layer.
+    :rtype geometry: QgsWkbTypes (note:
+                     from C++ QgsWkbTypes::GeometryType enum)
+
+    :param coordinate_reference_system: The CRS of the memory layer.
+    :type coordinate_reference_system: QgsCoordinateReferenceSystem
+
+    :param fields: Fields of the vector layer. Default to None.
+    :type fields: QgsFields
+
+    :return: The memory layer.
+    :rtype: QgsVectorLayer
+    """
+
+    if geometry == QgsWkbTypes.PointGeometry:
+        wkb_type = QgsWkbTypes.MultiPoint
+    elif geometry == QgsWkbTypes.LineGeometry:
+        wkb_type = QgsWkbTypes.MultiLineString
+    elif geometry == QgsWkbTypes.PolygonGeometry:
+        wkb_type = QgsWkbTypes.MultiPolygon
+    elif geometry == QgsWkbTypes.NullGeometry:
+        wkb_type = QgsWkbTypes.NoGeometry
+    else:
+        raise Exception(
+            'Layer geometry must be one of: Point, Line, '
+            'Polygon or Null, I got %s' % geometry)
+
+    if coordinate_reference_system is None:
+        coordinate_reference_system = QgsCoordinateReferenceSystem()
+    if fields is None:
+        fields = QgsFields()
+    elif not isinstance(fields, QgsFields):
+        # fields is a list
+        new_fields = QgsFields()
+        for f in fields:
+            new_fields.append(f)
+        fields = new_fields
+    memory_layer = QgsMemoryProviderUtils. \
+        createMemoryLayer(name=layer_name,
+                          fields=fields,
+                          geometryType=wkb_type,
+                          crs=coordinate_reference_system)
+
+    memory_layer.dataProvider().createSpatialIndex()
+    return memory_layer
+
+
+def reproject(layer, output_crs):
+    """Reproject a vector layer to a specific CRS.
+
+    :param layer: The layer to reproject.
+    :type layer: QgsVectorLayer
+
+    :param output_crs: The destination CRS.
+    :type output_crs: QgsCoordinateReferenceSystem
+
+    :return: Reprojected memory layer.
+    :rtype: QgsVectorLayer
+    """
+    output_layer_name = '{}_reprojected'.format(layer.name())
+
+    input_crs = layer.crs()
+    input_fields = layer.fields()
+
+    reprojected = create_memory_layer(
+        output_layer_name, layer.geometryType(), output_crs, input_fields)
+    reprojected.startEditing()
+
+    crs_transform = QgsCoordinateTransform(
+        input_crs, output_crs, QgsProject.instance())
+
+    out_feature = QgsFeature()
+
+    for i, feature in enumerate(layer.getFeatures()):
+        geom = feature.geometry()
+        geom.transform(crs_transform)
+        out_feature.setGeometry(geom)
+        out_feature.setAttributes(feature.attributes())
+        reprojected.addFeature(out_feature)
+
+    reprojected.commitChanges()
+    return reprojected
