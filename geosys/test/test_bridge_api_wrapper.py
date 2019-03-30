@@ -64,6 +64,8 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             "-86.86263916875464 41.32450729144166,"
             "-86.86701653386694 41.32450729144166,"
             "-86.86701653386694 41.331532756357426))")
+        crop_type = 'CORN'
+        sowing_date = '2018-04-15'
 
         bridge_api = BridgeAPI(
             username=self.username,
@@ -73,8 +75,30 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             client_secret='mapproduct_api.secret',
             use_testing_service=True)
         coverages = bridge_api.get_coverage(
-            geometry=geom, crop='CORN', sowing_date='2018-04-15')
+            geometry=geom, crop=crop_type, sowing_date=sowing_date)
         self.assertTrue(len(coverages) > 0)
+
+    def test_get_field_map(self):
+        """Test we can successfully get the field map."""
+        map_type_key = 'INSEASONFIELD_AVERAGE_NDVI'
+        season_field_id = 'zgzmbrm'
+        image_date = '2018-10-13'
+
+        bridge_api = BridgeAPI(
+            username=self.username,
+            password=self.password,
+            region='na',
+            client_id='mapproduct_api',
+            client_secret='mapproduct_api.secret',
+            use_testing_service=True)
+        field_map = bridge_api.get_field_map(
+            map_type_key, season_field_id, image_date,
+            # map creation parameters
+            NPlanned=48,
+            NMin=20,
+            NMax=70
+        )
+        self.assertTrue('seasonField' in field_map)
 
     def test_get_content(self):
         """Test we can successfully get the content of png response."""
