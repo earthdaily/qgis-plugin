@@ -29,6 +29,10 @@ from PyQt5.QtCore import (
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 
+from qgis.core import QgsApplication
+
+from geosys.processing.geosys_processing_provider import (
+    GeosysProcessingProvider)
 from geosys.utilities.resources import resources_path
 
 
@@ -173,6 +177,11 @@ class GeosysPlugin:
         # Also deal with the fact that on start of QGIS dock may already be
         # hidden.
         self.action_dock.setChecked(self.dock_widget.isVisible())
+
+        # Add custom processing tools
+        geosys_processing_provider = GeosysProcessingProvider()
+        QgsApplication.processingRegistry().addProvider(
+            geosys_processing_provider)
 
     # ---------------------------------------------------------------------
 
