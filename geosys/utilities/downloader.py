@@ -243,7 +243,7 @@ class FileDownloader:
 
         elif result == QNetworkReply.ContentNotFoundError:
             LOGGER.exception('Path not found : %s' % self.url.path())
-            return False, 'Sorry, the layer was not found on the server.'
+            return False, 'Sorry, the content was not found on the server.'
 
         else:
             return result, self.reply.errorString()

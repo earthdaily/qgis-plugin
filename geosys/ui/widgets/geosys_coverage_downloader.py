@@ -99,6 +99,7 @@ class CoverageSearchThread(QThread):
                 filters=self.filters)
 
             if isinstance(results, dict) and results.get('message'):
+                # TODO handle model_validation_error
                 raise Exception(results['message'])
 
             collected_results = []
@@ -115,10 +116,13 @@ class CoverageSearchThread(QThread):
                 if not requested_map:
                     continue
 
-                thumbnail_url = requested_map['_links']['thumbnail']
-                thumbnail_content = self.searcher_client.get_content(
-                    thumbnail_url)
-                thumbnail_ba = QByteArray(thumbnail_content)
+                thumbnail_url = requested_map['_links'].get('thumbnail')
+                if thumbnail_url:
+                    thumbnail_content = self.searcher_client.get_content(
+                        thumbnail_url)
+                    thumbnail_ba = QByteArray(thumbnail_content)
+                else:
+                    thumbnail_ba = bytes('', 'utf-8')
 
                 collected_results.append({
                     'data': result,
@@ -219,6 +223,8 @@ def create_map(
     if not field_map_json.get('seasonField'):
         # field map request error
         message = 'Field map request failed.'
+        if field_map_json.get('message'):
+            message = '{} {}'.format(message, field_map_json['message'])
         return False, message
 
     # If request succeeded, download zipped map and extract it

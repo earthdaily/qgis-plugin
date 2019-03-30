@@ -341,7 +341,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 QMessageBox.critical(
                     self,
                     'Map Creation Status',
-                    'Error creating the map. {}'.format(message))
+                    'Error creating map. {}'.format(message))
                 return
 
             # Add map to qgis canvas
@@ -365,7 +365,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 QMessageBox.critical(
                     self,
                     'Map Creation Status',
-                    'Error validating map creation parameters. {}'.format(message))
+                    'Error validating map creation parameters. {}'.format(
+                        message))
                 return
 
             # start map creation job
