@@ -212,6 +212,18 @@ SLOPE = {
     'map_family': topology_map
 }
 
+# Difference map
+DIFFERENCE_INSEASON_NDVI = {
+    'key': 'DIFFERENCE_INSEASON_NDVI',
+    'name': 'DIFFERENCE_INSEASON_NDVI',
+    'map_family': difference_map
+}
+DIFFERENCE_INSEASON_EVI = {
+    'key': 'DIFFERENCE_INSEASON_EVI',
+    'name': 'DIFFERENCE_INSEASON_EVI',
+    'map_family': difference_map
+}
+
 ARCHIVE_MAP_PRODUCTS = [
     NDVI,
     EVI,
@@ -235,6 +247,11 @@ INSEASON_MAP_PRODUCTS = [
     INSEASONPARTIAL_EVI,
     INSEASON_GNDVI,
     COLOR_COMPOSITION
+]
+
+DIFFERENCE_MAPS = [
+    DIFFERENCE_INSEASON_NDVI,
+    DIFFERENCE_INSEASON_EVI
 ]
 
 # Sensor definition

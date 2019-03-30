@@ -131,15 +131,14 @@ class CoverageSearchThread(QThread):
                 self.data_downloaded.emit(result['data'], result['thumbnail'])
 
             self.search_finished.emit()
-        except Exception as e:
+        except Exception:
             error_text = (self.tr(
                 "Error of processing!\n{0}: {1}")).format(
                 unicode(sys.exc_info()[0].__name__), unicode(
                     sys.exc_info()[1]))
             self.error_occurred.emit(error_text)
-            raise e
-
-        self.mutex.unlock()
+        finally:
+            self.mutex.unlock()
 
     def stop(self):
         """Stop thread job."""

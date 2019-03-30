@@ -26,14 +26,17 @@ import os
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, QSettings, QMutex
-from PyQt5.QtWidgets import QLabel, QListWidgetItem, QMessageBox
+from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QLabel, QListWidgetItem, QMessageBox, QApplication
 
 from qgis.core import (
     QgsProject, QgsFeatureRequest, QgsVectorLayer, QgsRasterLayer)
 from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.default import SHP_EXT, TIFF_EXT
-from geosys.bridge_api.definitions import INSEASON_MAP_PRODUCTS, SENSORS
+from geosys.bridge_api.definitions import (
+    INSEASON_MAP_PRODUCTS, SENSORS, DIFFERENCE_MAPS)
+from geosys.bridge_api.utilities import get_definition
 from geosys.ui.widgets.geosys_coverage_downloader import (
     CoverageSearchThread, create_map)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
@@ -288,56 +291,42 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         return True, ''
 
-    def start_map_creation(self):
-        """Map creation starts here."""
-        # validate map creation parameters before creating the map
-        is_success, message = self.validate_map_creation_parameters()
-        if not is_success:
-            QMessageBox.critical(
-                self,
-                'Map Creation Status',
-                'Error validating map creation parameters. {}'.format(message))
-            return
+    def _start_map_creation(self, map_specifications):
+        """Actual method to run the map creation task.
 
-        # start map creation job
-
-        # construct map specification
-        map_specifications = None
-        if len(self.selected_coverage_results) > 1:
-            # map specification for difference map
-            pass
-        else:
-            # Place the requested map specification on the top level of
-            # coverage result dict. coverage_result['maps'][0] is the requested
-            # map specification.
-            # example:
-            #   before = {
-            #       'seasonField': {...},
-            #       'image': {...},
-            #       'maps': [
-            #           {
-            #               'type': 'INSEASON_NDVI',
-            #               '_links': {...}
-            #           }
-            #       ],
-            #       'coverageType': 'CLEAR'
-            #   }
-            #
-            #   after = {
-            #       'seasonField': {...},
-            #       'image': {...},
-            #       'type': 'INSEASON_NDVI',
-            #       '_links': {...},
-            #       'coverageType': 'CLEAR',
-            #       'maps': [
-            #           {
-            #               'type': 'INSEASON_NDVI',
-            #               '_links': {...}
-            #           }
-            #       ]
-            #   }
-            map_specifications = self.selected_coverage_results[0]
-            map_specifications.update(map_specifications['maps'][0])
+        :param map_specifications: Map specification.
+        :type map_specifications: dict
+        """
+        # Place the requested map specification on the top level of
+        # coverage result dict. coverage_result['maps'][0] is the requested
+        # map specification.
+        # example:
+        #   before = {
+        #       'seasonField': {...},
+        #       'image': {...},
+        #       'maps': [
+        #           {
+        #               'type': 'INSEASON_NDVI',
+        #               '_links': {...}
+        #           }
+        #       ],
+        #       'coverageType': 'CLEAR'
+        #   }
+        #
+        #   after = {
+        #       'seasonField': {...},
+        #       'image': {...},
+        #       'type': 'INSEASON_NDVI',
+        #       '_links': {...},
+        #       'coverageType': 'CLEAR',
+        #       'maps': [
+        #           {
+        #               'type': 'INSEASON_NDVI',
+        #               '_links': {...}
+        #           }
+        #       ]
+        #   }
+        map_specifications.update(map_specifications['maps'][0])
 
         if map_specifications:
             filename = '{}_{}_{}'.format(
@@ -365,6 +354,33 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     os.path.join(self.output_directory, filename + TIFF_EXT),
                     filename)
             add_layer_to_canvas(map_layer, filename)
+
+    def start_map_creation(self):
+        """Map creation starts here."""
+        # validate map creation parameters before creating the map
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            is_success, message = self.validate_map_creation_parameters()
+            if not is_success:
+                QMessageBox.critical(
+                    self,
+                    'Map Creation Status',
+                    'Error validating map creation parameters. {}'.format(message))
+                return
+
+            # start map creation job
+            map_product_definition = get_definition(self.map_product)
+            if map_product_definition in DIFFERENCE_MAPS:
+                # start difference map creation
+                pass
+            else:
+                # start single map creation for each selected
+                for coverage_result in self.selected_coverage_results:
+                    self._start_map_creation(coverage_result)
+        except:
+            pass
+        finally:
+            QApplication.restoreOverrideCursor()
 
     def start_coverage_search(self):
         """Coverage search starts here."""
