@@ -21,8 +21,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+from PyQt5.QtGui import QIcon
 from qgis.core import QgsProcessingProvider
 from geosys.processing.geosys_processing_algorithm import MapCoverageDownloader
+from geosys.utilities.resources import resources_path
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -37,6 +39,9 @@ class GeosysProcessingProvider(QgsProcessingProvider):
 
         # Load algorithms
         self.alglist = [MapCoverageDownloader()]
+
+        # Icon path
+        self._icon = resources_path('img', 'icons', 'icon.png')
 
     def unload(self):
         """
@@ -67,7 +72,7 @@ class GeosysProcessingProvider(QgsProcessingProvider):
 
         This string should be short (e.g. "Lastools") and localised.
         """
-        return self.tr('Geosys')
+        return 'GEOSYS'
 
     def longName(self):
         """
@@ -77,3 +82,6 @@ class GeosysProcessingProvider(QgsProcessingProvider):
         implementation returns the same string as name().
         """
         return self.name()
+
+    def icon(self):
+        return QIcon(self._icon)

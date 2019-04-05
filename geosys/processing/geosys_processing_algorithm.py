@@ -21,17 +21,44 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import QCoreApplication, QDate
+from PyQt5.QtWidgets import QDateEdit
+from processing.gui.wrappers import WidgetWrapper
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink)
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFolderDestination,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterString)
+
+from geosys.bridge_api.definitions import INSEASON_MAP_PRODUCTS, SENSORS
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
 __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
+
+
+class DateWidgetWrapper(WidgetWrapper):
+    """WidgetWrapper for QgsProcessingParameterString that create and manage
+    a QDateEdit widget.
+    """
+    def createWidget(self):
+        """Override method."""
+        self.date_edit = QDateEdit()
+        self.date_edit.setCalendarPopup(True)
+        return self.date_edit
+
+    def setValue(self, value):
+        """Override method."""
+        date = QDate.fromString(value, 'yyyy-MM-dd')
+        self.date_edit.setDate(date)
+
+    def value(self):
+        """Override method."""
+        return self.date_edit.date().toString('yyyy-MM-dd')
 
 
 class MapCoverageDownloader(QgsProcessingAlgorithm):
@@ -52,30 +79,91 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
-    OUTPUT = 'OUTPUT'
     INPUT = 'INPUT'
+    COVERAGE_DATE = 'COVERAGE DATE'
+    MAP_PRODUCT = 'MAP PRODUCT'
+    SENSOR = 'SENSOR'
+    OUTPUT = 'OUTPUT'
 
-    def initAlgorithm(self, config):
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+
+    def createInstance(self):
+        return MapCoverageDownloader()
+
+    def name(self):
+        """
+        Returns the algorithm name, used for identifying the algorithm. This
+        string should be fixed for the algorithm, and must not be localised.
+        The name should be unique within each provider. Names should contain
+        lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
+        """
+        return 'create_coverage_map'
+
+    def displayName(self):
+        """
+        Returns the translated algorithm name, which should be used for any
+        user-visible display of the algorithm name.
+        """
+        return self.tr('Create coverage map')
+
+    def initAlgorithm(self, config=None):
         """
         Here we define the inputs and output of the algorithm, along
         with some other properties.
         """
 
-        # We add the input vector features source. It can have any kind of
-        # geometry.
+        # We add the input vector features source. It only allows polygon.
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry]
+                self.tr('Coverage layer'),
+                [QgsProcessing.TypeVectorPolygon]
             )
         )
 
-        # We add a feature sink in which to store our processed features (this
-        # usually takes the form of a newly created vector layer when the
-        # algorithm is run in QGIS).
+        # Coverage date. Will search the most recent map product prior to
+        # the coverage date.
+        date_param = QgsProcessingParameterString(
+            self.COVERAGE_DATE, self.tr('Coverage date'))
+        date_param.setMetadata({
+            'widget_wrapper': {
+                'class': DateWidgetWrapper
+            }
+        })
+        self.addParameter(date_param)
+
+        # Map products options.
+        map_products = []
+        for map_product in INSEASON_MAP_PRODUCTS:
+            map_products.append(map_product['key'])
         self.addParameter(
-            QgsProcessingParameterFeatureSink(
+            QgsProcessingParameterEnum(
+                self.MAP_PRODUCT,
+                self.tr('Map product'),
+                options=map_products,
+                defaultValue=0
+            )
+        )
+
+        # Sensor options.
+        sensors = []
+        for sensor in SENSORS:
+            sensors.append(sensor['key'])
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.SENSOR,
+                self.tr('Sensor'),
+                options=sensors,
+                defaultValue=0
+            )
+        )
+
+        # Output directory where the map product of the coverage search will be
+        # placed.
+        self.addParameter(
+            QgsProcessingParameterFolderDestination(
                 self.OUTPUT,
                 self.tr('Output layer')
             )
@@ -116,43 +204,3 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         # dictionary, with keys matching the feature corresponding parameter
         # or output names.
         return {self.OUTPUT: dest_id}
-
-    def name(self):
-        """
-        Returns the algorithm name, used for identifying the algorithm. This
-        string should be fixed for the algorithm, and must not be localised.
-        The name should be unique within each provider. Names should contain
-        lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
-        return 'Create coverage map'
-
-    def displayName(self):
-        """
-        Returns the translated algorithm name, which should be used for any
-        user-visible display of the algorithm name.
-        """
-        return self.tr(self.name())
-
-    def group(self):
-        """
-        Returns the name of the group this algorithm belongs to. This string
-        should be localised.
-        """
-        return self.tr(self.groupId())
-
-    def groupId(self):
-        """
-        Returns the unique ID of the group this algorithm belongs to. This
-        string should be fixed for the algorithm, and must not be localised.
-        The group id should be unique within each provider. Group id should
-        contain lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
-        """
-        return 'geosys'
-
-    def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
-
-    def createInstance(self):
-        return MapCoverageDownloader()
