@@ -21,19 +21,33 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QCoreApplication, QDate
+import os
+import tempfile
+
+from PyQt5.QtCore import QCoreApplication, QDate, QSettings
 from PyQt5.QtWidgets import QDateEdit
 from processing.gui.wrappers import WidgetWrapper
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsProcessingParameterFolderDestination,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterString)
+from qgis.core import (
+    QgsProcessing,
+    QgsFeatureSink,
+    QgsProcessingAlgorithm,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterFeatureSink,
+    QgsProcessingParameterFolderDestination,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterString,
+    QgsCoordinateReferenceSystem,
+    QgsProcessingParameterNumber)
 
+from geosys.bridge_api.default import (
+    ZIPPED_TIFF, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT)
 from geosys.bridge_api.definitions import INSEASON_MAP_PRODUCTS, SENSORS
+from geosys.bridge_api_wrapper import BridgeAPI
+from geosys.ui.widgets.geosys_coverage_downloader import (
+    credentials_parameters_from_settings)
+from geosys.utilities.downloader import fetch_zip, extract_zip
+from geosys.utilities.gui_utilities import reproject
+from geosys.utilities.settings import setting
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -42,12 +56,15 @@ __revision__ = "$Format:%H$"
 
 
 class DateWidgetWrapper(WidgetWrapper):
-    """WidgetWrapper for QgsProcessingParameterString that create and manage
+    """QDateEdit widget wrapper.
+
+    WidgetWrapper for QgsProcessingParameterString that create and manage
     a QDateEdit widget.
     """
     def createWidget(self):
         """Override method."""
         self.date_edit = QDateEdit()
+        self.date_edit.setDisplayFormat('yyyy-MM-dd')
         self.date_edit.setCalendarPopup(True)
         return self.date_edit
 
@@ -62,14 +79,7 @@ class DateWidgetWrapper(WidgetWrapper):
 
 
 class MapCoverageDownloader(QgsProcessingAlgorithm):
-    """
-    This is an example algorithm that takes a vector layer and
-    creates a new identical one.
-
-    It is meant to be used as an example of how to create your own
-    algorithms and explain methods and variables used to do it. An
-    algorithm like this will be available in all elements, and there
-    is not need for additional work.
+    """Extended QgsProcessingAlgorithm class for GEOSYS coverage downloader.
 
     All Processing algorithms should extend the QgsProcessingAlgorithm
     class.
@@ -79,40 +89,54 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
-    INPUT = 'INPUT'
+    INPUT = 'COVERAGE LAYER'
     COVERAGE_DATE = 'COVERAGE DATE'
     MAP_PRODUCT = 'MAP PRODUCT'
     SENSOR = 'SENSOR'
-    OUTPUT = 'OUTPUT'
+    LIMIT = 'LIMIT'
+    OUTPUT = 'OUTPUT DIRECTORY'
 
     def tr(self, string):
+        """Translate string on processing context."""
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
+        """MapCoverageDownloader instance."""
         return MapCoverageDownloader()
 
     def name(self):
-        """
+        """Unique name of the algorithm.
+
         Returns the algorithm name, used for identifying the algorithm. This
         string should be fixed for the algorithm, and must not be localised.
         The name should be unique within each provider. Names should contain
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'create_coverage_map'
+        return 'geosys_create_coverage_map'
 
     def displayName(self):
-        """
+        """Display name of the algorithm.
+
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
         return self.tr('Create coverage map')
 
     def initAlgorithm(self, config=None):
-        """
+        """Algorithm initialisation.
+
         Here we define the inputs and output of the algorithm, along
         with some other properties.
         """
+        # Coverage parameters from settings
+        settings = QSettings()
+        self.crop_type = setting(
+            'crop_type', expected_type=str, qsettings=settings)
+        self.sowing_date = setting(
+            'sowing_date', expected_type=str, qsettings=settings)
+        self.output_dir = setting(
+            'output_directory', expected_type=str, qsettings=settings)
 
         # We add the input vector features source. It only allows polygon.
         self.addParameter(
@@ -160,47 +184,174 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
             )
         )
 
+        # Number of the most recent maps.
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.LIMIT,
+                self.tr('Number of most recent maps'),
+                QgsProcessingParameterNumber.Integer,
+                defaultValue=20, minValue=1
+            )
+        )
+
         # Output directory where the map product of the coverage search will be
         # placed.
         self.addParameter(
             QgsProcessingParameterFolderDestination(
                 self.OUTPUT,
-                self.tr('Output layer')
+                self.tr('Output directory'),
+                defaultValue=self.output_dir
             )
         )
 
     def processAlgorithm(self, parameters, context, feedback):
+        """Here is where the processing itself takes place.
         """
-        Here is where the processing itself takes place.
-        """
-
-        # Retrieve the feature source and sink. The 'dest_id' variable is used
-        # to uniquely identify the feature sink, and must be included in the
-        # dictionary returned by the processAlgorithm function.
+        # Retrieve the feature source.
         source = self.parameterAsSource(parameters, self.INPUT, context)
-        (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT,
-                context, source.fields(), source.wkbType(), source.sourceCrs())
 
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
-        total = 100.0 / source.featureCount() if source.featureCount() else 0
-        features = source.getFeatures()
+        # Reproject layer to EPSG:4326
+        if source.sourceCrs().authid() != 'EPSG:4326':
+            source = reproject(
+                source, QgsCoordinateReferenceSystem('EPSG:4326'))
 
-        for current, feature in enumerate(features):
-            # Stop the algorithm if cancel button has been clicked
-            if feedback.isCanceled():
-                break
+        # Handle multi features
+        # Merge features into multi-part polygon
+        # TODO use Collect Geometries processing algorithm
+        geom = None
+        for index, feature in enumerate(source.getFeatures()):
+            if not feature.hasGeometry() or not (
+                    feature.geometry().isGeosValid()):
+                continue
+            if not geom:
+                geom = feature.geometry()
+            else:
+                geom = geom.combine(feature.geometry())
 
-            # Add a feature in the sink
-            sink.addFeature(feature, QgsFeatureSink.FastInsert)
+        if geom:
+            geom_wkt = geom.asWkt()
+        else:
+            # geometry is not valid
+            return False, 'Geometry is not valid.'
 
-            # Update the progress bar
-            feedback.setProgress(int(current * total))
+        # Retrieve the coverage date.
+        coverage_date = self.parameterAsString(
+            parameters, self.COVERAGE_DATE, context)
 
-        # Return the results of the algorithm. In this case our only result is
-        # the feature sink which contains the processed features, but some
-        # algorithms may return multiple feature sinks, calculated numeric
-        # statistics, etc. These should all be included in the returned
-        # dictionary, with keys matching the feature corresponding parameter
-        # or output names.
-        return {self.OUTPUT: dest_id}
+        # Retrieve the selected map product.
+        map_product_index = self.parameterAsEnum(
+            parameters, self.MAP_PRODUCT, context)
+        map_product = INSEASON_MAP_PRODUCTS[map_product_index]['key']
+
+        # Retrieve the selected sensor type.
+        sensor_index = self.parameterAsEnum(parameters, self.SENSOR, context)
+        sensor_type = SENSORS[sensor_index]['key']
+
+        # Retrieve the number of recent maps.
+        map_limit = self.parameterAsInt(parameters, self.LIMIT, context)
+
+        # Retrieve output directory destination.
+        self.output_dir = self.parameterAsString(
+            parameters, self.OUTPUT, context)
+
+        message = self.tr('Please check your output directory for results.')
+
+        filters = {
+            MAPS_TYPE: map_product,
+            IMAGE_SENSOR: sensor_type,
+            IMAGE_DATE: '$lte:{}'.format(coverage_date),
+            MAP_LIMIT: map_limit
+        }
+
+        # Start coverage search
+        bridge_api = BridgeAPI(
+            *credentials_parameters_from_settings())
+        results = bridge_api.get_coverage(
+            geom_wkt, self.crop_type, self.sowing_date,
+            filters=filters)
+
+        if isinstance(results, dict) and results.get('message'):
+            # TODO handle model_validation_error
+            raise Exception(results['message'])
+
+        if len(results) > 0:
+            # Compute the number of steps to display within the progress bar
+            total = 100.0 / len(results)
+            for index, result in enumerate(results):
+                # Stop the algorithm if cancel button has been clicked
+                if feedback.isCanceled():
+                    break
+
+                # Update the progress bar
+                progress_text = (
+                    'Downloading {} of {} maps...'.format(
+                        index+1, len(results)))
+                feedback.setProgressText(progress_text)
+
+                downloaded_path = self.download_map(result)
+
+                feedback.pushInfo(downloaded_path)
+                feedback.setProgress(int((index+1) * total))
+        else:
+            message = self.tr(
+                'No coverage result available based on given parameters')
+
+        return {
+            'message': message
+        }
+
+    def download_map(self, coverage_map_json):
+        """Download map directly from the coverage search result.
+
+        :param coverage_map_json: Result of single map coverage.
+            example: {
+                "seasonField": {
+                    "id": "zgzmbrm",
+                    "customerExternalId": "..."
+                },
+                "image": {
+                    "date": "2018-10-18",
+                    "sensor": "SENTINEL_2",
+                    "weather": "HOT",
+                    "soilMaterial": "BARE"
+                },
+                "maps": [
+                    {
+                        "type": "INSEASON_NDVI",
+                        "_links": {
+                            "self": "the_url",
+                            "worldFile": "the_url",
+                            "thumbnail": "the_url",
+                            "legend": "the_url",
+                            "image:image/png": "the_url",
+                            "image:image/tiff+zip": "the_url",
+                            "image:application/shp+zip": "the_url",
+                            "image:application/vnd.google-earth.kmz": "the_url"
+                        }
+                    }
+                ],
+                "coverageType": "CLEAR"
+            }
+        :type coverage_map_json: dict
+        """
+        bridge_api = BridgeAPI(*credentials_parameters_from_settings())
+
+        map_urls = coverage_map_json['maps'][0]['_links']
+        filename = '{}_{}_{}'.format(
+            coverage_map_json['maps'][0]['type'],
+            coverage_map_json['seasonField']['id'],
+            coverage_map_json['image']['date']
+        )
+
+        # Get the requested map format. For now, use Raster (.tiff)
+        map_forrmat = ZIPPED_TIFF
+        map_extension = TIFF_EXT
+
+        # Download zipped map and extract it in requested format.
+        zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
+        url = map_urls[map_forrmat]
+
+        fetch_zip(url, zip_path, headers=bridge_api.headers)
+        extract_zip(zip_path, os.path.join(self.output_dir, filename))
+
+        return os.path.join(self.output_dir, filename)
