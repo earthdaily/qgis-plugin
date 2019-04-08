@@ -29,6 +29,10 @@ from PyQt5.QtCore import (
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 
+from qgis.core import QgsApplication
+
+from geosys.processing.geosys_processing_provider import (
+    GeosysProcessingProvider)
 from geosys.utilities.resources import resources_path
 
 
@@ -151,6 +155,18 @@ class GeosysPlugin:
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dock_widget)
         self.dock_widget.show()
 
+    def initProcessing(self):
+        """Processing initialisation procedure (for QGIS plugin api).
+
+        This method is called by initGui and should be used to set up
+        any processing tools that should appear in QGIS by
+        default (i.e. before the user performs any explicit action with the
+        plugin).
+        """
+        self.provider = GeosysProcessingProvider()
+        QgsApplication.processingRegistry().addProvider(
+            self.provider)
+
     def initGui(self):
         """Gui initialisation procedure (for QGIS plugin api).
 
@@ -173,6 +189,9 @@ class GeosysPlugin:
         # Also deal with the fact that on start of QGIS dock may already be
         # hidden.
         self.action_dock.setChecked(self.dock_widget.isVisible())
+
+        # Add custom processing tools
+        self.initProcessing()
 
     # ---------------------------------------------------------------------
 

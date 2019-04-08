@@ -73,10 +73,17 @@ class CoverageSearchThread(QThread):
         self.parent = parent
 
         # setup coverage search filters
+        date_filter = ''
+        if self.start_date and self.end_date:
+            date_filter = '$between:{}|{}'.format(
+                self.start_date, self.end_date)
+        elif self.end_date:
+            date_filter = '$lte:{}'.format(self.end_date)
+
         self.filters = {
             MAPS_TYPE: self.map_product,
             IMAGE_SENSOR: self.sensor_type,
-            IMAGE_DATE: '$between:{}|{}'.format(self.start_date, self.end_date)
+            IMAGE_DATE: date_filter
         }
 
         self.settings = QSettings()
@@ -137,7 +144,7 @@ class CoverageSearchThread(QThread):
             self.search_finished.emit()
         except Exception:
             error_text = (self.tr(
-                "Error of processing!\n{0}: {1}")).format(
+                "Error of prFocessing!\n{0}: {1}")).format(
                 unicode(sys.exc_info()[0].__name__), unicode(
                     sys.exc_info()[1]))
             self.error_occurred.emit(error_text)

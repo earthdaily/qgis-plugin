@@ -55,6 +55,7 @@ IMAGE_SENSOR = 'Image.Sensor'
 IMAGE_SOIL_MATERIAL = 'Image.SoilMaterial'
 IMAGE_WEATHER = 'Image.Weather'
 MAPS_TYPE = 'Maps.Type'
+MAP_LIMIT = '$limit'
 
 # map output format based on Bridge API
 TIFF_EXT = '.tif'
