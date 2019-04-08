@@ -318,7 +318,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Choose your region based on your fields geographical regions. This will decide which GEOSYS service would be used.</string>
+     <string>Choose your region based on the location of your fields. This will determine which GEOSYS service will be used.</string>
     </property>
     <property name="wordWrap">
      <bool>true</bool>
@@ -473,7 +473,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Set the desired coverage parameters for each request. This parameters are required and will be applied to each coverage request</string>
+     <string>Set the desired coverage parameters for each request. These parameters are required and will be used for each coverage request.</string>
     </property>
     <property name="wordWrap">
      <bool>true</bool>
