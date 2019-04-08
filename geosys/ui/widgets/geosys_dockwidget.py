@@ -447,7 +447,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 u"</div>".format(
                     self.tr(u"No results."),
                     self.tr(
-                        u"No coverage results available with given "
+                        u"No coverage results available based on given "
                         u"parameters.")))
             new_item = QListWidgetItem(self.coverage_result_list)
             new_item.setSizeHint(new_widget.sizeHint())
