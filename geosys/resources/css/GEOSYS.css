@@ -1,0 +1,265 @@
+body {
+  font-family: 'Ubuntu', 'Lucida Grande', 'Segoe UI', 'Arial', sans-serif;
+  font-size: 14px;
+}
+th {text-align: left;}
+table {font-size: 12px ;!important;}
+.table th, .table td {
+  padding: 8px;
+}
+th.button-cell{
+  padding: 4px 10px 4px;
+  margin-bottom: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: #ffffff;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(200, 200, 200, 0.75);
+  vertical-align: middle;
+  background-color: #f5f5f5;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+  background-image: linear-gradient(top, #ffffff, #e6e6e6);
+  background-repeat: repeat-x;
+  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  border: 1px solid #cccccc;
+  border-bottom-color: #b3b3b3;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  *margin-left: .3em;
+  width: 92%;
+}
+.branding {
+	background: #ffffff;
+	padding: 2px 20px;
+	margin: 0 -15px;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-right: -15px;
+  margin-left: -15px;
+  padding-left: 20px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+h5, .h5 {
+  font-size: 14px;
+}
+.warning {
+  color: #fff;
+  background-color: #f15a2b;
+  line-height: 2;
+}
+.title {
+  color: #fff;
+  background-color: #3d9d45;
+  line-height: 2;
+  margin-bottom: 0;
+}
+.section {
+  color: #fff;
+  background-color: #50cf5c;
+  line-height: 2;
+  margin-bottom: 0;
+}
+.subsection {
+  color: #fff;
+  background-color: #3d9d45;
+  line-height: 2;
+  margin-bottom: 0;
+}
+
+.problem {
+  color: #fff;
+  background-color: #faa732;
+  line-height: 2;
+  margin-bottom: 0;
+}
+
+.details-subgroup {
+  color: #fff;
+  background-color: #8d9196;
+  line-height: 2;
+}
+
+.info, caption {
+  color: #fff;
+  background-color: #3d9d45;
+  line-height: 2;
+}
+
+.sub_info {
+  color: #fff;
+  background-color: #6ec5e6;
+  line-height: 2;
+}
+
+.suggestion {
+  color: #fff;
+  background-color: #50CF5C;
+  line-height: 2;
+}
+
+.inverse {
+  color: #fff;
+  background-color: #000;
+  line-height: 2;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.caption {
+  font-size: 8pt;
+}
+
+/* List styling */
+.customBulletList, .customBulletList ul {
+  margin-top: 0;
+  padding-left: 2em;
+  list-style-type: none;
+}
+.customBulletList li:before {
+  position: absolute;
+  margin-left: -1.3em;
+  font-weight: bold;
+}
+.customBulletList li.tick:before {
+  content: "\2713";
+}
+p {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.category {
+  color: #3DB2DD;
+  background-color: #fff;
+  line-height: 2;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 25px;
+}
+
+
+/* Tree view styling */
+.tree, .tree ul, .tree li {
+     position: relative;
+}
+
+.tree ul {
+    list-style: none;
+    padding-left: 32px;
+}
+
+.tree li::before, .tree li::after {
+    content: "";
+    position: absolute;
+    left: -12px;
+}
+
+.tree li::before {
+    border-top: 2px solid #3DB2DD;
+    top: 9px;
+    width: 8px;
+    height: 0;
+}
+
+.tree li::after {
+    border-left: 2px solid #3DB2DD;
+    height: 100%;
+    width: 0px;
+    top: 2px;
+}
+
+.tree ul > li:last-child::after {
+    height: 8px;
+}
+
+table li, table li::after, table li::before {
+  list-style: circle inside;
+  border-left: None !important;
+  border-top: None !important;
+}
+
+table ul {
+  padding-left: 0px !important;
+}
+
+.tree table {
+  margin-bottom: 0px;
+  margin-top: 0.75rem;
+}
+
+
+
+/* Try to prevent images wider than content. */
+img{
+  max-width: 100%;
+}
+
+
+/* Make preformatted text look nice */
+code, samp, kbd {
+  font-family: "Courier New", Courier, monospace, sans-serif;
+  text-align: left;
+  color: #555;
+}
+pre code {
+  line-height: 1.6em;
+  font-size: 11px;
+}
+pre {
+  padding: 0.1em 0.5em 0.3em 0.7em;
+  border-left: 11px solid #ccc;
+  margin: 1.7em 0 1.7em 0.3em;
+  overflow: auto;
+  width: 93%;
+  background: #ECECEC;
+}
+/* target IE7 and IE6 */
+*:first-child+html pre {
+  padding-bottom: 2em;
+  overflow-y: hidden;
+  overflow: visible;
+  overflow-x: auto;
+}
+* html pre {
+  padding-bottom: 2em;
+  overflow: visible;
+  overflow-x: auto;
+}
+
+/* Rules for print layout see
+
+https://stackoverflow.com/questions/16649943/css-to-set-a4-paper-size
+
+ */
+
+
+@page {
+    size: A4;
+    margin: 0;
+}
+@media print {
+    html, body {
+        width: 210mm;
+        height: 297mm;
+    }
+    .page {
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        width: initial;
+        min-height: initial;
+        box-shadow: initial;
+        background: initial;
+        page-break-after: always;
+    }
+}
