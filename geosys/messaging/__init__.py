@@ -25,7 +25,7 @@ from .error_message import ErrorMessage
 from .styles import PROGRESS_UPDATE_STYLE
 # pylint: enable=unused-import
 
-__copyright__ = "Copyright 2016, The InaSAFE Project"
+__copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
-__email__ = "info@inasafe.org"
+__email__ = "rohmat@kartoza.com"
 __revision__ = '$Format:%H$'

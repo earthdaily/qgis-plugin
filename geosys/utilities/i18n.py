@@ -13,9 +13,9 @@ from qgis.PyQt.QtCore import QCoreApplication, QLocale
 from qgis.PyQt.QtCore import QSettings  # QSettings can't be moved to our class
 
 
-__copyright__ = "Copyright 2016, The InaSAFE Project"
+__copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
-__email__ = "info@inasafe.org"
+__email__ = "rohmat@kartoza.com"
 __revision__ = '$Format:%H$'
 
 LOGGER = logging.getLogger('geosys')

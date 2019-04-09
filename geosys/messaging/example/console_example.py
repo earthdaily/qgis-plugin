@@ -1,6 +1,5 @@
 """
-InaSAFE Disaster risk assessment tool by AusAid - **Dispatcher console example
-.**
+**Dispatcher console example**
 
 Contact : ole.moller.nielsen@gmail.com
 

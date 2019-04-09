@@ -1,6 +1,6 @@
 /** This section is for heading counters . See http://philarcher.org/diary/2013/headingnumbers/
 
-It overrides the styles in InaSAFE.css so that headers are numbered
+It overrides the styles in GEOSYS.css so that headers are numbered
 
 **/
 body {counter-reset: h2}

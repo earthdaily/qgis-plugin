@@ -1,5 +1,5 @@
 """
-InaSAFE Disaster risk assessment tool by AusAid - **Error Message example.**
+**Error Message example.**
 
 Contact : ole.moller.nielsen@gmail.com
 

@@ -10,9 +10,9 @@ SUBSECTION_STYLE = styles.SUBSECTION_LEVEL_3_STYLE
 INFO_STYLE = styles.BLUE_LEVEL_4_STYLE
 SMALL_ICON_STYLE = styles.SMALL_ICON_STYLE
 
-__copyright__ = "Copyright 2015, The InaSAFE Project"
+__copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
-__email__ = "info@inasafe.org"
+__email__ = "rohmat@kartoza.com"
 __revision__ = '$Format:%H$'
 
 
@@ -102,7 +102,7 @@ def content():
     bullets = m.BulletedList()
     for sensor in SENSORS:
         bullets.add(m.Text(
-            '{} {}'.format(
+            '{} - {}'.format(
                 m.ImportantText(tr(
                     sensor['name']
                 )).to_html(),

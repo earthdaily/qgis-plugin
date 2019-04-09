@@ -83,8 +83,8 @@ INSEASON_NDVI = {
                    'vegetation index.'
 }
 INSEASONPARTIAL_NDVI = {
-    'key': 'INSEASON_PARTIAL_NDVI',
-    'name': 'INSEASON_PARTIAL_NDVI',
+    'key': 'INSEASONPARTIAL_NDVI',
+    'name': 'INSEASONPARTIAL_NDVI',
     'map_family': base_reference_map,
     'description': ''
 }

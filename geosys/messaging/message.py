@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-InaSAFE Disaster risk assessment tool developed by AusAid - **Message Modele.**
+**Message Modele.**
 
 Contact : ole.moller.nielsen@gmail.com
 

@@ -1,5 +1,5 @@
 """
-InaSAFE Disaster risk assessment tool developed by AusAid - **Paragraph.**
+**Paragraph.**
 
 Contact : ole.moller.nielsen@gmail.com
 
@@ -26,7 +26,7 @@ from .text import Text
 
 class Brand(Text):
 
-    """A class to model the inasafe brand.
+    """A class to model the brand.
 
     .. versionadded: 3.2
     """
@@ -39,7 +39,7 @@ class Brand(Text):
 
         For text, it will create a plain text brand e.g.
 
-        **** InaSAFE - http://inasafe.org ****
+        **** GEOSYS - https://www.geosys.com/ ****
 
         We pass the kwargs on to the base class so an exception is raised
         if invalid keywords were passed. See:

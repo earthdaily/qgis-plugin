@@ -20,14 +20,14 @@ from geosys.messaging import styles, Message
 from geosys.messaging.error_message import ErrorMessage
 from geosys.utilities.i18n import tr
 
-__copyright__ = "Copyright 2016, The InaSAFE Project"
+__copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
-__email__ = "info@inasafe.org"
+__email__ = "rohmat@kartoza.com"
 __revision__ = '$Format:%H$'
 
 INFO_STYLE = styles.BLUE_LEVEL_4_STYLE
 
-LOGGER = logging.getLogger('InaSAFE')
+LOGGER = logging.getLogger('geosys')
 
 
 def basestring_to_message(text):
@@ -222,7 +222,7 @@ def replace_accentuated_characters(message):
 
 
 def write_json(data, filename):
-    """Custom handler for writing json file in InaSAFE.
+    """Custom handler for writing json file.
 
     Criteria:
     - use indent = 2

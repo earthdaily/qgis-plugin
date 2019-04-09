@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-InaSAFE Disaster risk assessment tool by AusAid - **Dispatcher gui example.**
+**Dispatcher gui example.**
 
 Contact : ole.moller.nielsen@gmail.com
 

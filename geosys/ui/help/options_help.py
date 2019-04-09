@@ -10,9 +10,9 @@ SUBSECTION_STYLE = styles.SUBSECTION_LEVEL_3_STYLE
 INFO_STYLE = styles.BLUE_LEVEL_4_STYLE
 SMALL_ICON_STYLE = styles.SMALL_ICON_STYLE
 
-__copyright__ = "Copyright 2016, The InaSAFE Project"
+__copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
-__email__ = "info@inasafe.org"
+__email__ = "rohmat@kartoza.com"
 __revision__ = '$Format:%H$'
 
 
@@ -43,7 +43,7 @@ def heading():
     :returns: A heading object.
     :rtype: safe.messaging.heading.Heading
     """
-    message = m.Heading(tr('InaSAFE options help'), **SUBSECTION_STYLE)
+    message = m.Heading(tr('GEOSYS Plugin options help'), **SUBSECTION_STYLE)
     return message
 
 
