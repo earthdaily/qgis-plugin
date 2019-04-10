@@ -79,8 +79,8 @@ INSEASON_NDVI = {
     'key': 'INSEASON_NDVI',
     'name': 'INSEASON_NDVI',
     'map_family': base_reference_map,
-    'description': 'Provides the in-season normalized difference '
-                   'vegetation index.'
+    'description': 'Provides the in-season Normalized Difference '
+                   'Vegetation Index.'
 }
 INSEASONPARTIAL_NDVI = {
     'key': 'INSEASONPARTIAL_NDVI',
@@ -113,7 +113,7 @@ INSEASON_EVI = {
     'key': 'INSEASON_EVI',
     'name': 'INSEASON_EVI',
     'map_family': base_reference_map,
-    'description': 'Provides the in-season enhanced vegetation index.'
+    'description': 'Provides the in-season Enhanced Vegetation Index.'
 }
 INSEASONPARTIAL_EVI = {
     'key': 'INSEASONPARTIAL_EVI',
@@ -133,8 +133,9 @@ INSEASON_CVI = {
     'key': 'INSEASON_CVI',
     'name': 'INSEASON_CVI',
     'map_family': base_reference_map,
-    'description': 'Chlorophyll Vegetation Index. It is used as an indicator '
-                   'of photosynthetic energy conversion.'
+    'description': 'Provides the in-season Chlorophyll Vegetation Index. '
+                   'It is used as an indicator of photosynthetic energy '
+                   'conversion.'
 }
 
 # GNDVI (Green Normalized Difference Vegetation Index)
@@ -148,8 +149,8 @@ INSEASON_GNDVI = {
     'key': 'INSEASON_GNDVI',
     'name': 'INSEASON_GNDVI',
     'map_family': base_reference_map,
-    'description': 'Provides the in-season green normalized difference '
-                   'vegetation index.'
+    'description': 'Provides the in-season Green Normalized Difference '
+                   'Vegetation Index.'
 }
 
 # LAI (Leaf Area Index)
@@ -157,7 +158,7 @@ INSEASON_LAI = {
     'key': 'INSEASON_LAI',
     'name': 'INSEASON_LAI',
     'map_family': base_reference_map,
-    'description': 'Gives the in-season Leave Area Index. '
+    'description': 'Provides the in-season Leave Area Index. '
                    'The LAI is a dimensionless ranging from 0 (bare ground) '
                    'to over 10 (dense conifer forests).'
 }

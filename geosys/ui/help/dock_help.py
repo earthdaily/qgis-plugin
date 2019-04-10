@@ -70,7 +70,9 @@ def content():
     paragraph = m.Paragraph(tr(
         'Choose a polygon layer with one or more polygons representing '
         'the area or areas you are interested in for retrieving '
-        'the sensor data.'
+        'the sensor data. If you have a selection on that layer, '
+        'only the selected polygons will be used. If you have more than '
+        'XXX polygons, only the first XXX polygons will be processed.'
     ))
     message.add(paragraph)
 
