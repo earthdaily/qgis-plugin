@@ -40,12 +40,12 @@ from qgis.core import (
     QgsProcessingParameterNumber)
 
 from geosys.bridge_api.default import (
-    ZIPPED_TIFF, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT)
+    ZIPPED_TIFF_KEY, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT)
 from geosys.bridge_api.definitions import INSEASON_MAP_PRODUCTS, SENSORS
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.ui.widgets.geosys_coverage_downloader import (
     credentials_parameters_from_settings)
-from geosys.utilities.downloader import fetch_zip, extract_zip
+from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.gui_utilities import reproject
 from geosys.utilities.settings import setting
 
@@ -344,14 +344,14 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         )
 
         # Get the requested map format. For now, use Raster (.tiff)
-        map_forrmat = ZIPPED_TIFF
+        map_format = ZIPPED_TIFF_KEY
         map_extension = TIFF_EXT
 
         # Download zipped map and extract it in requested format.
         zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
-        url = map_urls[map_forrmat]
+        url = map_urls[map_format]
 
-        fetch_zip(url, zip_path, headers=bridge_api.headers)
+        fetch_data(url, zip_path, headers=bridge_api.headers)
         extract_zip(zip_path, os.path.join(self.output_dir, filename))
 
         return os.path.join(self.output_dir, filename)
