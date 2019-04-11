@@ -7,10 +7,10 @@ import tempfile
 
 from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings
 
-from geosys.bridge_api.default import MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, \
-    ZIPPED_SHP, ZIPPED_TIFF, SHP_EXT, TIFF_EXT
+from geosys.bridge_api.default import (
+    MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT)
 from geosys.bridge_api_wrapper import BridgeAPI
-from geosys.utilities.downloader import fetch_zip, extract_zip
+from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.settings import setting
 
 __copyright__ = "Copyright 2019, Kartoza"
@@ -160,7 +160,7 @@ def create_map(
         map_specifications,
         output_dir,
         filename,
-        vector_format=False,
+        output_map_format,
         data=None,
         params=None):
     """Create map based on given parameters.
@@ -198,10 +198,8 @@ def create_map(
     :param filename: Filename of the output.
     :type filename: str
     
-    :param vector_format: Flag indicating to create the map in vector format.
-        If this set to False (default value), it will create map in 
-        raster format.
-    :type vector_format: bool
+    :param output_map_format: Output map format.
+    :type output_map_format: dict
     
     :param data: Map creation data.
         example: {
@@ -236,16 +234,20 @@ def create_map(
 
     # If request succeeded, download zipped map and extract it
     # in requested format.
-    map_format = ZIPPED_SHP if vector_format else ZIPPED_TIFF
-    map_extension = SHP_EXT if vector_format else TIFF_EXT
-    zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
-    url = field_map_json['_links'][map_format]
+    map_extension = output_map_format['extension']
+    url = field_map_json['_links'][output_map_format['api_key']]
     try:
-        fetch_zip(url, zip_path, headers=bridge_api.headers)
-        extract_zip(zip_path, os.path.join(output_dir, filename))
+        if output_map_format in ZIPPED_FORMAT:
+            zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
+            fetch_data(url, zip_path, headers=bridge_api.headers)
+            extract_zip(zip_path, os.path.join(output_dir, filename))
+        else:
+            destination_filename = os.path.join(
+                output_dir, filename+output_map_format['extension'])
+            fetch_data(url, destination_filename, headers=bridge_api.headers)
     except:
         # zip extraction error
-        message = 'Failed to extract zip file.'
+        message = 'Failed to download file.'
         return False, message
 
     return True, message

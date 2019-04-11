@@ -37,7 +37,9 @@ from qgis.core import (
     QgsCoordinateReferenceSystem)
 from qgis.PyQt.QtCore import Qt
 
-from geosys.bridge_api.default import SHP_EXT, TIFF_EXT
+from geosys.bridge_api.default import (
+    SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
+    VALID_QGIS_FORMAT)
 from geosys.bridge_api.definitions import (
     INSEASON_MAP_PRODUCTS, SENSORS, DIFFERENCE_MAPS)
 from geosys.bridge_api.utilities import get_definition
@@ -89,8 +91,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.yield_maximum = None
         self.organic_average = None
         self.samz_zone = None
-        self.raster_output = False
-        self.vector_output = False
+        self.output_map_format = None
 
         self.selected_coverage_results = []
 
@@ -248,6 +249,30 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.connect_layer_listener()
         self.get_layers_lock = False
 
+    def get_map_format(self):
+        """Get selected map format from the radio button."""
+        widget_data = [
+            {
+                'widget': self.png_radio_button,
+                'data': PNG
+            },
+            {
+                'widget': self.tiff_radio_button,
+                'data': ZIPPED_TIFF
+            },
+            {
+                'widget': self.shp_radio_button,
+                'data': ZIPPED_SHP
+            },
+            {
+                'widget': self.kmz_radio_button,
+                'data': KMZ
+            },
+        ]
+        for wd in widget_data:
+            if wd['widget'].isChecked():
+                return wd['data']
+
     def validate_map_creation_parameters(self):
         """Check current state of map creation parameters."""
         self.yield_average = self.yield_average_form.value()
@@ -255,8 +280,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.yield_maximum = self.yield_maximum_form.value()
         self.organic_average = self.organic_average_form.value()
         self.samz_zone = self.samz_zone_form.value()
-        self.raster_output = self.raster_radio_button.isChecked()
-        self.vector_output = not self.raster_output
+        self.output_map_format = self.get_map_format()
 
         if len(self.selected_coverage_results) == 0:
             return False, 'Please select at least one coverage result.'
@@ -355,7 +379,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             )
             is_success, message = create_map(
                 map_specifications, self.output_directory, filename,
-                vector_format=self.vector_output)
+                output_map_format=self.output_map_format)
             if not is_success:
                 QMessageBox.critical(
                     self,
@@ -364,15 +388,18 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 return
 
             # Add map to qgis canvas
-            if self.vector_output:
-                map_layer = QgsVectorLayer(
-                    os.path.join(self.output_directory, filename + SHP_EXT),
-                    filename)
-            else:
-                map_layer = QgsRasterLayer(
-                    os.path.join(self.output_directory, filename + TIFF_EXT),
-                    filename)
-            add_layer_to_canvas(map_layer, filename)
+            if self.output_map_format in VALID_QGIS_FORMAT:
+                if self.output_map_format in VECTOR_FORMAT:
+                    map_layer = QgsVectorLayer(
+                        os.path.join(
+                            self.output_directory, filename + SHP_EXT),
+                        filename)
+                else:
+                    map_layer = QgsRasterLayer(
+                        os.path.join(
+                            self.output_directory, filename + TIFF_EXT),
+                        filename)
+                add_layer_to_canvas(map_layer, filename)
 
     def start_map_creation(self):
         """Map creation starts here."""
