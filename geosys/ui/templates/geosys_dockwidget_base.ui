@@ -108,6 +108,19 @@
               </widget>
              </item>
              <item>
+              <widget class="QCheckBox" name="selected_features_checkbox">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Selected features only</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="map_product_label">
                <property name="text">
                 <string>Choose a map product type</string>

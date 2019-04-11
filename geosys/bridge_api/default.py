@@ -47,6 +47,7 @@ CLIENT_ID = 'mapproduct_api'
 CLIENT_SECRET = 'mapproduct_api.secret'
 GRANT_TYPE = 'password'
 SCOPE = 'openid offline_access'
+MAX_FEATURE_NUMBERS = 10
 
 # coverage filters
 

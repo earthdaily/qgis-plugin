@@ -40,7 +40,7 @@ from qgis.PyQt.QtCore import Qt
 from geosys.bridge_api.default import (
     SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
-    ORGANIC_AVERAGE, SAMZ_ZONE)
+    ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS)
 from geosys.bridge_api.utilities import get_definition
@@ -295,7 +295,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if not layer:
             # layer is not selected
             return False, 'Layer is not selected.'
-        use_selected_features = layer.selectedFeatureCount() > 0
+        use_selected_features = (
+            self.selected_features_checkbox.isChecked() and (
+                layer.selectedFeatureCount() > 0))
 
         # Reproject layer to EPSG:4326
         if layer.crs().authid() != 'EPSG:4326':
@@ -313,6 +315,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # TODO use Collect Geometries processing algorithm
         geom = None
         for index, feature in enumerate(feature_iterator):
+            if index > MAX_FEATURE_NUMBERS:
+                break
             if not feature.hasGeometry():
                 continue
             if not geom:
