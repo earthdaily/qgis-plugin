@@ -18,8 +18,8 @@ __revision__ = "$Format:%H$"
 LOGGER = logging.getLogger('GEOSYS Plugin')
 
 
-def fetch_zip(url, output_path, headers=None, progress_dialog=None):
-    """Download zip containing shp file and write to output_path.
+def fetch_data(url, output_path, headers=None, progress_dialog=None):
+    """Download data from url and write to output_path.
 
     :param url: URL of the zip bundle.
     :type url: str

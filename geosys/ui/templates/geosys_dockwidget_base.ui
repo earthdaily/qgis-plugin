@@ -373,19 +373,62 @@
             <property name="title">
              <string>Map Format</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
-             <item>
-              <widget class="QRadioButton" name="raster_radio_button">
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="2" column="1">
+              <widget class="QRadioButton" name="shp_radio_button">
                <property name="text">
-                <string>Raster</string>
+                <string>SHP</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QRadioButton" name="kmz_radio_button">
+               <property name="text">
+                <string>KMZ</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="png_radio_button">
+               <property name="text">
+                <string>PNG</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QRadioButton" name="vecto_radio_button">
+             <item row="1" column="1">
+              <widget class="QRadioButton" name="tiff_radio_button">
+               <property name="text">
+                <string>TIFF</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="raster_label">
+               <property name="maximumSize">
+                <size>
+                 <width>60</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Raster</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="vectorl_abel">
+               <property name="maximumSize">
+                <size>
+                 <width>60</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Vector</string>
                </property>
@@ -488,8 +531,8 @@
   <tabstop>back_push_button</tabstop>
   <tabstop>next_push_button</tabstop>
   <tabstop>coverage_result_list</tabstop>
-  <tabstop>raster_radio_button</tabstop>
-  <tabstop>vecto_radio_button</tabstop>
+  <tabstop>png_radio_button</tabstop>
+  <tabstop>shp_radio_button</tabstop>
  </tabstops>
  <resources/>
  <connections/>
