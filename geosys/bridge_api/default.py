@@ -50,6 +50,7 @@ SCOPE = 'openid offline_access'
 MAX_FEATURE_NUMBERS = 10
 
 # coverage filters
+
 COVERAGE_TYPE = 'CoverageType'
 IMAGE_DATE = 'Image.Date'
 IMAGE_SENSOR = 'Image.Sensor'
@@ -57,6 +58,14 @@ IMAGE_SOIL_MATERIAL = 'Image.SoilMaterial'
 IMAGE_WEATHER = 'Image.Weather'
 MAPS_TYPE = 'Maps.Type'
 MAP_LIMIT = '$limit'
+
+# map creation parameters
+
+YIELD_AVERAGE = 'HistoricalYieldAverage'
+YIELD_MINIMUM = 'MinYieldGoal'
+YIELD_MAXIMUM = 'MaxYieldGoal'
+ORGANIC_AVERAGE = 'AverageOrganicMatter'
+SAMZ_ZONE = 'zoneCount'
 
 # map output format based on Bridge API
 
