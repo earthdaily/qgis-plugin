@@ -454,7 +454,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 for coverage_result in self.selected_coverage_results:
                     self._start_map_creation(coverage_result)
         except:
-            pass
+            raise
         finally:
             QApplication.restoreOverrideCursor()
 

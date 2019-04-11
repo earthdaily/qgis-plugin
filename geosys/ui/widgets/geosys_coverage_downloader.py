@@ -237,7 +237,17 @@ def create_map(
     # If request succeeded, download zipped map and extract it
     # in requested format.
     map_extension = output_map_format['extension']
-    url = field_map_json['_links'][output_map_format['api_key']]
+
+    try:
+        url = field_map_json['_links'][output_map_format['api_key']]
+    except KeyError:
+        # requested map format not found
+        message = (
+            '{} format not found. '
+            'Please select another output format.'.format(
+                output_map_format['api_key']))
+        return False, message
+
     try:
         if output_map_format in ZIPPED_FORMAT:
             zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
