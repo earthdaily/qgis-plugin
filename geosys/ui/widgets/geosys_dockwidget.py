@@ -39,7 +39,7 @@ from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.default import (
     SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
-    VALID_QGIS_FORMAT)
+    VALID_QGIS_FORMAT, MAX_FEATURE_NUMBERS)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS)
 from geosys.bridge_api.utilities import get_definition
@@ -314,6 +314,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # TODO use Collect Geometries processing algorithm
         geom = None
         for index, feature in enumerate(feature_iterator):
+            if index > MAX_FEATURE_NUMBERS:
+                break
             if not feature.hasGeometry():
                 continue
             if not geom:
