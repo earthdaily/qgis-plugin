@@ -25,7 +25,7 @@
 import os
 
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSignal, QSettings, QMutex
+from PyQt5.QtCore import pyqtSignal, QSettings, QMutex, QDate
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QLabel, QListWidgetItem, QMessageBox, QApplication
 
@@ -119,6 +119,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Populate sensor combo box
         self.populate_sensors()
 
+        # Set default date value
+        self.populate_date()
+
         # Set default behaviour
         self.help_push_button.setEnabled(False)
         self.back_push_button.setEnabled(False)
@@ -139,6 +142,13 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 self.map_product_combo_box,
                 map_product['name'],
                 map_product['key'])
+
+    def populate_date(self):
+        """Set default value of start and end date to last week."""
+        current_date = QDate.currentDate()
+        last_week_date = current_date.addDays(-7)
+        self.start_date_edit.setDate(last_week_date)
+        self.end_date_edit.setDate(current_date)
 
     def show_help(self):
         """Open the help dialog."""
