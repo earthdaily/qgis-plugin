@@ -40,8 +40,9 @@ from qgis.core import (
     QgsProcessingParameterNumber)
 
 from geosys.bridge_api.default import (
-    ZIPPED_TIFF, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT)
-from geosys.bridge_api.definitions import ARCHIVE_MAP_PRODUCTS, SENSORS
+    ZIPPED_TIFF_KEY, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT)
+from geosys.bridge_api.definitions import ARCHIVE_MAP_PRODUCTS, SENSORS, \
+    ALL_SENSORS
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.ui.widgets.geosys_coverage_downloader import (
     credentials_parameters_from_settings)
@@ -95,6 +96,8 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
     SENSOR = 'SENSOR'
     LIMIT = 'LIMIT'
     OUTPUT = 'OUTPUT DIRECTORY'
+
+    SENSOR_OPTIONS = [ALL_SENSORS] + SENSORS
 
     def tr(self, string):
         """Translate string on processing context."""
@@ -173,7 +176,7 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
 
         # Sensor options.
         sensors = []
-        for sensor in SENSORS:
+        for sensor in self.SENSOR_OPTIONS:
             sensors.append(sensor['key'])
         self.addParameter(
             QgsProcessingParameterEnum(
@@ -245,7 +248,9 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
 
         # Retrieve the selected sensor type.
         sensor_index = self.parameterAsEnum(parameters, self.SENSOR, context)
-        sensor_type = SENSORS[sensor_index]['key']
+        sensor_type = self.SENSOR_OPTIONS[sensor_index]['key']
+        if sensor_type == ALL_SENSORS['key']:
+            sensor_type = None
 
         # Retrieve the number of recent maps.
         map_limit = self.parameterAsInt(parameters, self.LIMIT, context)
@@ -258,10 +263,12 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
 
         filters = {
             MAPS_TYPE: map_product,
-            IMAGE_SENSOR: sensor_type,
             IMAGE_DATE: '$lte:{}'.format(coverage_date),
             MAP_LIMIT: map_limit
         }
+        sensor_type and filters.update({
+            IMAGE_SENSOR: sensor_type
+        })
 
         # Start coverage search
         bridge_api = BridgeAPI(

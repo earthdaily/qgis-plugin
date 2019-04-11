@@ -40,6 +40,20 @@ def layer_from_combo(combo):
     return layer
 
 
+def item_data_from_combo(combo):
+    """Get the item data currently selected in a combo box.
+
+    :returns: The currently selected combo box item data.
+    :rtype: any
+    """
+    index = combo.currentIndex()
+    if index < 0:
+        return None
+
+    item_data = combo.itemData(index, Qt.UserRole)
+    return item_data
+
+
 def add_ordered_combo_item(
         combo, text, data=None, count_selected_features=None, icon=None):
     """Add a combo item ensuring that all items are listed alphabetically.
