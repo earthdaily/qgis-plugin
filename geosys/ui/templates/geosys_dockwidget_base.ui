@@ -276,6 +276,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>302</width>
+                 <height>0</height>
+                </size>
+               </property>
               </widget>
              </item>
              <item row="1" column="0">
@@ -299,6 +305,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>302</width>
+                 <height>0</height>
+                </size>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">
@@ -315,6 +327,12 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>302</width>
+                 <height>0</height>
+                </size>
                </property>
               </widget>
              </item>
@@ -333,6 +351,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>302</width>
+                 <height>0</height>
+                </size>
+               </property>
               </widget>
              </item>
              <item row="4" column="0">
@@ -349,6 +373,12 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>302</width>
+                 <height>0</height>
+                </size>
                </property>
               </widget>
              </item>

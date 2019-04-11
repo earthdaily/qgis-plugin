@@ -39,7 +39,8 @@ from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.default import (
     SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
-    VALID_QGIS_FORMAT)
+    VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
+    ORGANIC_AVERAGE, SAMZ_ZONE)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS)
 from geosys.bridge_api.utilities import get_definition
@@ -388,9 +389,16 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 map_specifications['seasonField']['id'],
                 map_specifications['image']['date']
             )
+            data = {
+                YIELD_AVERAGE: self.yield_average,
+                YIELD_MINIMUM: self.yield_minimum,
+                YIELD_MAXIMUM: self.yield_maximum,
+                ORGANIC_AVERAGE: self.organic_average,
+                SAMZ_ZONE: self.samz_zone
+            }
             is_success, message = create_map(
                 map_specifications, self.output_directory, filename,
-                output_map_format=self.output_map_format)
+                data=data, output_map_format=self.output_map_format)
             if not is_success:
                 QMessageBox.critical(
                     self,
