@@ -41,14 +41,14 @@ from geosys.bridge_api.default import (
     SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT)
 from geosys.bridge_api.definitions import (
-    ARCHIVE_MAP_PRODUCTS, SENSORS, DIFFERENCE_MAPS)
+    ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.widgets.geosys_coverage_downloader import (
     CoverageSearchThread, create_map)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
-    add_layer_to_canvas, reproject)
+    add_layer_to_canvas, reproject, item_data_from_combo)
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting
 
@@ -128,7 +128,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def populate_sensors(self):
         """Obtain a list of sensors from Bridge API definition."""
-        for sensor in SENSORS:
+        for sensor in [ALL_SENSORS]+SENSORS:
             add_ordered_combo_item(
                 self.sensor_combo_box, sensor['name'], sensor['key'])
 
@@ -281,6 +281,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """Check current state of coverage parameters."""
         # Get geometry in WKT format
         layer = layer_from_combo(self.geometry_combo_box)
+        if not layer:
+            # layer is not selected
+            return False, 'Layer is not selected.'
         use_selected_features = layer.selectedFeatureCount() > 0
 
         # Reproject layer to EPSG:4326
@@ -313,10 +316,18 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             return False, 'Geometry is not valid.'
 
         # Get map product
-        self.map_product = self.map_product_combo_box.currentText()
+        self.map_product = item_data_from_combo(self.map_product_combo_box)
+        if not self.map_product:
+            # map product is not valid
+            return False, 'Map product data is not valid.'
 
         # Get the sensor type
-        self.sensor_type = self.sensor_combo_box.currentText()
+        self.sensor_type = item_data_from_combo(self.sensor_combo_box)
+        if not self.sensor_type:
+            # sensor type is not valid
+            return False, 'Sensor data is not valid.'
+        if self.sensor_type == ALL_SENSORS['key']:
+            self.sensor_type = None
 
         # Get the start and end date
         self.start_date = self.start_date_edit.date().toString('yyyy-MM-dd')

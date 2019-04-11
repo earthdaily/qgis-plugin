@@ -82,9 +82,11 @@ class CoverageSearchThread(QThread):
 
         self.filters = {
             MAPS_TYPE: self.map_product,
-            IMAGE_SENSOR: self.sensor_type,
             IMAGE_DATE: date_filter
         }
+        self.sensor_type and self.filters.update({
+            IMAGE_SENSOR: self.sensor_type
+        })
 
         self.settings = QSettings()
 

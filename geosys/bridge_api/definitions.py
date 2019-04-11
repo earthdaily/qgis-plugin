@@ -287,3 +287,9 @@ SENTINEL_2 = {
 SENSORS = [
     DEIMOS, DMC, LANDSAT_8, RESOURCESAT2, SENTINEL_2
 ]
+
+ALL_SENSORS = {
+    'key': 'ALL_SENSORS',
+    'name': 'ALL SENSORS',
+    'sensors': SENSORS
+}
