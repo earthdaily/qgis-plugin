@@ -294,7 +294,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if not layer:
             # layer is not selected
             return False, 'Layer is not selected.'
-        use_selected_features = layer.selectedFeatureCount() > 0
+        use_selected_features = (
+            self.selected_features_checkbox.isChecked() and (
+                layer.selectedFeatureCount() > 0))
 
         # Reproject layer to EPSG:4326
         if layer.crs().authid() != 'EPSG:4326':
