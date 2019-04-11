@@ -40,8 +40,8 @@ from qgis.core import (
     QgsProcessingParameterNumber)
 
 from geosys.bridge_api.default import (
-    ZIPPED_TIFF_KEY, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT)
-from geosys.bridge_api.definitions import INSEASON_MAP_PRODUCTS, SENSORS
+    ZIPPED_TIFF, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT)
+from geosys.bridge_api.definitions import ARCHIVE_MAP_PRODUCTS, SENSORS
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.ui.widgets.geosys_coverage_downloader import (
     credentials_parameters_from_settings)
@@ -160,7 +160,7 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
 
         # Map products options.
         map_products = []
-        for map_product in INSEASON_MAP_PRODUCTS:
+        for map_product in ARCHIVE_MAP_PRODUCTS:
             map_products.append(map_product['key'])
         self.addParameter(
             QgsProcessingParameterEnum(

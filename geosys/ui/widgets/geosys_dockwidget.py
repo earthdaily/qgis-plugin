@@ -41,7 +41,7 @@ from geosys.bridge_api.default import (
     SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT)
 from geosys.bridge_api.definitions import (
-    INSEASON_MAP_PRODUCTS, SENSORS, DIFFERENCE_MAPS)
+    ARCHIVE_MAP_PRODUCTS, SENSORS, DIFFERENCE_MAPS)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.widgets.geosys_coverage_downloader import (
     CoverageSearchThread, create_map)
@@ -137,7 +137,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def populate_map_products(self):
         """Obtain a list of map products from Bridge API definition."""
-        for map_product in INSEASON_MAP_PRODUCTS:
+        for map_product in ARCHIVE_MAP_PRODUCTS:
             add_ordered_combo_item(
                 self.map_product_combo_box,
                 map_product['name'],
