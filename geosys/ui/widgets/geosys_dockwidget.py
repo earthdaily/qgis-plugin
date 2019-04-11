@@ -113,6 +113,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Populate layer combo box
         self.connect_layer_listener()
 
+        # Set checkbox label based on MAX_FEATURE_NUMBERS constant
+        if MAX_FEATURE_NUMBERS:
+            label_format = self.tr('Selected features only (max {} features)')
+            self.selected_features_checkbox.setText(
+                label_format.format(MAX_FEATURE_NUMBERS))
+
         # Populate map product combo box
         self.populate_map_products()
 
