@@ -321,7 +321,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # TODO use Collect Geometries processing algorithm
         geom = None
         for index, feature in enumerate(feature_iterator):
-            if index > MAX_FEATURE_NUMBERS:
+            if index >= MAX_FEATURE_NUMBERS:
                 break
             if not feature.hasGeometry():
                 continue
