@@ -89,7 +89,11 @@ def extract_zip(zip_path, destination_base_path):
     zip_file = zipfile.ZipFile(handle)
     for name in zip_file.namelist():
         extension = os.path.splitext(name)[1]
-        output_final_path = '%s%s' % (destination_base_path, extension)
+        _, requested_extension = os.path.splitext(destination_base_path)
+        if requested_extension:
+            output_final_path = destination_base_path
+        else:
+            output_final_path = '%s%s' % (destination_base_path, extension)
         output_file = open(output_final_path, 'wb')
         output_file.write(zip_file.read(name))
         output_file.close()
