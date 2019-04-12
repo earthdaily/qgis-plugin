@@ -33,7 +33,7 @@ from qgis.core import (
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
     QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterFolderDestination,
+    QgsProcessingParameterRasterDestination,
     QgsProcessingParameterEnum,
     QgsProcessingParameterString,
     QgsCoordinateReferenceSystem,
@@ -67,6 +67,8 @@ class DateWidgetWrapper(WidgetWrapper):
         self.date_edit = QDateEdit()
         self.date_edit.setDisplayFormat('yyyy-MM-dd')
         self.date_edit.setCalendarPopup(True)
+        current_date = QDate.currentDate()
+        self.date_edit.setDate(current_date)
         return self.date_edit
 
     def setValue(self, value):
@@ -90,12 +92,11 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
 
-    INPUT = 'COVERAGE LAYER'
-    COVERAGE_DATE = 'COVERAGE DATE'
-    MAP_PRODUCT = 'MAP PRODUCT'
+    INPUT = 'INPUT'
+    COVERAGE_DATE = 'COVERAGE_DATE'
+    MAP_PRODUCT = 'MAP_PRODUCT'
     SENSOR = 'SENSOR'
-    LIMIT = 'LIMIT'
-    OUTPUT = 'OUTPUT DIRECTORY'
+    OUTPUT = 'OUTPUT'
 
     SENSOR_OPTIONS = [ALL_SENSORS] + SENSORS
 
@@ -187,24 +188,13 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
             )
         )
 
-        # Number of the most recent maps.
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.LIMIT,
-                self.tr('Number of most recent maps'),
-                QgsProcessingParameterNumber.Integer,
-                defaultValue=20, minValue=1
-            )
-        )
-
         # Output directory where the map product of the coverage search will be
         # placed.
         self.addParameter(
-            QgsProcessingParameterFolderDestination(
+            QgsProcessingParameterRasterDestination(
                 self.OUTPUT,
-                self.tr('Output directory'),
-                defaultValue=self.output_dir
-            )
+                self.tr('Output layer')
+            ), createOutput=True
         )
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -244,7 +234,7 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         # Retrieve the selected map product.
         map_product_index = self.parameterAsEnum(
             parameters, self.MAP_PRODUCT, context)
-        map_product = INSEASON_MAP_PRODUCTS[map_product_index]['key']
+        map_product = ARCHIVE_MAP_PRODUCTS[map_product_index]['key']
 
         # Retrieve the selected sensor type.
         sensor_index = self.parameterAsEnum(parameters, self.SENSOR, context)
@@ -252,19 +242,16 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         if sensor_type == ALL_SENSORS['key']:
             sensor_type = None
 
-        # Retrieve the number of recent maps.
-        map_limit = self.parameterAsInt(parameters, self.LIMIT, context)
-
-        # Retrieve output directory destination.
-        self.output_dir = self.parameterAsString(
+        # Retrieve output layer destination.
+        self.output_destination = self.parameterAsOutputLayer(
             parameters, self.OUTPUT, context)
 
-        message = self.tr('Please check your output directory for results.')
+        message = self.tr('Please check your output directory for the result.')
 
         filters = {
             MAPS_TYPE: map_product,
             IMAGE_DATE: '$lte:{}'.format(coverage_date),
-            MAP_LIMIT: map_limit
+            MAP_LIMIT: 1  # only get the recent one
         }
         sensor_type and filters.update({
             IMAGE_SENSOR: sensor_type
@@ -304,6 +291,7 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
                 'No coverage result available based on given parameters')
 
         return {
+            self.OUTPUT: self.output_destination,
             'message': message
         }
 
@@ -344,11 +332,6 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         bridge_api = BridgeAPI(*credentials_parameters_from_settings())
 
         map_urls = coverage_map_json['maps'][0]['_links']
-        filename = '{}_{}_{}'.format(
-            coverage_map_json['maps'][0]['type'],
-            coverage_map_json['seasonField']['id'],
-            coverage_map_json['image']['date']
-        )
 
         # Get the requested map format. For now, use Raster (.tiff)
         map_format = ZIPPED_TIFF_KEY
@@ -359,6 +342,6 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         url = map_urls[map_format]
 
         fetch_data(url, zip_path, headers=bridge_api.headers)
-        extract_zip(zip_path, os.path.join(self.output_dir, filename))
+        extract_zip(zip_path, self.output_destination)
 
-        return os.path.join(self.output_dir, filename)
+        return self.output_destination
