@@ -67,6 +67,18 @@ yield_variability_map = {
 
 # Map types definition
 
+# Difference map
+DIFFERENCE_INSEASON_NDVI = {
+    'key': 'DIFFERENCE_INSEASON_NDVI',
+    'name': 'DIFFERENCE_INSEASON_NDVI',
+    'map_family': difference_map
+}
+DIFFERENCE_INSEASON_EVI = {
+    'key': 'DIFFERENCE_INSEASON_EVI',
+    'name': 'DIFFERENCE_INSEASON_EVI',
+    'map_family': difference_map
+}
+
 # NDVI (Normalized Difference Vegetation Index)
 # https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index
 NDVI = {
@@ -77,7 +89,8 @@ NDVI = {
 INSEASON_NDVI = {
     'key': 'INSEASON_NDVI',
     'name': 'INSEASON_NDVI',
-    'map_family': base_reference_map
+    'map_family': base_reference_map,
+    'difference_map': DIFFERENCE_INSEASON_NDVI
 }
 INSEASONPARTIAL_NDVI = {
     'key': 'INSEASON_PARTIAL_NDVI',
@@ -105,7 +118,8 @@ EVI = {
 INSEASON_EVI = {
     'key': 'INSEASON_EVI',
     'name': 'INSEASON_EVI',
-    'map_family': base_reference_map
+    'map_family': base_reference_map,
+    'difference_map': DIFFERENCE_INSEASON_EVI
 }
 INSEASONPARTIAL_EVI = {
     'key': 'INSEASONPARTIAL_EVI',
@@ -210,18 +224,6 @@ SLOPE = {
     'key': 'SLOPE',
     'name': 'SLOPE',
     'map_family': topology_map
-}
-
-# Difference map
-DIFFERENCE_INSEASON_NDVI = {
-    'key': 'DIFFERENCE_INSEASON_NDVI',
-    'name': 'DIFFERENCE_INSEASON_NDVI',
-    'map_family': difference_map
-}
-DIFFERENCE_INSEASON_EVI = {
-    'key': 'DIFFERENCE_INSEASON_EVI',
-    'name': 'DIFFERENCE_INSEASON_EVI',
-    'map_family': difference_map
 }
 
 ARCHIVE_MAP_PRODUCTS = [

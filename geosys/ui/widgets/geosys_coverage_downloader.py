@@ -5,7 +5,7 @@ import os
 import sys
 import tempfile
 
-from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings
+from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings, QDate
 
 from geosys.bridge_api.default import (
     MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT)
@@ -159,7 +159,7 @@ class CoverageSearchThread(QThread):
 
 
 def create_map(
-        map_specifications,
+        map_specification,
         output_dir,
         filename,
         output_map_format,
@@ -167,7 +167,7 @@ def create_map(
         params=None):
     """Create map based on given parameters.
 
-    :param map_specifications: Result of single map coverage specifications.
+    :param map_specification: Result of single map coverage specifications.
         example: {   
             "seasonField": {
                 "id": "zgzmbrm",
@@ -192,7 +192,7 @@ def create_map(
             },
             "coverageType": "CLEAR"
         }
-    :type map_specifications: dict
+    :type map_specification: dict
 
     :param output_dir: Base directory of the output.
     :type output_dir: str
@@ -215,17 +215,128 @@ def create_map(
     :type params: dict
     """""
     # Construct map creation parameters
-    map_type_key = map_specifications['type']
-    season_field_id = map_specifications['seasonField']['id']
-    image_date = map_specifications['image']['date']
+    map_type_key = map_specification['type']
+    season_field_id = map_specification['seasonField']['id']
+    image_date = map_specification['image']['date']
+    destination_base_path = os.path.join(output_dir, filename)
     data = data if data else {}
     params = params if params else {}
-    data.update(params)
+    data.update({'params': params})
 
     bridge_api = BridgeAPI(*credentials_parameters_from_settings())
     field_map_json = bridge_api.get_field_map(
         map_type_key, season_field_id, image_date, **data)
 
+    return download_field_map(
+        field_map_json=field_map_json,
+        destination_base_path=destination_base_path,
+        output_map_format=output_map_format,
+        headers=bridge_api.headers)
+
+
+def create_difference_map(
+        map_specifications,
+        output_dir,
+        filename,
+        output_map_format,
+        data=None,
+        params=None):
+    """Create map based on given parameters.
+
+    :param map_specifications: List of map coverage specification.
+        example: [{   
+            "seasonField": {
+                "id": "zgzmbrm",
+                "customerExternalId": "..."
+            },
+            "image": {
+                "date": "2018-10-18",
+                "sensor": "SENTINEL_2",
+                "weather": "HOT",
+                "soilMaterial": "BARE"
+            }
+            "type": "INSEASON_NDVI",
+            "_links": {
+                "self": "the_url",
+                "worldFile": "the_url",
+                "thumbnail": "the_url",
+                "legend": "the_url",
+                "image:image/png": "the_url",
+                "image:image/tiff+zip": "the_url",
+                "image:application/shp+zip": "the_url",
+                "image:application/vnd.google-earth.kmz": "the_url"
+            },
+            "coverageType": "CLEAR"
+        }, {...}]
+    :type map_specifications: list
+
+    :param output_dir: Base directory of the output.
+    :type output_dir: str
+
+    :param filename: Filename of the output.
+    :type filename: str
+
+    :param output_map_format: Output map format.
+    :type output_map_format: dict
+
+    :param data: Map creation data.
+        example: {
+            "MinYieldGoal": 0,
+            "MaxYieldGoal": 0,
+            "HistoricalYieldAverage": 0
+        }
+    :type data: dict
+
+    :param params: Map creation parameters.
+    :type params: dict
+    """""
+    # Difference map only created from 2 map specifications.
+    # Map type and season field id should always be the same between two map.
+    map_type_key = map_specifications[0]['type']
+    season_field_id = map_specifications[0]['seasonField']['id']
+    earliest_image_date = map_specifications[0]['image']['date']
+    latest_image_date = map_specifications[1]['image']['date']
+    destination_base_path = os.path.join(output_dir, filename)
+    data = data if data else {}
+    params = params if params else {}
+    data.update({'params': params})
+
+    # First, make sure latest date is greater than earliest date
+    latest_date = QDate.fromString(latest_image_date, 'yyyy-MM-dd')
+    earliest_date = QDate.fromString(earliest_image_date, 'yyyy-MM-dd')
+    if earliest_date > latest_date:
+        latest_image_date = earliest_date.toString('yyyy-MM-dd')
+        earliest_image_date = latest_date.toString('yyyy-MM-dd')
+
+    bridge_api = BridgeAPI(*credentials_parameters_from_settings())
+    difference_map_json = bridge_api.get_difference_map(
+        map_type_key, season_field_id,
+        earliest_image_date, latest_image_date, **data)
+
+    return download_field_map(
+        field_map_json=difference_map_json,
+        destination_base_path=destination_base_path,
+        output_map_format=output_map_format,
+        headers=bridge_api.headers)
+
+
+def download_field_map(
+        field_map_json, destination_base_path, output_map_format, headers):
+    """Download field map from requested field map json.
+
+    :param field_map_json: JSON response from Bridge API field map request.
+    :type field_map_json: dict
+
+    :param destination_base_path: The destination base path where the shp
+        will be written to.
+    :type destination_base_path: str
+
+    :param output_map_format: Output map format.
+    :type output_map_format: dict
+
+    :param headers: Extra headers containing Bridge API authorization.
+    :type headers: str
+    """
     message = 'Field map successfully created.'
     if not field_map_json.get('seasonField'):
         # field map request error
@@ -251,12 +362,12 @@ def create_map(
     try:
         if output_map_format in ZIPPED_FORMAT:
             zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
-            fetch_data(url, zip_path, headers=bridge_api.headers)
-            extract_zip(zip_path, os.path.join(output_dir, filename))
+            fetch_data(url, zip_path, headers=headers)
+            extract_zip(zip_path, destination_base_path)
         else:
-            destination_filename = os.path.join(
-                output_dir, filename+output_map_format['extension'])
-            fetch_data(url, destination_filename, headers=bridge_api.headers)
+            destination_filename = (
+                    destination_base_path + output_map_format['extension'])
+            fetch_data(url, destination_filename, headers=headers)
     except:
         # zip extraction error
         message = 'Failed to download file.'

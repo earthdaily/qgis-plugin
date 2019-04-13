@@ -42,10 +42,11 @@ from geosys.bridge_api.default import (
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
     ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS)
 from geosys.bridge_api.definitions import (
-    ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS)
+    ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS, INSEASON_NDVI,
+    INSEASON_EVI)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.widgets.geosys_coverage_downloader import (
-    CoverageSearchThread, create_map)
+    CoverageSearchThread, create_map, create_difference_map)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
@@ -133,6 +134,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.help_push_button.setEnabled(False)
         self.back_push_button.setEnabled(False)
         self.next_push_button.setEnabled(True)
+        self.difference_map_push_button.setVisible(False)
         self.stacked_widget.setCurrentIndex(self.current_stacked_widget_index)
         self.set_next_button_text(self.current_stacked_widget_index)
 
@@ -172,6 +174,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.current_stacked_widget_index == 0:
             self.back_push_button.setEnabled(False)
 
+        self.handle_difference_map_button()
+
     def show_next_page(self):
         """Open next page of stacked widget."""
         # If current page is map creation parameters page, create map without
@@ -192,6 +196,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.next_push_button.setEnabled(False)
             self.start_coverage_search()
 
+        self.handle_difference_map_button()
+
     def set_next_button_text(self, index):
         """Programmatically changed next button text based on current page."""
         text_rule = {
@@ -201,12 +207,27 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         }
         self.next_push_button.setText(text_rule[index])
 
+    def handle_difference_map_button(self):
+        """Handle difference map button behavior."""
+        if self.current_stacked_widget_index == 2:
+            # show difference map button only if 2 items are being selected
+            if len(self.selected_coverage_results) == 2 and (
+                    self.map_product in [
+                        INSEASON_NDVI['key'], INSEASON_EVI['key']]):
+                self.difference_map_push_button.setVisible(True)
+            else:
+                self.difference_map_push_button.setVisible(False)
+        else:
+            self.difference_map_push_button.setVisible(False)
+
     def update_selection_data(self):
         """Update current selection data."""
         # update data based on selected coverage results
         self.selected_coverage_results = []
         for item in self.coverage_result_list.selectedItems():
             self.selected_coverage_results.append(item.data(Qt.UserRole))
+
+        self.handle_difference_map_button()
 
     def get_layers(self, *args):
         """Obtain a list of layers currently loaded in QGIS.
@@ -356,11 +377,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         return True, ''
 
-    def _start_map_creation(self, map_specifications):
+    def _start_map_creation(self, map_specification):
         """Actual method to run the map creation task.
 
-        :param map_specifications: Map specification.
-        :type map_specifications: dict
+        :param map_specification: Map specification.
+        :type map_specification: dict
         """
         # Place the requested map specification on the top level of
         # coverage result dict. coverage_result['maps'][0] is the requested
@@ -391,13 +412,13 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         #           }
         #       ]
         #   }
-        map_specifications.update(map_specifications['maps'][0])
+        map_specification.update(map_specification['maps'][0])
 
-        if map_specifications:
+        if map_specification:
             filename = '{}_{}_{}'.format(
-                map_specifications['type'],
-                map_specifications['seasonField']['id'],
-                map_specifications['image']['date']
+                map_specification['type'],
+                map_specification['seasonField']['id'],
+                map_specification['image']['date']
             )
             data = {
                 YIELD_AVERAGE: self.yield_average,
@@ -407,7 +428,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 SAMZ_ZONE: self.samz_zone
             }
             is_success, message = create_map(
-                map_specifications, self.output_directory, filename,
+                map_specification, self.output_directory, filename,
                 data=data, output_map_format=self.output_map_format)
             if not is_success:
                 QMessageBox.critical(
@@ -453,6 +474,57 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 # start single map creation for each selected
                 for coverage_result in self.selected_coverage_results:
                     self._start_map_creation(coverage_result)
+        except:
+            raise
+        finally:
+            QApplication.restoreOverrideCursor()
+
+    def start_difference_map_creation(self):
+        """Difference Map creation starts here."""
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
+            # Validate map creation parameters
+            self.validate_map_creation_parameters()
+
+            # Construct filename
+            map_specifications = self.selected_coverage_results
+            for map_specification in map_specifications:
+                map_specification.update(map_specification['maps'][0])
+            map_type_definition = get_definition(map_specifications[0]['type'])
+            difference_map_definition = map_type_definition['difference_map']
+            filename = '{}_{}_{}_{}'.format(
+                difference_map_definition['key'],
+                map_specifications[0]['seasonField']['id'],
+                map_specifications[0]['image']['date'],
+                map_specifications[1]['image']['date']
+            )
+
+            # Run difference map creation
+            is_success, message = create_difference_map(
+                map_specifications, self.output_directory,
+                filename, output_map_format=self.output_map_format)
+
+            if not is_success:
+                QMessageBox.critical(
+                    self,
+                    'Map Creation Status',
+                    'Error creating map. {}'.format(message))
+                return
+
+            # Add map to qgis canvas
+            if self.output_map_format in VALID_QGIS_FORMAT:
+                if self.output_map_format in VECTOR_FORMAT:
+                    map_layer = QgsVectorLayer(
+                        os.path.join(
+                            self.output_directory, filename + SHP_EXT),
+                        filename)
+                else:
+                    map_layer = QgsRasterLayer(
+                        os.path.join(
+                            self.output_directory, filename + TIFF_EXT),
+                        filename)
+                add_layer_to_canvas(map_layer, filename)
         except:
             raise
         finally:
@@ -629,6 +701,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.help_push_button.clicked.connect(self.show_help)
         self.back_push_button.clicked.connect(self.show_previous_page)
         self.next_push_button.clicked.connect(self.show_next_page)
+        self.difference_map_push_button.clicked.connect(
+            self.start_difference_map_creation)
 
         # Stacked widget connector
         self.stacked_widget.currentChanged.connect(self.set_next_button_text)
