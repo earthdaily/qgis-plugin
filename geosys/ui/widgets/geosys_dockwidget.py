@@ -40,7 +40,7 @@ from qgis.PyQt.QtCore import Qt
 from geosys.bridge_api.default import (
     SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
-    ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS)
+    ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS, INSEASON_NDVI,
     INSEASON_EVI)
@@ -135,6 +135,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.back_push_button.setEnabled(False)
         self.next_push_button.setEnabled(True)
         self.difference_map_push_button.setVisible(False)
+        self.samz_zone_form.setValue(DEFAULT_ZONE_COUNT)
         self.stacked_widget.setCurrentIndex(self.current_stacked_widget_index)
         self.set_next_button_text(self.current_stacked_widget_index)
 
