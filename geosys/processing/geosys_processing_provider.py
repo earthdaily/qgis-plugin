@@ -37,9 +37,6 @@ class GeosysProcessingProvider(QgsProcessingProvider):
     def __init__(self):
         QgsProcessingProvider.__init__(self)
 
-        # Load algorithms
-        self.alglist = [MapCoverageDownloader()]
-
         # Icon path
         self._icon = resources_path('img', 'icons', 'icon.png')
 
@@ -54,8 +51,7 @@ class GeosysProcessingProvider(QgsProcessingProvider):
         """
         Loads all algorithms belonging to this provider.
         """
-        for alg in self.alglist:
-            self.addAlgorithm( alg )
+        self.addAlgorithm(MapCoverageDownloader())
 
     def id(self):
         """
