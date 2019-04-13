@@ -48,6 +48,7 @@ from geosys.ui.widgets.geosys_coverage_downloader import (
     credentials_parameters_from_settings)
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.gui_utilities import reproject
+from geosys.utilities.qgis_settings import QGISSettings
 from geosys.utilities.settings import setting
 
 __copyright__ = "Copyright 2019, Kartoza"
@@ -259,7 +260,8 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
 
         # Start coverage search
         bridge_api = BridgeAPI(
-            *credentials_parameters_from_settings())
+            *credentials_parameters_from_settings(),
+            proxies=QGISSettings.get_qgis_proxy())
         results = bridge_api.get_coverage(
             geom_wkt, self.crop_type, self.sowing_date,
             filters=filters)
@@ -329,7 +331,9 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
             }
         :type coverage_map_json: dict
         """
-        bridge_api = BridgeAPI(*credentials_parameters_from_settings())
+        bridge_api = BridgeAPI(
+            *credentials_parameters_from_settings(),
+            proxies=QGISSettings.get_qgis_proxy())
 
         map_urls = coverage_map_json['maps'][0]['_links']
 

@@ -68,7 +68,8 @@ class BridgeAPI(ApiClient):
             region,
             client_id,
             client_secret,
-            use_testing_service=False):
+            use_testing_service=False,
+            proxies=None):
         """Wrapper implementation for bridge api.
 
         :param username: Bridge API username.
@@ -88,6 +89,10 @@ class BridgeAPI(ApiClient):
 
         :param use_testing_service: Testing service flag.
         :type use_testing_service: bool
+
+        :param proxies: Tuple of proxy definition.
+            (proxy_host, proxy_port, proxy_user, proxy_password)
+        :type proxies: tuple
         """
         super(BridgeAPI, self).__init__()
         self.username = username
@@ -97,6 +102,8 @@ class BridgeAPI(ApiClient):
         self.client_secret = client_secret
         self.use_testing_service = use_testing_service
         self.access_token = None
+        if proxies:
+            self.set_proxy(*proxies)
 
         # authenticate user
         self.authenticated, self.authentication_message = self.authenticate()
