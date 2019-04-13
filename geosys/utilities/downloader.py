@@ -78,7 +78,7 @@ def extract_zip(zip_path, destination_base_path):
     :param zip_path: The path of the .zip file
     :type zip_path: str
 
-    :param destination_base_path: The destination base path where the shp
+    :param destination_base_path: The destination base path where the file
         will be written to.
     :type destination_base_path: str
 
