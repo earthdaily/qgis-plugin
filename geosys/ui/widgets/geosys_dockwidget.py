@@ -301,6 +301,24 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             if wd['widget'].isChecked():
                 return wd['data']
 
+    def load_layer(self, base_path):
+        """Load layer tp QGIS map canvas.
+
+        :param base_path: Base path of the layer.
+        :type base_path: str
+        """
+        if self.output_map_format in VALID_QGIS_FORMAT:
+            filename = os.path.basename(base_path)
+            if self.output_map_format in VECTOR_FORMAT:
+                map_layer = QgsVectorLayer(
+                    base_path + SHP_EXT,
+                    filename)
+            else:
+                map_layer = QgsRasterLayer(
+                    base_path + TIFF_EXT,
+                    filename)
+            add_layer_to_canvas(map_layer, filename)
+
     def validate_map_creation_parameters(self):
         """Check current state of map creation parameters."""
         self.yield_average = self.yield_average_form.value()
@@ -438,18 +456,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 return
 
             # Add map to qgis canvas
-            if self.output_map_format in VALID_QGIS_FORMAT:
-                if self.output_map_format in VECTOR_FORMAT:
-                    map_layer = QgsVectorLayer(
-                        os.path.join(
-                            self.output_directory, filename + SHP_EXT),
-                        filename)
-                else:
-                    map_layer = QgsRasterLayer(
-                        os.path.join(
-                            self.output_directory, filename + TIFF_EXT),
-                        filename)
-                add_layer_to_canvas(map_layer, filename)
+            self.load_layer(os.path.join(self.output_directory, filename))
 
     def start_map_creation(self):
         """Map creation starts here."""
@@ -513,18 +520,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 return
 
             # Add map to qgis canvas
-            if self.output_map_format in VALID_QGIS_FORMAT:
-                if self.output_map_format in VECTOR_FORMAT:
-                    map_layer = QgsVectorLayer(
-                        os.path.join(
-                            self.output_directory, filename + SHP_EXT),
-                        filename)
-                else:
-                    map_layer = QgsRasterLayer(
-                        os.path.join(
-                            self.output_directory, filename + TIFF_EXT),
-                        filename)
-                add_layer_to_canvas(map_layer, filename)
+            self.load_layer(os.path.join(self.output_directory, filename))
         except:
             raise
         finally:
