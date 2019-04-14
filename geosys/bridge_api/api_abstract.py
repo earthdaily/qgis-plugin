@@ -61,9 +61,8 @@ class ApiClient(object):
                     proxy_url
                 )
 
-            self.proxy = {
-                "http": proxy_url
-            }
+            for protocol in ['http', 'https', 'ftp']:
+                self.proxy[protocol] = '%s://%s' % (protocol, proxy_url)
 
     @property
     def base_url(self):
@@ -100,7 +99,7 @@ class ApiClient(object):
         if kwargs.get('headers'):
             kwargs['headers'].update(self.headers)
 
-        response = get(url, **kwargs)
+        response = get(url, proxies=self.proxy, **kwargs)
         return response
 
     def post(self, url, **kwargs):
@@ -118,7 +117,7 @@ class ApiClient(object):
         if kwargs.get('headers'):
             kwargs['headers'].update(self.headers)
 
-        response = post(url, **kwargs)
+        response = post(url, proxies=self.proxy, **kwargs)
         return response
 
     def get_content(self, url, params=None):
@@ -133,5 +132,7 @@ class ApiClient(object):
         :return: Response content.
         :rtype: str
         """
-        response = get(url, headers=self.headers, params=params, stream=True)
+        response = get(
+            url, headers=self.headers, params=params, proxies=self.proxy,
+            stream=True)
         return response.content

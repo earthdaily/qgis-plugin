@@ -11,6 +11,7 @@ from geosys.bridge_api.default import (
     MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT)
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
+from geosys.utilities.qgis_settings import QGISSettings
 from geosys.utilities.settings import setting
 
 __copyright__ = "Copyright 2019, Kartoza"
@@ -91,7 +92,8 @@ class CoverageSearchThread(QThread):
         self.settings = QSettings()
 
         self.searcher_client = BridgeAPI(
-            *credentials_parameters_from_settings())
+            *credentials_parameters_from_settings(),
+            proxies=QGISSettings.get_qgis_proxy())
         # TODO set QGIS proxy to the searcher
 
         self.need_stop = False
@@ -223,7 +225,9 @@ def create_map(
     params = params if params else {}
     data.update({'params': params})
 
-    bridge_api = BridgeAPI(*credentials_parameters_from_settings())
+    bridge_api = BridgeAPI(
+        *credentials_parameters_from_settings(),
+        proxies=QGISSettings.get_qgis_proxy())
     field_map_json = bridge_api.get_field_map(
         map_type_key, season_field_id, image_date, **data)
 
@@ -308,7 +312,9 @@ def create_difference_map(
         latest_image_date = earliest_date.toString('yyyy-MM-dd')
         earliest_image_date = latest_date.toString('yyyy-MM-dd')
 
-    bridge_api = BridgeAPI(*credentials_parameters_from_settings())
+    bridge_api = BridgeAPI(
+        *credentials_parameters_from_settings(),
+        proxies=QGISSettings.get_qgis_proxy())
     difference_map_json = bridge_api.get_difference_map(
         map_type_key, season_field_id,
         earliest_image_date, latest_image_date, **data)
