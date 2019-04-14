@@ -287,6 +287,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="maximum">
+              <double>999.990000000000009</double>
+             </property>
             </widget>
            </item>
            <item row="1" column="0">
@@ -316,6 +319,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="maximum">
+              <double>999.990000000000009</double>
+             </property>
             </widget>
            </item>
            <item row="2" column="0">
@@ -339,6 +345,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="maximum">
+              <double>999.990000000000009</double>
+             </property>
             </widget>
            </item>
            <item row="3" column="0">
@@ -361,6 +370,9 @@
                <width>302</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="maximum">
+              <double>999.990000000000009</double>
              </property>
             </widget>
            </item>
