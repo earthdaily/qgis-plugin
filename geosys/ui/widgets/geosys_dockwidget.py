@@ -52,7 +52,7 @@ from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
     add_layer_to_canvas, reproject, item_data_from_combo)
 from geosys.utilities.resources import get_ui_class
-from geosys.utilities.settings import setting
+from geosys.utilities.settings import setting, set_setting
 
 FORM_CLASS = get_ui_class('geosys_dockwidget_base.ui')
 
@@ -94,6 +94,13 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.organic_average = None
         self.samz_zone = None
         self.output_map_format = None
+        self.map_creation_parameters_settings = {
+            YIELD_AVERAGE: self.yield_average_form,
+            YIELD_MINIMUM: self.yield_minimum_form,
+            YIELD_MAXIMUM: self.yield_maximum_form,
+            ORGANIC_AVERAGE: self.organic_average_form,
+            SAMZ_ZONE: self.samz_zone_form
+        }
 
         self.selected_coverage_results = []
 
@@ -179,6 +186,16 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def show_next_page(self):
         """Open next page of stacked widget."""
+        # If current page is coverage parameters page, run coverage searcher.
+        if self.current_stacked_widget_index == 0:
+            self.next_push_button.setEnabled(False)
+            self.start_coverage_search()
+
+        # If current page is coverage results page, prepare map creation
+        # parameters.
+        if self.current_stacked_widget_index == 1:
+            self.restore_parameter_values_from_setting()
+
         # If current page is map creation parameters page, create map without
         # increasing index.
         if self.current_stacked_widget_index == 2:
@@ -190,12 +207,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.stacked_widget.setCurrentIndex(
                 self.current_stacked_widget_index)
             self.back_push_button.setEnabled(True)
-
-        # If previous page is coverage parameters page and current page is
-        # coverage results page, run coverage searcher.
-        if self.current_stacked_widget_index == 1:
-            self.next_push_button.setEnabled(False)
-            self.start_coverage_search()
 
         self.handle_difference_map_button()
 
@@ -319,6 +330,17 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     base_path + TIFF_EXT,
                     filename)
             add_layer_to_canvas(map_layer, filename)
+
+    def save_parameter_values_as_setting(self):
+        """Save parameter values as qsettings."""
+        for key, form in self.map_creation_parameters_settings.items():
+            set_setting(key, form.value(), self.settings)
+
+    def restore_parameter_values_from_setting(self):
+        """Restore parameter values from qsettings."""
+        for key, form in self.map_creation_parameters_settings.items():
+            value = setting(key, expected_type=int, qsettings=self.settings)
+            value and form.setValue(value)
 
     def validate_map_creation_parameters(self):
         """Check current state of map creation parameters."""
@@ -472,6 +494,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     'Error validating map creation parameters. {}'.format(
                         message))
                 return
+
+            # store parameters value as qsettings
+            self.save_parameter_values_as_setting()
 
             # start map creation job
             map_product_definition = get_definition(self.map_product)
