@@ -18,8 +18,8 @@ __revision__ = "$Format:%H$"
 LOGGER = logging.getLogger('geosys')
 
 
-def fetch_zip(url, output_path, headers=None, progress_dialog=None):
-    """Download zip containing shp file and write to output_path.
+def fetch_data(url, output_path, headers=None, progress_dialog=None):
+    """Download data from url and write to output_path.
 
     :param url: URL of the zip bundle.
     :type url: str
@@ -78,7 +78,7 @@ def extract_zip(zip_path, destination_base_path):
     :param zip_path: The path of the .zip file
     :type zip_path: str
 
-    :param destination_base_path: The destination base path where the shp
+    :param destination_base_path: The destination base path where the file
         will be written to.
     :type destination_base_path: str
 
@@ -89,7 +89,11 @@ def extract_zip(zip_path, destination_base_path):
     zip_file = zipfile.ZipFile(handle)
     for name in zip_file.namelist():
         extension = os.path.splitext(name)[1]
-        output_final_path = '%s%s' % (destination_base_path, extension)
+        _, requested_extension = os.path.splitext(destination_base_path)
+        if requested_extension:
+            output_final_path = destination_base_path
+        else:
+            output_final_path = '%s%s' % (destination_base_path, extension)
         output_file = open(output_final_path, 'wb')
         output_file.write(zip_file.read(name))
         output_file.close()

@@ -11,6 +11,7 @@ from qgis.PyQt.QtCore import QSettings
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.ui.help.options_help import options_help
 from geosys.ui.help.help_dialog import HelpDialog
+from geosys.utilities.qgis_settings import QGISSettings
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import set_setting, setting
 
@@ -116,7 +117,8 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
                 region=self.region(),
                 client_id=self.client_id(),
                 client_secret=self.client_secret(),
-                use_testing_service=self.use_testing_service())
+                use_testing_service=self.use_testing_service(),
+                proxies=QGISSettings.get_qgis_proxy())
 
             if not bridge_api.authenticated:
                 QMessageBox.critical(

@@ -100,6 +100,26 @@ class BridgeAPIWrapperTest(unittest.TestCase):
         )
         self.assertTrue('seasonField' in field_map)
 
+    def test_get_difference_map(self):
+        """Test we can successfully get the difference map."""
+        map_type_key = 'INSEASON_NDVI'
+        season_field_id = 'zgzmbrm'
+        earliest_image_date = '2018-10-13'
+        latest_image_date = '2018-10-18'
+
+        bridge_api = BridgeAPI(
+            username=self.username,
+            password=self.password,
+            region='na',
+            client_id='mapproduct_api',
+            client_secret='mapproduct_api.secret',
+            use_testing_service=True)
+        field_map = bridge_api.get_difference_map(
+            map_type_key, season_field_id,
+            earliest_image_date, latest_image_date
+        )
+        self.assertTrue('seasonField' in field_map)
+
     def test_get_content(self):
         """Test we can successfully get the content of png response."""
         thumbnail_url = (

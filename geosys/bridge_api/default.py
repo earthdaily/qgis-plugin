@@ -47,8 +47,11 @@ CLIENT_ID = 'mapproduct_api'
 CLIENT_SECRET = 'mapproduct_api.secret'
 GRANT_TYPE = 'password'
 SCOPE = 'openid offline_access'
+MAX_FEATURE_NUMBERS = 10
+DEFAULT_ZONE_COUNT = 5
 
 # coverage filters
+
 COVERAGE_TYPE = 'CoverageType'
 IMAGE_DATE = 'Image.Date'
 IMAGE_SENSOR = 'Image.Sensor'
@@ -57,12 +60,48 @@ IMAGE_WEATHER = 'Image.Weather'
 MAPS_TYPE = 'Maps.Type'
 MAP_LIMIT = '$limit'
 
+# map creation parameters
+
+YIELD_AVERAGE = 'HistoricalYieldAverage'
+YIELD_MINIMUM = 'MinYieldGoal'
+YIELD_MAXIMUM = 'MaxYieldGoal'
+ORGANIC_AVERAGE = 'AverageOrganicMatter'
+SAMZ_ZONE = 'zoneCount'
+
 # map output format based on Bridge API
+
+# file extension
+PNG_EXT = '.png'
 TIFF_EXT = '.tif'
 SHP_EXT = '.shp'
-THUMBNAIL = 'thumbnail'
-LEGEND = 'legend'
-PNG = 'image:image/png'
-ZIPPED_TIFF = 'image:image/tiff+zip'
-ZIPPED_SHP = 'image:application/shp+zip'
-KMZ = 'image:application/vnd.google-earth.kmz'
+KMZ_EXT = '.kmz'
+
+# API key
+PNG_KEY = 'image:image/png'
+ZIPPED_TIFF_KEY = 'image:image/tiff+zip'
+ZIPPED_SHP_KEY = 'image:application/shp+zip'
+KMZ_KEY = 'image:application/vnd.google-earth.kmz'
+THUMBNAIL_KEY = 'thumbnail'
+LEGEND_KEY = 'legend'
+
+PNG = {
+    'api_key': PNG_KEY,
+    'extension': PNG_EXT
+}
+ZIPPED_TIFF = {
+    'api_key': ZIPPED_TIFF_KEY,
+    'extension': TIFF_EXT
+}
+ZIPPED_SHP = {
+    'api_key': ZIPPED_SHP_KEY,
+    'extension': SHP_EXT
+}
+KMZ = {
+    'api_key': KMZ_KEY,
+    'extension': KMZ_EXT
+}
+
+ZIPPED_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP]
+RASTER_FORMAT = [ZIPPED_TIFF, PNG]
+VECTOR_FORMAT = [ZIPPED_SHP, KMZ]
+VALID_QGIS_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP]

@@ -6,6 +6,7 @@ from geosys.bridge_api.connection import ConnectionAPIClient
 from geosys.bridge_api.default import IDENTITY_URLS, BRIDGE_URLS, ALL_REGIONS
 from geosys.bridge_api.definitions import CROPS
 from geosys.bridge_api.field_level_maps import FieldLevelMapsAPIClient
+from geosys.bridge_api.utilities import get_definition
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -67,7 +68,8 @@ class BridgeAPI(ApiClient):
             region,
             client_id,
             client_secret,
-            use_testing_service=False):
+            use_testing_service=False,
+            proxies=None):
         """Wrapper implementation for bridge api.
 
         :param username: Bridge API username.
@@ -87,6 +89,10 @@ class BridgeAPI(ApiClient):
 
         :param use_testing_service: Testing service flag.
         :type use_testing_service: bool
+
+        :param proxies: Tuple of proxy definition.
+            (proxy_host, proxy_port, proxy_user, proxy_password)
+        :type proxies: tuple
         """
         super(BridgeAPI, self).__init__()
         self.username = username
@@ -96,6 +102,8 @@ class BridgeAPI(ApiClient):
         self.client_secret = client_secret
         self.use_testing_service = use_testing_service
         self.access_token = None
+        if proxies:
+            self.set_proxy(*proxies)
 
         # authenticate user
         self.authenticated, self.authentication_message = self.authenticate()
@@ -233,5 +241,59 @@ class BridgeAPI(ApiClient):
         api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
         field_map_json = api_client.get_field_map(
             map_type_key, request_data, params)
+
+        return field_map_json
+
+    def get_difference_map(
+            self, map_type_key, season_field_id,
+            earliest_image_date, latest_image_date, **kwargs):
+        """Get requested difference map.
+
+        Currently this only support INSEASON_NDVI and INSEASON_EVI map.
+
+        :param map_type_key: Map type key.
+        :type map_type_key: str
+
+        :param season_field_id: ID of the season field.
+        :param season_field_id: str
+
+        :param earliest_image_date: Earliest date of the image. yyyy-MM-dd
+        :type earliest_image_date: str
+
+        :param latest_image_date: Latest date of the image. yyyy-MM-dd
+        :type latest_image_date: str
+
+        :param kwargs: Other map creation and request parameters.
+
+        :return: JSON response.
+            Map data specification based on given criteria.
+        :rtype: dict
+        """
+        # Construct map creation parameters
+        request_data = {
+            "SeasonField": {
+                "Id": season_field_id
+            },
+            "EarliestImage": {
+                "Date": earliest_image_date
+            },
+            "LatestImage": {
+                "Date": latest_image_date
+            }
+        }
+        request_data.update(kwargs)
+
+        # Get request parameters
+        params = kwargs.get('params')
+
+        map_type_definition = get_definition(map_type_key)
+        difference_map_definition = map_type_definition['difference_map']
+
+        bridge_server = (BRIDGE_URLS[self.region]['test']
+                         if self.use_testing_service
+                         else BRIDGE_URLS[self.region]['prod'])
+        api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
+        field_map_json = api_client.get_field_map(
+            difference_map_definition['key'], request_data, params)
 
         return field_map_json

@@ -67,6 +67,18 @@ yield_variability_map = {
 
 # Map types definition
 
+# Difference map
+DIFFERENCE_INSEASON_NDVI = {
+    'key': 'DIFFERENCE_INSEASON_NDVI',
+    'name': 'DIFFERENCE_INSEASON_NDVI',
+    'map_family': difference_map
+}
+DIFFERENCE_INSEASON_EVI = {
+    'key': 'DIFFERENCE_INSEASON_EVI',
+    'name': 'DIFFERENCE_INSEASON_EVI',
+    'map_family': difference_map
+}
+
 # NDVI (Normalized Difference Vegetation Index)
 # https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index
 NDVI = {
@@ -80,7 +92,8 @@ INSEASON_NDVI = {
     'name': 'INSEASON_NDVI',
     'map_family': base_reference_map,
     'description': 'Provides the in-season Normalized Difference '
-                   'Vegetation Index.'
+                   'Vegetation Index.',
+    'difference_map': DIFFERENCE_INSEASON_NDVI
 }
 INSEASONPARTIAL_NDVI = {
     'key': 'INSEASONPARTIAL_NDVI',
@@ -113,7 +126,8 @@ INSEASON_EVI = {
     'key': 'INSEASON_EVI',
     'name': 'INSEASON_EVI',
     'map_family': base_reference_map,
-    'description': 'Provides the in-season Enhanced Vegetation Index.'
+    'description': 'Provides the in-season Enhanced Vegetation Index.',
+    'difference_map': DIFFERENCE_INSEASON_EVI
 }
 INSEASONPARTIAL_EVI = {
     'key': 'INSEASONPARTIAL_EVI',
@@ -242,31 +256,20 @@ SLOPE = {
     'description': ''
 }
 
-# Difference map
-DIFFERENCE_INSEASON_NDVI = {
-    'key': 'DIFFERENCE_INSEASON_NDVI',
-    'name': 'DIFFERENCE_INSEASON_NDVI',
-    'map_family': difference_map,
-    'description': ''
-}
-DIFFERENCE_INSEASON_EVI = {
-    'key': 'DIFFERENCE_INSEASON_EVI',
-    'name': 'DIFFERENCE_INSEASON_EVI',
-    'map_family': difference_map,
-    'description': ''
-}
-
 ARCHIVE_MAP_PRODUCTS = [
-    NDVI,
-    EVI,
-    GNDVI,
-    CVI,
-    OM,
-    YVM,
-    YGM,
-    SAMZ,
+    INSEASON_NDVI,
+    INSEASON_GNDVI,
+    INSEASON_EVI,
+    INSEASON_CVI,
+    INSEASONPARTIAL_NDVI,
+    INSEASONPARTIAL_EVI,
     COLOR_COMPOSITION,
-    ELEVATION
+    ELEVATION,
+    OM,
+    YGM,
+    YVM,
+    SAMZ,
+    NDVI
 ]
 
 BASIC_INSEASON_MAP_PRODUCTS = [
@@ -334,3 +337,9 @@ SENTINEL_2 = {
 SENSORS = [
     DEIMOS, DMC, LANDSAT_8, RESOURCESAT2, SENTINEL_2
 ]
+
+ALL_SENSORS = {
+    'key': 'ALL_SENSORS',
+    'name': 'ALL SENSORS',
+    'sensors': SENSORS
+}

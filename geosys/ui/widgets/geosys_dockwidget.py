@@ -25,7 +25,7 @@
 import os
 
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSignal, QSettings, QMutex
+from PyQt5.QtCore import pyqtSignal, QSettings, QMutex, QDate
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QLabel, QListWidgetItem, QMessageBox, QApplication
 
@@ -37,19 +37,23 @@ from qgis.core import (
     QgsCoordinateReferenceSystem)
 from qgis.PyQt.QtCore import Qt
 
-from geosys.bridge_api.default import SHP_EXT, TIFF_EXT
+from geosys.bridge_api.default import (
+    SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
+    VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
+    ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
 from geosys.bridge_api.definitions import (
-    INSEASON_MAP_PRODUCTS, SENSORS, DIFFERENCE_MAPS)
+    ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS, INSEASON_NDVI,
+    INSEASON_EVI)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
-    CoverageSearchThread, create_map)
+    CoverageSearchThread, create_map, create_difference_map)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
-    add_layer_to_canvas, reproject)
+    add_layer_to_canvas, reproject, item_data_from_combo)
 from geosys.utilities.resources import get_ui_class
-from geosys.utilities.settings import setting
+from geosys.utilities.settings import setting, set_setting
 
 FORM_CLASS = get_ui_class('geosys_dockwidget_base.ui')
 
@@ -90,8 +94,14 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.yield_maximum = None
         self.organic_average = None
         self.samz_zone = None
-        self.raster_output = False
-        self.vector_output = False
+        self.output_map_format = None
+        self.map_creation_parameters_settings = {
+            YIELD_AVERAGE: self.yield_average_form,
+            YIELD_MINIMUM: self.yield_minimum_form,
+            YIELD_MAXIMUM: self.yield_maximum_form,
+            ORGANIC_AVERAGE: self.organic_average_form,
+            SAMZ_ZONE: self.samz_zone_form
+        }
 
         self.selected_coverage_results = []
 
@@ -113,32 +123,50 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Populate layer combo box
         self.connect_layer_listener()
 
+        # Set checkbox label based on MAX_FEATURE_NUMBERS constant
+        if MAX_FEATURE_NUMBERS:
+            label_format = self.tr('Selected features only (max {} features)')
+            self.selected_features_checkbox.setText(
+                label_format.format(MAX_FEATURE_NUMBERS))
+
         # Populate map product combo box
         self.populate_map_products()
 
         # Populate sensor combo box
         self.populate_sensors()
 
+        # Set default date value
+        self.populate_date()
+
         # Set default behaviour
         # self.help_push_button.setEnabled(False)
         self.back_push_button.setEnabled(False)
         self.next_push_button.setEnabled(True)
+        self.difference_map_push_button.setVisible(False)
+        self.samz_zone_form.setValue(DEFAULT_ZONE_COUNT)
         self.stacked_widget.setCurrentIndex(self.current_stacked_widget_index)
         self.set_next_button_text(self.current_stacked_widget_index)
 
     def populate_sensors(self):
         """Obtain a list of sensors from Bridge API definition."""
-        for sensor in SENSORS:
+        for sensor in [ALL_SENSORS]+SENSORS:
             add_ordered_combo_item(
                 self.sensor_combo_box, sensor['name'], sensor['key'])
 
     def populate_map_products(self):
         """Obtain a list of map products from Bridge API definition."""
-        for map_product in INSEASON_MAP_PRODUCTS:
+        for map_product in ARCHIVE_MAP_PRODUCTS:
             add_ordered_combo_item(
                 self.map_product_combo_box,
                 map_product['name'],
                 map_product['key'])
+
+    def populate_date(self):
+        """Set default value of start and end date to last week."""
+        current_date = QDate.currentDate()
+        last_week_date = current_date.addDays(-7)
+        self.start_date_edit.setDate(last_week_date)
+        self.end_date_edit.setDate(current_date)
 
     def show_help(self):
         """Open the help dialog."""
@@ -156,8 +184,20 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.current_stacked_widget_index == 0:
             self.back_push_button.setEnabled(False)
 
+        self.handle_difference_map_button()
+
     def show_next_page(self):
         """Open next page of stacked widget."""
+        # If current page is coverage parameters page, run coverage searcher.
+        if self.current_stacked_widget_index == 0:
+            self.next_push_button.setEnabled(False)
+            self.start_coverage_search()
+
+        # If current page is coverage results page, prepare map creation
+        # parameters.
+        if self.current_stacked_widget_index == 1:
+            self.restore_parameter_values_from_setting()
+
         # If current page is map creation parameters page, create map without
         # increasing index.
         if self.current_stacked_widget_index == 2:
@@ -170,11 +210,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 self.current_stacked_widget_index)
             self.back_push_button.setEnabled(True)
 
-        # If previous page is coverage parameters page and current page is
-        # coverage results page, run coverage searcher.
-        if self.current_stacked_widget_index == 1:
-            self.next_push_button.setEnabled(False)
-            self.start_coverage_search()
+        self.handle_difference_map_button()
 
     def set_next_button_text(self, index):
         """Programmatically changed next button text based on current page."""
@@ -185,12 +221,27 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         }
         self.next_push_button.setText(text_rule[index])
 
+    def handle_difference_map_button(self):
+        """Handle difference map button behavior."""
+        if self.current_stacked_widget_index == 2:
+            # show difference map button only if 2 items are being selected
+            if len(self.selected_coverage_results) == 2 and (
+                    self.map_product in [
+                        INSEASON_NDVI['key'], INSEASON_EVI['key']]):
+                self.difference_map_push_button.setVisible(True)
+            else:
+                self.difference_map_push_button.setVisible(False)
+        else:
+            self.difference_map_push_button.setVisible(False)
+
     def update_selection_data(self):
         """Update current selection data."""
         # update data based on selected coverage results
         self.selected_coverage_results = []
         for item in self.coverage_result_list.selectedItems():
             self.selected_coverage_results.append(item.data(Qt.UserRole))
+
+        self.handle_difference_map_button()
 
     def get_layers(self, *args):
         """Obtain a list of layers currently loaded in QGIS.
@@ -240,6 +291,59 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.connect_layer_listener()
         self.get_layers_lock = False
 
+    def get_map_format(self):
+        """Get selected map format from the radio button."""
+        widget_data = [
+            {
+                'widget': self.png_radio_button,
+                'data': PNG
+            },
+            {
+                'widget': self.tiff_radio_button,
+                'data': ZIPPED_TIFF
+            },
+            {
+                'widget': self.shp_radio_button,
+                'data': ZIPPED_SHP
+            },
+            {
+                'widget': self.kmz_radio_button,
+                'data': KMZ
+            },
+        ]
+        for wd in widget_data:
+            if wd['widget'].isChecked():
+                return wd['data']
+
+    def load_layer(self, base_path):
+        """Load layer tp QGIS map canvas.
+
+        :param base_path: Base path of the layer.
+        :type base_path: str
+        """
+        if self.output_map_format in VALID_QGIS_FORMAT:
+            filename = os.path.basename(base_path)
+            if self.output_map_format in VECTOR_FORMAT:
+                map_layer = QgsVectorLayer(
+                    base_path + SHP_EXT,
+                    filename)
+            else:
+                map_layer = QgsRasterLayer(
+                    base_path + TIFF_EXT,
+                    filename)
+            add_layer_to_canvas(map_layer, filename)
+
+    def save_parameter_values_as_setting(self):
+        """Save parameter values as qsettings."""
+        for key, form in self.map_creation_parameters_settings.items():
+            set_setting(key, form.value(), self.settings)
+
+    def restore_parameter_values_from_setting(self):
+        """Restore parameter values from qsettings."""
+        for key, form in self.map_creation_parameters_settings.items():
+            value = setting(key, expected_type=int, qsettings=self.settings)
+            value and form.setValue(value)
+
     def validate_map_creation_parameters(self):
         """Check current state of map creation parameters."""
         self.yield_average = self.yield_average_form.value()
@@ -247,8 +351,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.yield_maximum = self.yield_maximum_form.value()
         self.organic_average = self.organic_average_form.value()
         self.samz_zone = self.samz_zone_form.value()
-        self.raster_output = self.raster_radio_button.isChecked()
-        self.vector_output = not self.raster_output
+        self.output_map_format = self.get_map_format()
 
         if len(self.selected_coverage_results) == 0:
             return False, 'Please select at least one coverage result.'
@@ -259,7 +362,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """Check current state of coverage parameters."""
         # Get geometry in WKT format
         layer = layer_from_combo(self.geometry_combo_box)
-        use_selected_features = layer.selectedFeatureCount() > 0
+        if not layer:
+            # layer is not selected
+            return False, 'Layer is not selected.'
+        use_selected_features = (
+            self.selected_features_checkbox.isChecked() and (
+                layer.selectedFeatureCount() > 0))
 
         # Reproject layer to EPSG:4326
         if layer.crs().authid() != 'EPSG:4326':
@@ -277,6 +385,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # TODO use Collect Geometries processing algorithm
         geom = None
         for index, feature in enumerate(feature_iterator):
+            if index >= MAX_FEATURE_NUMBERS:
+                break
             if not feature.hasGeometry():
                 continue
             if not geom:
@@ -291,10 +401,18 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             return False, 'Geometry is not valid.'
 
         # Get map product
-        self.map_product = self.map_product_combo_box.currentText()
+        self.map_product = item_data_from_combo(self.map_product_combo_box)
+        if not self.map_product:
+            # map product is not valid
+            return False, 'Map product data is not valid.'
 
         # Get the sensor type
-        self.sensor_type = self.sensor_combo_box.currentText()
+        self.sensor_type = item_data_from_combo(self.sensor_combo_box)
+        if not self.sensor_type:
+            # sensor type is not valid
+            return False, 'Sensor data is not valid.'
+        if self.sensor_type == ALL_SENSORS['key']:
+            self.sensor_type = None
 
         # Get the start and end date
         self.start_date = self.start_date_edit.date().toString('yyyy-MM-dd')
@@ -302,11 +420,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         return True, ''
 
-    def _start_map_creation(self, map_specifications):
+    def _start_map_creation(self, map_specification):
         """Actual method to run the map creation task.
 
-        :param map_specifications: Map specification.
-        :type map_specifications: dict
+        :param map_specification: Map specification.
+        :type map_specification: dict
         """
         # Place the requested map specification on the top level of
         # coverage result dict. coverage_result['maps'][0] is the requested
@@ -337,17 +455,24 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         #           }
         #       ]
         #   }
-        map_specifications.update(map_specifications['maps'][0])
+        map_specification.update(map_specification['maps'][0])
 
-        if map_specifications:
+        if map_specification:
             filename = '{}_{}_{}'.format(
-                map_specifications['type'],
-                map_specifications['seasonField']['id'],
-                map_specifications['image']['date']
+                map_specification['type'],
+                map_specification['seasonField']['id'],
+                map_specification['image']['date']
             )
+            data = {
+                YIELD_AVERAGE: self.yield_average,
+                YIELD_MINIMUM: self.yield_minimum,
+                YIELD_MAXIMUM: self.yield_maximum,
+                ORGANIC_AVERAGE: self.organic_average,
+                SAMZ_ZONE: self.samz_zone
+            }
             is_success, message = create_map(
-                map_specifications, self.output_directory, filename,
-                vector_format=self.vector_output)
+                map_specification, self.output_directory, filename,
+                data=data, output_map_format=self.output_map_format)
             if not is_success:
                 QMessageBox.critical(
                     self,
@@ -356,15 +481,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 return
 
             # Add map to qgis canvas
-            if self.vector_output:
-                map_layer = QgsVectorLayer(
-                    os.path.join(self.output_directory, filename + SHP_EXT),
-                    filename)
-            else:
-                map_layer = QgsRasterLayer(
-                    os.path.join(self.output_directory, filename + TIFF_EXT),
-                    filename)
-            add_layer_to_canvas(map_layer, filename)
+            self.load_layer(os.path.join(self.output_directory, filename))
 
     def start_map_creation(self):
         """Map creation starts here."""
@@ -380,6 +497,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         message))
                 return
 
+            # store parameters value as qsettings
+            self.save_parameter_values_as_setting()
+
             # start map creation job
             map_product_definition = get_definition(self.map_product)
             if map_product_definition in DIFFERENCE_MAPS:
@@ -390,7 +510,47 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 for coverage_result in self.selected_coverage_results:
                     self._start_map_creation(coverage_result)
         except:
-            pass
+            raise
+        finally:
+            QApplication.restoreOverrideCursor()
+
+    def start_difference_map_creation(self):
+        """Difference Map creation starts here."""
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
+            # Validate map creation parameters
+            self.validate_map_creation_parameters()
+
+            # Construct filename
+            map_specifications = self.selected_coverage_results
+            for map_specification in map_specifications:
+                map_specification.update(map_specification['maps'][0])
+            map_type_definition = get_definition(map_specifications[0]['type'])
+            difference_map_definition = map_type_definition['difference_map']
+            filename = '{}_{}_{}_{}'.format(
+                difference_map_definition['key'],
+                map_specifications[0]['seasonField']['id'],
+                map_specifications[0]['image']['date'],
+                map_specifications[1]['image']['date']
+            )
+
+            # Run difference map creation
+            is_success, message = create_difference_map(
+                map_specifications, self.output_directory,
+                filename, output_map_format=self.output_map_format)
+
+            if not is_success:
+                QMessageBox.critical(
+                    self,
+                    'Map Creation Status',
+                    'Error creating map. {}'.format(message))
+                return
+
+            # Add map to qgis canvas
+            self.load_layer(os.path.join(self.output_directory, filename))
+        except:
+            raise
         finally:
             QApplication.restoreOverrideCursor()
 
@@ -565,6 +725,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.help_push_button.clicked.connect(self.show_help)
         self.back_push_button.clicked.connect(self.show_previous_page)
         self.next_push_button.clicked.connect(self.show_next_page)
+        self.difference_map_push_button.clicked.connect(
+            self.start_difference_map_creation)
 
         # Stacked widget connector
         self.stacked_widget.currentChanged.connect(self.set_next_button_text)
