@@ -2,7 +2,8 @@
 """Help text for the dock widget."""
 
 from geosys import messaging as m
-from geosys.bridge_api.definitions import SENSORS, BASIC_INSEASON_MAP_PRODUCTS
+from geosys.bridge_api.default import MAX_FEATURE_NUMBERS
+from geosys.bridge_api.definitions import SENSORS, ARCHIVE_MAP_PRODUCTS
 from geosys.messaging import styles
 from geosys.utilities.i18n import tr
 
@@ -72,8 +73,9 @@ def content():
         'the area or areas you are interested in for retrieving '
         'the sensor data. If you have a selection on that layer, '
         'only the selected polygons will be used. If you have more than '
-        'XXX polygons, only the first XXX polygons will be processed.'
-    ))
+        '{max_features} polygons, only the first {max_features} polygons '
+        'will be processed.'
+    ).format(max_features=MAX_FEATURE_NUMBERS))
     message.add(paragraph)
 
     paragraph = m.Paragraph(
@@ -84,7 +86,7 @@ def content():
     message.add(paragraph)
 
     bullets = m.BulletedList()
-    for map_product in BASIC_INSEASON_MAP_PRODUCTS:
+    for map_product in ARCHIVE_MAP_PRODUCTS:
         bullets.add(m.Text(
             '{} - {}'.format(
                 m.ImportantText(tr(

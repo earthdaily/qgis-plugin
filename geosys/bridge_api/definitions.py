@@ -85,7 +85,7 @@ NDVI = {
     'key': 'NDVI',
     'name': 'NDVI',
     'map_family': base_reference_map,
-    'description': ''
+    'description': 'Provides the Normalized Difference Vegetation Index.'
 }
 INSEASON_NDVI = {
     'key': 'INSEASON_NDVI',
@@ -99,7 +99,8 @@ INSEASONPARTIAL_NDVI = {
     'key': 'INSEASONPARTIAL_NDVI',
     'name': 'INSEASONPARTIAL_NDVI',
     'map_family': base_reference_map,
-    'description': ''
+    'description': 'Provides the partial Normalized Difference '
+                   'Vegetation Index.'
 }
 INSEASONFIELD_AVERAGE_NDVI = {
     'key': 'INSEASONFIELD_AVERAGE_NDVI',
@@ -133,7 +134,7 @@ INSEASONPARTIAL_EVI = {
     'key': 'INSEASONPARTIAL_EVI',
     'name': 'INSEASONPARTIAL_EVI',
     'map_family': base_reference_map,
-    'description': ''
+    'description': 'Provides the partial Enhanced Vegetation Index.'
 }
 
 # CVI (Chlorophyll Vegetation Index)
@@ -201,7 +202,7 @@ OM = {
     'key': 'OM',
     'name': 'OM',
     'map_family': organic_matter_map,
-    'description': ''
+    'description': 'Provides the Organic Matter map.'
 }
 
 # YGM (Yield Goal Map)
@@ -209,7 +210,7 @@ YGM = {
     'key': 'YGM',
     'name': 'YGM',
     'map_family': yield_goal_map,
-    'description': ''
+    'description': 'Provides the Yield Goal Map.'
 }
 
 # YVM (Yield Variability Map)
@@ -217,7 +218,7 @@ YVM = {
     'key': 'YPM',
     'name': 'YPM',
     'map_family': yield_variability_map,
-    'description': ''
+    'description': 'Provides the Yield Variability Map.'
 }
 
 # SaMZ
@@ -225,7 +226,7 @@ SAMZ = {
     'key': 'SAMZ',
     'name': 'SAMZ',
     'map_family': management_zones_map,
-    'description': ''
+    'description': 'Provides the management zones map.'
 }
 
 # Color Composition
@@ -233,7 +234,7 @@ COLOR_COMPOSITION = {
     'key': 'COLORCOMPOSITION',
     'name': 'COLORCOMPOSITION',
     'map_family': base_reference_map,
-    'description': ''
+    'description': 'Provides the color composition map.'
 }
 
 # Topology
@@ -241,19 +242,19 @@ ELEVATION = {
     'key': 'ELEVATION',
     'name': 'ELEVATION',
     'map_family': topology_map,
-    'description': ''
+    'description': 'Provides the elevation map.'
 }
 EROSION = {
     'key': 'EROSION',
     'name': 'EROSION',
     'map_family': topology_map,
-    'description': ''
+    'description': 'Provides the erosion map.'
 }
 SLOPE = {
     'key': 'SLOPE',
     'name': 'SLOPE',
     'map_family': topology_map,
-    'description': ''
+    'description': 'Provides the slope map.'
 }
 
 ARCHIVE_MAP_PRODUCTS = [
