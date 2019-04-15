@@ -453,11 +453,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         #           }
         #       ]
         #   }
-        map_specification.update(map_specification['maps'][0])
-
         if map_specification:
             filename = '{}_{}_{}'.format(
-                map_specification['type'],
+                map_specification['maps'][0]['type'],
                 map_specification['seasonField']['id'],
                 map_specification['image']['date']
             )
@@ -522,9 +520,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             # Construct filename
             map_specifications = self.selected_coverage_results
-            for map_specification in map_specifications:
-                map_specification.update(map_specification['maps'][0])
-            map_type_definition = get_definition(map_specifications[0]['type'])
+            map_type_definition = get_definition(
+                map_specifications[0]['maps'][0]['type'])
             difference_map_definition = map_type_definition['difference_map']
             filename = '{}_{}_{}_{}'.format(
                 difference_map_definition['key'],
