@@ -40,12 +40,14 @@ from qgis.core import (
     QgsProcessingParameterNumber)
 
 from geosys.bridge_api.default import (
-    ZIPPED_TIFF_KEY, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT)
+    ZIPPED_TIFF_KEY, TIFF_EXT, MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, MAP_LIMIT,
+    ZIPPED_TIFF, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM, ORGANIC_AVERAGE,
+    SAMZ_ZONE)
 from geosys.bridge_api.definitions import ARCHIVE_MAP_PRODUCTS, SENSORS, \
     ALL_SENSORS
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.ui.widgets.geosys_coverage_downloader import (
-    credentials_parameters_from_settings)
+    credentials_parameters_from_settings, create_map)
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.gui_utilities import reproject
 from geosys.utilities.qgis_settings import QGISSettings
@@ -247,8 +249,6 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         self.output_destination = self.parameterAsOutputLayer(
             parameters, self.OUTPUT, context)
 
-        message = self.tr('Please check your output directory for the result.')
-
         filters = {
             MAPS_TYPE: map_product,
             IMAGE_DATE: '$lte:{}'.format(coverage_date),
@@ -284,7 +284,7 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
                         index+1, len(results)))
                 feedback.setProgressText(progress_text)
 
-                downloaded_path = self.download_map(result)
+                downloaded_path, message = self.download_map(result)
 
                 feedback.pushInfo(downloaded_path)
                 feedback.setProgress(int((index+1) * total))
@@ -335,17 +335,44 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
             *credentials_parameters_from_settings(),
             proxies=QGISSettings.get_qgis_proxy())
 
-        map_urls = coverage_map_json['maps'][0]['_links']
-
         # Get the requested map format. For now, use Raster (.tiff)
         map_format = ZIPPED_TIFF_KEY
         map_extension = TIFF_EXT
 
-        # Download zipped map and extract it in requested format.
-        zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
-        url = map_urls[map_format]
+        map_urls = coverage_map_json['maps'][0]['_links']
+        url = map_urls.get(map_format)
 
-        fetch_data(url, zip_path, headers=bridge_api.headers)
-        extract_zip(zip_path, self.output_destination)
+        message = self.tr(
+            'Please check your output directory for the result.')
 
-        return self.output_destination
+        if url:
+            # Download zipped map and extract it in requested format.
+            zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
+
+            fetch_data(url, zip_path, headers=bridge_api.headers)
+            extract_zip(zip_path, self.output_destination)
+        else:
+            # download map using get field map request
+            settings = QSettings()
+            data = {
+                YIELD_AVERAGE: setting(
+                    YIELD_AVERAGE, expected_type=int, qsettings=settings),
+                YIELD_MINIMUM: setting(
+                    YIELD_MINIMUM, expected_type=int, qsettings=settings),
+                YIELD_MAXIMUM: setting(
+                    YIELD_MAXIMUM, expected_type=int, qsettings=settings),
+                ORGANIC_AVERAGE: setting(
+                    ORGANIC_AVERAGE,
+                    expected_type=int, qsettings=settings),
+                SAMZ_ZONE: setting(
+                    SAMZ_ZONE, expected_type=int, qsettings=settings),
+            }
+            is_success, message = create_map(
+                coverage_map_json,
+                os.path.dirname(self.output_destination),
+                os.path.basename(self.output_destination),
+                ZIPPED_TIFF, data)
+            if not is_success:
+                message = self.tr('Error creating map. {}').format(message)
+
+        return self.output_destination, message

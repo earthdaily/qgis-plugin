@@ -217,6 +217,7 @@ def create_map(
     :type params: dict
     """""
     # Construct map creation parameters
+    map_specification.update(map_specification['maps'][0])
     map_type_key = map_specification['type']
     season_field_id = map_specification['seasonField']['id']
     image_date = map_specification['image']['date']
@@ -233,6 +234,7 @@ def create_map(
 
     return download_field_map(
         field_map_json=field_map_json,
+        map_type_key=map_type_key,
         destination_base_path=destination_base_path,
         output_map_format=output_map_format,
         headers=bridge_api.headers)
@@ -296,6 +298,8 @@ def create_difference_map(
     """""
     # Difference map only created from 2 map specifications.
     # Map type and season field id should always be the same between two map.
+    for map_specification in map_specifications:
+        map_specification.update(map_specification['maps'][0])
     map_type_key = map_specifications[0]['type']
     season_field_id = map_specifications[0]['seasonField']['id']
     earliest_image_date = map_specifications[0]['image']['date']
@@ -321,17 +325,22 @@ def create_difference_map(
 
     return download_field_map(
         field_map_json=difference_map_json,
+        map_type_key=map_type_key,
         destination_base_path=destination_base_path,
         output_map_format=output_map_format,
         headers=bridge_api.headers)
 
 
 def download_field_map(
-        field_map_json, destination_base_path, output_map_format, headers):
+        field_map_json, map_type_key, destination_base_path,
+        output_map_format, headers):
     """Download field map from requested field map json.
 
     :param field_map_json: JSON response from Bridge API field map request.
     :type field_map_json: dict
+
+    :param map_type_key: Map type.
+    :type map_type_key: str
 
     :param destination_base_path: The destination base path where the shp
         will be written to.
@@ -343,10 +352,10 @@ def download_field_map(
     :param headers: Extra headers containing Bridge API authorization.
     :type headers: str
     """
-    message = 'Field map successfully created.'
+    message = '{} map successfully created.'.format(map_type_key)
     if not field_map_json.get('seasonField'):
         # field map request error
-        message = 'Field map request failed.'
+        message = '{} map request failed.'.format(map_type_key)
         if field_map_json.get('message'):
             message = '{} {}'.format(message, field_map_json['message'])
         return False, message
