@@ -45,6 +45,7 @@ from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS, INSEASON_NDVI,
     INSEASON_EVI)
 from geosys.bridge_api.utilities import get_definition
+from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
     CoverageSearchThread, create_map, create_difference_map)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
@@ -138,7 +139,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.populate_date()
 
         # Set default behaviour
-        self.help_push_button.setEnabled(False)
+        # self.help_push_button.setEnabled(False)
         self.back_push_button.setEnabled(False)
         self.next_push_button.setEnabled(True)
         self.difference_map_push_button.setVisible(False)
@@ -170,7 +171,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def show_help(self):
         """Open the help dialog."""
         # noinspection PyTypeChecker
-        pass  # not implemented yet
+        dialog = HelpDialog(self)
+        dialog.show()
 
     def show_previous_page(self):
         """Open previous page of stacked widget."""

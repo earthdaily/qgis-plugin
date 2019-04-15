@@ -148,7 +148,7 @@ class CoverageSearchThread(QThread):
             self.search_finished.emit()
         except Exception:
             error_text = (self.tr(
-                "Error of prFocessing!\n{0}: {1}")).format(
+                "Error of processing!\n{0}: {1}")).format(
                 unicode(sys.exc_info()[0].__name__), unicode(
                     sys.exc_info()[1]))
             self.error_occurred.emit(error_text)

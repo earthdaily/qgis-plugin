@@ -15,7 +15,7 @@ __license__ = "GPL version 3"
 __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
-LOGGER = logging.getLogger('GEOSYS Plugin')
+LOGGER = logging.getLogger('geosys')
 
 
 def fetch_data(url, output_path, headers=None, progress_dialog=None):

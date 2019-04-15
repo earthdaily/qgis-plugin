@@ -5,10 +5,12 @@ import os
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QMessageBox, QFileDialog
+from PyQt5.QtWidgets import QMessageBox, QFileDialog, QDialogButtonBox
 from qgis.PyQt.QtCore import QSettings
 
 from geosys.bridge_api_wrapper import BridgeAPI
+from geosys.ui.help.options_help import options_help
+from geosys.ui.help.help_dialog import HelpDialog
 from geosys.utilities.qgis_settings import QGISSettings
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import set_setting, setting
@@ -75,6 +77,9 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.connect_button.clicked.connect(self.request_token)
         self.output_directory_chooser.clicked.connect(
             self.open_output_directory_dialog)
+
+        help_button = self.button_box.button(QDialogButtonBox.Help)
+        help_button.clicked.connect(self.show_help)
 
     def username(self):
         """Get current value of username."""
@@ -291,6 +296,12 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         # Save date settings
         for key, date_edit in list(self.date_settings.items()):
             self.save_date_setting(key, date_edit)
+
+    def show_help(self):
+        """Open the help dialog."""
+        # noinspection PyTypeChecker
+        dialog = HelpDialog(self, options_help())
+        dialog.show()
 
     def accept(self):
         """Method invoked when OK button is clicked."""

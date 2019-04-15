@@ -506,7 +506,7 @@
       <item>
        <widget class="QPushButton" name="help_push_button">
         <property name="text">
-         <string>Show Help</string>
+         <string>Help</string>
         </property>
         <property name="autoDefault">
          <bool>false</bool>
