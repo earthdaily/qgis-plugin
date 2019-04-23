@@ -76,6 +76,7 @@ PNG_EXT = '.png'
 TIFF_EXT = '.tif'
 SHP_EXT = '.shp'
 KMZ_EXT = '.kmz'
+LEGEND_EXT = '.legend.png'
 
 # API key
 PNG_KEY = 'image:image/png'
@@ -105,6 +106,10 @@ ZIPPED_SHP = {
 KMZ = {
     'api_key': KMZ_KEY,
     'extension': KMZ_EXT
+}
+LEGEND = {
+    'api_key': LEGEND_KEY,
+    'extension': LEGEND_EXT
 }
 
 ZIPPED_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP]

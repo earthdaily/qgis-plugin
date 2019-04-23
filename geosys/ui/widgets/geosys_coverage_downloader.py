@@ -8,7 +8,7 @@ import tempfile
 from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings, QDate
 
 from geosys.bridge_api.default import (
-    MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PGW)
+    MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PGW, LEGEND)
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.qgis_settings import QGISSettings
@@ -384,11 +384,13 @@ def download_field_map(
                     destination_base_path + output_map_format['extension'])
             fetch_data(url, destination_filename, headers=headers)
             if output_map_format == PNG:
-                # download pgw world-file for geo-referencing PNG file
-                url = field_map_json['_links'][PGW['api_key']]
-                destination_filename = (
-                        destination_base_path + PGW['extension'])
-                fetch_data(url, destination_filename, headers=headers)
+                # Download associated legend and world-file for geo-referencing
+                # the PNG file.
+                for item in [PGW, LEGEND]:
+                    url = field_map_json['_links'][item['api_key']]
+                    destination_filename = '{}{}'.format(
+                        destination_base_path, item['extension'])
+                    fetch_data(url, destination_filename, headers=headers)
     except:
         # zip extraction error
         message = 'Failed to download file.'
