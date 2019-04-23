@@ -71,6 +71,7 @@ SAMZ_ZONE = 'zoneCount'
 # map output format based on Bridge API
 
 # file extension
+PGW_EXT = '.pgw'
 PNG_EXT = '.png'
 TIFF_EXT = '.tif'
 SHP_EXT = '.shp'
@@ -83,7 +84,12 @@ ZIPPED_SHP_KEY = 'image:application/shp+zip'
 KMZ_KEY = 'image:application/vnd.google-earth.kmz'
 THUMBNAIL_KEY = 'thumbnail'
 LEGEND_KEY = 'legend'
+WORLD_FILE_KEY = 'worldFile'
 
+PGW = {
+    'api_key': WORLD_FILE_KEY,
+    'extension': PGW_EXT
+}
 PNG = {
     'api_key': PNG_KEY,
     'extension': PNG_EXT
@@ -104,4 +110,4 @@ KMZ = {
 ZIPPED_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP]
 RASTER_FORMAT = [ZIPPED_TIFF, PNG]
 VECTOR_FORMAT = [ZIPPED_SHP, KMZ]
-VALID_QGIS_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP]
+VALID_QGIS_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP, KMZ, PNG]

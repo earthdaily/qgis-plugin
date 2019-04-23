@@ -325,11 +325,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             filename = os.path.basename(base_path)
             if self.output_map_format in VECTOR_FORMAT:
                 map_layer = QgsVectorLayer(
-                    base_path + SHP_EXT,
+                    base_path + self.output_map_format['extension'],
                     filename)
             else:
                 map_layer = QgsRasterLayer(
-                    base_path + TIFF_EXT,
+                    base_path + self.output_map_format['extension'],
                     filename)
             add_layer_to_canvas(map_layer, filename)
 
