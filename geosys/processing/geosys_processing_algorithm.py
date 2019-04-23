@@ -120,7 +120,7 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'geosys_create_coverage_map'
+        return 'geosys_get_field_level_map'
 
     def displayName(self):
         """Display name of the algorithm.
@@ -128,7 +128,7 @@ class MapCoverageDownloader(QgsProcessingAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Create coverage map')
+        return self.tr('Get field level map')
 
     def initAlgorithm(self, config=None):
         """Algorithm initialisation.
