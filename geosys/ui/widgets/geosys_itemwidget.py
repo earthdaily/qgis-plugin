@@ -107,6 +107,3 @@ class CoverageSearchResultItemWidget(QWidget):
 
         self.coverage_map_json = coverage_map_json
         self.thumbnail_ba = thumbnail_ba
-
-    def mouseDoubleClickEvent(self, event):
-        self.addToMap()
