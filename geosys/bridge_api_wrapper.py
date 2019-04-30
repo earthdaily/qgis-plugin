@@ -4,7 +4,7 @@
 from geosys.bridge_api.api_abstract import ApiClient
 from geosys.bridge_api.connection import ConnectionAPIClient
 from geosys.bridge_api.default import IDENTITY_URLS, BRIDGE_URLS, ALL_REGIONS
-from geosys.bridge_api.definitions import CROPS
+from geosys.bridge_api.definitions import CROPS, SAMZ
 from geosys.bridge_api.field_level_maps import FieldLevelMapsAPIClient
 from geosys.bridge_api.utilities import get_definition
 
@@ -202,6 +202,31 @@ class BridgeAPI(ApiClient):
 
         return coverages_json
 
+    def _get_field_map(self, map_type_key, request_data, params):
+        """Actual method to call field map creation request.
+
+        :param map_type_key: Map type key.
+        :type map_type_key: str
+
+        :param request_data: Request data.
+        :type request_data: dict
+
+        :param params: Request parameters.
+        :type params: dict
+
+        :return: JSON response.
+            Map data specification based on given criteria.
+        :rtype: dict
+        """
+        bridge_server = (BRIDGE_URLS[self.region]['test']
+                         if self.use_testing_service
+                         else BRIDGE_URLS[self.region]['prod'])
+        api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
+        field_map_json = api_client.get_field_map(
+            map_type_key, request_data, params)
+
+        return field_map_json
+
     def get_field_map(
             self, map_type_key, season_field_id, image_date, **kwargs):
         """Get requested field map.
@@ -235,14 +260,7 @@ class BridgeAPI(ApiClient):
         # Get request parameters
         params = kwargs.get('params')
 
-        bridge_server = (BRIDGE_URLS[self.region]['test']
-                         if self.use_testing_service
-                         else BRIDGE_URLS[self.region]['prod'])
-        api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
-        field_map_json = api_client.get_field_map(
-            map_type_key, request_data, params)
-
-        return field_map_json
+        return self._get_field_map(map_type_key, request_data, params)
 
     def get_difference_map(
             self, map_type_key, season_field_id,
@@ -289,11 +307,38 @@ class BridgeAPI(ApiClient):
         map_type_definition = get_definition(map_type_key)
         difference_map_definition = map_type_definition['difference_map']
 
-        bridge_server = (BRIDGE_URLS[self.region]['test']
-                         if self.use_testing_service
-                         else BRIDGE_URLS[self.region]['prod'])
-        api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
-        field_map_json = api_client.get_field_map(
+        return self._get_field_map(
             difference_map_definition['key'], request_data, params)
 
-        return field_map_json
+    def get_samz_map(self, season_field_id, list_of_image_date=None, **kwargs):
+        """Get requested SAMZ map.
+
+        :param season_field_id: ID of the season field.
+        :param season_field_id: str
+
+        :param list_of_image_date: List of image date indicating the maps
+            which are going to be compiled.
+        :type list_of_image_date: list
+
+        :param kwargs: Other map creation and request parameters.
+
+        :return: JSON response.
+            Map data specification based on given criteria.
+        :rtype: dict
+        """
+        list_of_image_date = list_of_image_date if list_of_image_date else []
+        # Construct map creation parameters
+        request_data = {
+            "SeasonField": {
+                "Id": season_field_id
+            },
+            "Images": [
+                {"Date": image_date} for image_date in list_of_image_date
+            ]
+        }
+        request_data.update(kwargs)
+
+        # Get request parameters
+        params = kwargs.get('params')
+
+        return self._get_field_map(SAMZ['key'], request_data, params)

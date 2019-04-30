@@ -120,6 +120,32 @@ class BridgeAPIWrapperTest(unittest.TestCase):
         )
         self.assertTrue('seasonField' in field_map)
 
+    def test_get_samz_map(self):
+        """Test we can successfully get the SAMZ map."""
+        season_field_id = 'zgzmbrm'
+        params = {'zoneCount': 5}
+
+        bridge_api = BridgeAPI(
+            username=self.username,
+            password=self.password,
+            region='na',
+            client_id='mapproduct_api',
+            client_secret='mapproduct_api.secret',
+            use_testing_service=True)
+
+        # test SAMZ auto
+        field_map = bridge_api.get_samz_map(
+            season_field_id, params=params)
+        self.assertTrue('seasonField' in field_map)
+
+        # test SAMZ custom
+        list_of_image_date = ['2018-10-13', '2018-10-18']
+        field_map = bridge_api.get_samz_map(
+            season_field_id, list_of_image_date, params=params)
+        # Currently the API returns an error when we try to create
+        # custom SAMZ map.
+        self.assertFalse('seasonField' in field_map)
+
     def test_get_content(self):
         """Test we can successfully get the content of png response."""
         thumbnail_url = (
