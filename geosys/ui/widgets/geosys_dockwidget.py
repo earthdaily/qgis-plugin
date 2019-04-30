@@ -38,16 +38,16 @@ from qgis.core import (
 from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.default import (
-    SHP_EXT, TIFF_EXT, VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
+    VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
     ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
 from geosys.bridge_api.definitions import (
-    ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, DIFFERENCE_MAPS, INSEASON_NDVI,
-    INSEASON_EVI)
+    ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
+    SAMZ)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
-    CoverageSearchThread, create_map, create_difference_map)
+    CoverageSearchThread, create_map, create_difference_map, create_samz_map)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
@@ -420,57 +420,40 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         return True, ''
 
-    def _start_map_creation(self, map_specification):
+    def _start_map_creation(self, map_specifications):
         """Actual method to run the map creation task.
 
-        :param map_specification: Map specification.
-        :type map_specification: dict
+        :param map_specifications: List of map specification.
+        :type map_specifications: list
         """
-        # Place the requested map specification on the top level of
-        # coverage result dict. coverage_result['maps'][0] is the requested
-        # map specification.
-        # example:
-        #   before = {
-        #       'seasonField': {...},
-        #       'image': {...},
-        #       'maps': [
-        #           {
-        #               'type': 'INSEASON_NDVI',
-        #               '_links': {...}
-        #           }
-        #       ],
-        #       'coverageType': 'CLEAR'
-        #   }
-        #
-        #   after = {
-        #       'seasonField': {...},
-        #       'image': {...},
-        #       'type': 'INSEASON_NDVI',
-        #       '_links': {...},
-        #       'coverageType': 'CLEAR',
-        #       'maps': [
-        #           {
-        #               'type': 'INSEASON_NDVI',
-        #               '_links': {...}
-        #           }
-        #       ]
-        #   }
-        if map_specification:
+        map_product_definition = get_definition(self.map_product)
+        data = {
+            YIELD_AVERAGE: self.yield_average,
+            YIELD_MINIMUM: self.yield_minimum,
+            YIELD_MAXIMUM: self.yield_maximum,
+            ORGANIC_AVERAGE: self.organic_average,
+            SAMZ_ZONE: self.samz_zone
+        }
+        if map_product_definition == SAMZ:
+            image_dates = []
+            samz_mode = 'auto'
+            if map_specifications:
+                season_field_id = map_specifications[0]['seasonField']['id']
+                samz_mode = 'custom'
+                for map_specification in map_specifications:
+                    image_dates.append(map_specification['image']['date'])
+            else:
+                # take season field id from the first item in coverage results
+                item = self.coverage_result_list.item(0)
+                item_data = item.data(Qt.UserRole)
+                season_field_id = item_data['seasonField']['id']
+
             filename = '{}_{}_{}'.format(
-                map_specification['maps'][0]['type'],
-                map_specification['seasonField']['id'],
-                map_specification['image']['date']
-            )
-            data = {
-                YIELD_AVERAGE: self.yield_average,
-                YIELD_MINIMUM: self.yield_minimum,
-                YIELD_MAXIMUM: self.yield_maximum,
-                ORGANIC_AVERAGE: self.organic_average,
-                SAMZ_ZONE: self.samz_zone
-            }
-            is_success, message = create_map(
-                map_specification, self.output_directory, filename,
-                data=data, output_map_format=self.output_map_format)
+                SAMZ['key'], season_field_id, samz_mode)
+
+            is_success, message = create_samz_map(
+                season_field_id, image_dates, self.output_directory, filename,
+                output_map_format=self.output_map_format, data=data)
             if not is_success:
                 QMessageBox.critical(
                     self,
@@ -480,6 +463,25 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             # Add map to qgis canvas
             self.load_layer(os.path.join(self.output_directory, filename))
+        else:
+            for map_specification in map_specifications:
+                filename = '{}_{}_{}'.format(
+                    map_specification['maps'][0]['type'],
+                    map_specification['seasonField']['id'],
+                    map_specification['image']['date']
+                )
+                is_success, message = create_map(
+                    map_specification, self.output_directory, filename,
+                    data=data, output_map_format=self.output_map_format)
+                if not is_success:
+                    QMessageBox.critical(
+                        self,
+                        'Map Creation Status',
+                        'Error creating map. {}'.format(message))
+                    return
+
+                # Add map to qgis canvas
+                self.load_layer(os.path.join(self.output_directory, filename))
 
     def start_map_creation(self):
         """Map creation starts here."""
@@ -499,14 +501,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.save_parameter_values_as_setting()
 
             # start map creation job
-            map_product_definition = get_definition(self.map_product)
-            if map_product_definition in DIFFERENCE_MAPS:
-                # start difference map creation
-                pass
-            else:
-                # start single map creation for each selected
-                for coverage_result in self.selected_coverage_results:
-                    self._start_map_creation(coverage_result)
+            self._start_map_creation(self.selected_coverage_results)
         except:
             raise
         finally:

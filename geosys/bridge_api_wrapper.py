@@ -310,7 +310,7 @@ class BridgeAPI(ApiClient):
         return self._get_field_map(
             difference_map_definition['key'], request_data, params)
 
-    def get_samz_map(self, season_field_id, list_of_image_date=[], **kwargs):
+    def get_samz_map(self, season_field_id, list_of_image_date=None, **kwargs):
         """Get requested SAMZ map.
 
         :param season_field_id: ID of the season field.
@@ -326,6 +326,7 @@ class BridgeAPI(ApiClient):
             Map data specification based on given criteria.
         :rtype: dict
         """
+        list_of_image_date = list_of_image_date if list_of_image_date else []
         # Construct map creation parameters
         request_data = {
             "SeasonField": {

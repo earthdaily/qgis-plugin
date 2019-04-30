@@ -9,6 +9,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings, QDate
 
 from geosys.bridge_api.default import (
     MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PGW, LEGEND)
+from geosys.bridge_api.definitions import SAMZ
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.qgis_settings import QGISSettings
@@ -325,6 +326,63 @@ def create_difference_map(
 
     return download_field_map(
         field_map_json=difference_map_json,
+        map_type_key=map_type_key,
+        destination_base_path=destination_base_path,
+        output_map_format=output_map_format,
+        headers=bridge_api.headers)
+
+
+def create_samz_map(
+        season_field_id,
+        list_of_image_date,
+        output_dir,
+        filename,
+        output_map_format,
+        data=None,
+        params=None):
+    """Create map based on given parameters.
+
+    :param season_field_id: ID of the season field.
+    :param season_field_id: str
+
+    :param list_of_image_date: List of image date indicating the maps
+        which are going to be compiled.
+    :type list_of_image_date: list
+
+    :param output_dir: Base directory of the output.
+    :type output_dir: str
+
+    :param filename: Filename of the output.
+    :type filename: str
+
+    :param output_map_format: Output map format.
+    :type output_map_format: dict
+
+    :param data: Map creation data.
+        example: {
+            "MinYieldGoal": 0,
+            "MaxYieldGoal": 0,
+            "HistoricalYieldAverage": 0
+        }
+    :type data: dict
+
+    :param params: Map creation parameters.
+    :type params: dict
+    """""
+    map_type_key = SAMZ['key']
+    destination_base_path = os.path.join(output_dir, filename)
+    data = data if data else {}
+    params = params if params else {}
+    data.update({'params': params})
+
+    bridge_api = BridgeAPI(
+        *credentials_parameters_from_settings(),
+        proxies=QGISSettings.get_qgis_proxy())
+    samz_map_json = bridge_api.get_samz_map(
+        season_field_id, list_of_image_date, **data)
+
+    return download_field_map(
+        field_map_json=samz_map_json,
         map_type_key=map_type_key,
         destination_base_path=destination_base_path,
         output_map_format=output_map_format,
