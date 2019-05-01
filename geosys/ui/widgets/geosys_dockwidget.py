@@ -43,7 +43,7 @@ from geosys.bridge_api.default import (
     ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
-    SAMZ)
+    SAMZ, ELEVATION)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
@@ -353,7 +353,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.samz_zone = self.samz_zone_form.value()
         self.output_map_format = self.get_map_format()
 
-        if len(self.selected_coverage_results) == 0:
+        # SaMZ map creation accept zero selected results, which means it will
+        # trigger automatic SaMZ map creation.
+        if len(self.selected_coverage_results) == 0 and (
+                self.map_product != SAMZ['key']):
             return False, 'Please select at least one coverage result.'
 
         return True, ''
@@ -612,6 +615,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             )
         else:
             self.coverage_result_list.setCurrentRow(0)
+
+            # When user selected Elevation map, we want to skip the coverage
+            # results panel and go straight to the map creation panel rather.
+            if self.map_product == ELEVATION['key']:
+                self.show_next_page()
 
     def show_coverage_result(self, coverage_map_json, thumbnail_ba):
         """Translate coverage map result into widget item.
