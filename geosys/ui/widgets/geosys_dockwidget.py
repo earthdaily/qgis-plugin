@@ -164,8 +164,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def populate_date(self):
         """Set default value of start and end date to last week."""
         current_date = QDate.currentDate()
-        last_week_date = current_date.addDays(-7)
-        self.start_date_edit.setDate(last_week_date)
+        last_year_date = current_date.addDays(-365)
+        self.start_date_edit.setDate(last_year_date)
         self.end_date_edit.setDate(current_date)
 
     def show_help(self):
