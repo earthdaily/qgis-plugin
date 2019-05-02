@@ -469,7 +469,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         else:
             for map_specification in map_specifications:
                 filename = '{}_{}_{}'.format(
-                    map_specification['maps'][0]['type'],
+                    self.map_product,  # map_specification['maps'][0]['type'],
                     map_specification['seasonField']['id'],
                     map_specification['image']['date']
                 )

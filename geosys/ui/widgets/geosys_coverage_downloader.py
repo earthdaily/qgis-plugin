@@ -9,7 +9,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings, QDate
 
 from geosys.bridge_api.default import (
     MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PGW, LEGEND)
-from geosys.bridge_api.definitions import SAMZ
+from geosys.bridge_api.definitions import SAMZ, ELEVATION
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.qgis_settings import QGISSettings
@@ -82,13 +82,16 @@ class CoverageSearchThread(QThread):
         elif self.end_date:
             date_filter = '$lte:{}'.format(self.end_date)
 
-        self.filters = {
-            MAPS_TYPE: self.map_product,
-            IMAGE_DATE: date_filter
-        }
-        self.sensor_type and self.filters.update({
-            IMAGE_SENSOR: self.sensor_type
-        })
+        # Disable filter when map product is Elevation
+        self.filters = {}
+        if self.map_product != ELEVATION['key']:
+            self.filters.update({
+                MAPS_TYPE: self.map_product,
+                IMAGE_DATE: date_filter
+            })
+            self.sensor_type and self.filters.update({
+                IMAGE_SENSOR: self.sensor_type
+            })
 
         self.settings = QSettings()
 
@@ -121,7 +124,8 @@ class CoverageSearchThread(QThread):
                 # get thumbnail content
                 requested_map = None
                 for map_result in result['maps']:
-                    if map_result['type'] == self.map_product:
+                    if map_result['type'] == self.map_product or (
+                            self.map_product == ELEVATION['key']):
                         requested_map = map_result
                         break
 
