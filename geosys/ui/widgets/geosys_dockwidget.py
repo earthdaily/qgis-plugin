@@ -224,8 +224,20 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def handle_difference_map_button(self):
         """Handle difference map button behavior."""
         if self.current_stacked_widget_index == 2:
-            # show difference map button only if 2 items are being selected
-            if len(self.selected_coverage_results) == 2 and (
+            # Show difference map button only if 2 items are being selected
+            # and has same SeasonField ID.
+
+            # check SeasonField ID
+            has_same_id = False
+            season_field_id = None
+            for coverage_result in self.selected_coverage_results:
+                if not season_field_id:
+                    season_field_id = coverage_result['seasonField']['id']
+                else:
+                    has_same_id = season_field_id == (
+                        coverage_result['seasonField']['id'])
+
+            if len(self.selected_coverage_results) == 2 and has_same_id and (
                     self.map_product in [
                         INSEASON_NDVI['key'], INSEASON_EVI['key']]):
                 self.difference_map_push_button.setVisible(True)
