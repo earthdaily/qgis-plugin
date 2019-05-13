@@ -308,3 +308,44 @@ def reproject(layer, output_crs):
 
     reprojected.commitChanges()
     return reprojected
+
+
+def wkt_geometries_from_feature_iterator(
+        feature_iterator, max_features=None, as_single_geometry=False):
+    """Get list of wkt geometries from a QgsMapLayer feature iterator.
+
+    :param feature_iterator: QGIS layer feature iterator.
+        *retrieved from QgsMapLayer.getFeatures()
+    :type feature_iterator: QgsFeatureIterator
+
+    :param max_features: Number of maximum features iteration.
+    :type max_features: int
+
+    :param as_single_geometry: Flag indicating whether to squash the features
+        into single geometry or not.
+    :type as_single_geometry: bool
+
+    :return: List of wkt geometries.
+    :rtype: list
+    """
+    geom = None
+    geoms = []
+    for index, feature in enumerate(feature_iterator):
+        if index >= max_features:
+            break
+        if not feature.hasGeometry():
+            continue
+        if as_single_geometry:
+            if not geom:
+                geom = feature.geometry()
+            else:
+                geom = geom.combine(feature.geometry())
+        else:
+            geoms.append(feature.geometry())
+
+    if geom:
+        return [geom.asWkt()]
+    elif geoms:
+        return [geom.asWkt() for geom in geoms]
+    else:
+        return []
