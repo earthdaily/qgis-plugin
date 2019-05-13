@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>657</height>
+    <width>471</width>
+    <height>666</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>466</width>
-    <height>474</height>
+    <width>471</width>
+    <height>666</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -65,7 +65,7 @@
          <number>3</number>
         </property>
         <item>
-         <widget class="QGroupBox" name="group_box">
+         <widget class="QGroupBox" name="coverage_parameters_group_box">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -196,6 +196,129 @@
           </layout>
          </widget>
         </item>
+        <item>
+         <widget class="QGroupBox" name="advanced_parameters_group_box">
+          <property name="title">
+           <string>Advanced parameters</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_3">
+           <property name="labelAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+           <property name="leftMargin">
+            <number>12</number>
+           </property>
+           <property name="rightMargin">
+            <number>12</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="limit_label">
+             <property name="text">
+              <string>Limit</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="limit_spinbox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="coverage_type_label">
+             <property name="text">
+              <string>Coverage type</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="coverage_type_combobox">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="soil_material_label">
+             <property name="text">
+              <string>Soil Material</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="soil_material_combobox">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="weather_label">
+             <property name="text">
+              <string>Weather</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QComboBox" name="weather_combobox">
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignRight|Qt::AlignTop">
+         <widget class="QLabel" name="advanced_parameters_label">
+          <property name="minimumSize">
+           <size>
+            <width>170</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>170</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="statusTip">
+           <string/>
+          </property>
+          <property name="whatsThis">
+           <string/>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>Show advanced parameters</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="coverage_result_page">
@@ -273,6 +396,9 @@
            <string>Parameters</string>
           </property>
           <layout class="QFormLayout" name="formLayout">
+           <property name="labelAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
            <item row="0" column="1">
             <widget class="QDoubleSpinBox" name="yield_average_form">
              <property name="sizePolicy">

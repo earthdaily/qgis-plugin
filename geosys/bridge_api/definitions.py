@@ -341,6 +341,90 @@ SENSORS = [
 
 ALL_SENSORS = {
     'key': 'ALL_SENSORS',
-    'name': 'ALL SENSORS',
+    'name': 'ALL',
     'sensors': SENSORS
+}
+
+# Coverage Types
+
+BORDER = {
+    'key': 'BORDER',
+    'name': 'BORDER',
+    'description': ''
+}
+
+CLEAR = {
+    'key': 'CLEAR',
+    'name': 'CLEAR',
+    'description': ''
+}
+
+CLOUD = {
+    'key': 'CLOUD',
+    'name': 'CLOUD',
+    'description': ''
+}
+
+COVERAGE_TYPES = [BORDER, CLEAR, CLOUD]
+
+ALL_COVERAGE_TYPES = {
+    'key': 'ALL_COVERAGE_TYPES',
+    'name': 'ALL',
+    'coverage_types': COVERAGE_TYPES
+}
+
+# Soil Materials
+
+BARE = {
+    'key': 'BARE',
+    'name': 'BARE',
+    'description': ''
+}
+
+VEGETATION = {
+    'key': 'VEGETATION',
+    'name': 'VEGETATION',
+    'description': ''
+}
+
+SOIL_MATERIALS = [BARE, VEGETATION]
+
+ALL_SOIL_MATERIALS = {
+    'key': 'ALL_SOIL_MATERIALS',
+    'name': 'ALL',
+    'soil_materials': SOIL_MATERIALS
+}
+
+# Weather
+
+HOT = {
+    'key': 'HOT',
+    'name': 'HOT',
+    'description': ''
+}
+
+COLD = {
+    'key': 'COLD',
+    'name': 'COLD',
+    'description': ''
+}
+
+WET = {
+    'key': 'WET',
+    'name': 'WET',
+    'description': ''
+}
+
+DRY = {
+    'key': 'DRY',
+    'name': 'DRY',
+    'description': ''
+}
+
+WEATHER = [HOT, COLD, WET, DRY]
+
+ALL_WEATHER = {
+    'key': 'ALL_WEATHER',
+    'name': 'ALL',
+    'wether': WEATHER
 }
