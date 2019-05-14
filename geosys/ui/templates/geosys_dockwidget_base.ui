@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>466</width>
-    <height>474</height>
+    <height>477</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -109,6 +109,13 @@
              </property>
              <property name="text">
               <string>Selected features only</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="single_geometry_checkbox">
+             <property name="text">
+              <string>Bulk request (all objects as a single geometry)</string>
              </property>
             </widget>
            </item>

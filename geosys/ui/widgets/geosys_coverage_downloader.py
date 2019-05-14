@@ -32,12 +32,12 @@ class CoverageSearchThread(QThread):
     error_occurred = pyqtSignal(object)
 
     def __init__(
-            self, geometry, crop_type, sowing_date, map_product, sensor_type,
+            self, geometries, crop_type, sowing_date, map_product, sensor_type,
             start_date, end_date, mutex, parent=None):
         """Thread object wrapper for coverage search.
 
-        :param geometry: Geometry filter in WKT format.
-        :type geometry: str
+        :param geometries: List of geometry filter in WKT format.
+        :type geometries: list
 
         :param crop_type: Crop type.
         :type crop_type: str
@@ -64,7 +64,7 @@ class CoverageSearchThread(QThread):
         :type parent: QWidget
         """
         super(CoverageSearchThread, self).__init__(parent)
-        self.geometry = geometry
+        self.geometries = geometries
         self.crop_type = crop_type
         self.sowing_date = sowing_date
         self.map_product = map_product
@@ -109,41 +109,42 @@ class CoverageSearchThread(QThread):
         # search
         try:
             self.mutex.lock()
-            results = self.searcher_client.get_coverage(
-                self.geometry, self.crop_type, self.sowing_date,
-                filters=self.filters)
-
-            if isinstance(results, dict) and results.get('message'):
-                # TODO handle model_validation_error
-                raise Exception(results['message'])
-
             collected_results = []
-            for result in results:
-                if self.need_stop:
-                    break
-                # get thumbnail content
-                requested_map = None
-                for map_result in result['maps']:
-                    if map_result['type'] == self.map_product or (
-                            self.map_product == ELEVATION['key']):
-                        requested_map = map_result
+            for geometry in self.geometries:
+                results = self.searcher_client.get_coverage(
+                    geometry, self.crop_type, self.sowing_date,
+                    filters=self.filters)
+
+                if isinstance(results, dict) and results.get('message'):
+                    # TODO handle model_validation_error
+                    raise Exception(results['message'])
+
+                for result in results:
+                    if self.need_stop:
                         break
+                    # get thumbnail content
+                    requested_map = None
+                    for map_result in result['maps']:
+                        if map_result['type'] == self.map_product or (
+                                self.map_product == ELEVATION['key']):
+                            requested_map = map_result
+                            break
 
-                if not requested_map:
-                    continue
+                    if not requested_map:
+                        continue
 
-                thumbnail_url = requested_map['_links'].get('thumbnail')
-                if thumbnail_url:
-                    thumbnail_content = self.searcher_client.get_content(
-                        thumbnail_url)
-                    thumbnail_ba = QByteArray(thumbnail_content)
-                else:
-                    thumbnail_ba = bytes('', 'utf-8')
+                    thumbnail_url = requested_map['_links'].get('thumbnail')
+                    if thumbnail_url:
+                        thumbnail_content = self.searcher_client.get_content(
+                            thumbnail_url)
+                        thumbnail_ba = QByteArray(thumbnail_content)
+                    else:
+                        thumbnail_ba = bytes('', 'utf-8')
 
-                collected_results.append({
-                    'data': result,
-                    'thumbnail': thumbnail_ba
-                })
+                    collected_results.append({
+                        'data': result,
+                        'thumbnail': thumbnail_ba
+                    })
 
             # Using this trick, rendering each list item will not be delayed
             # by thumbnail request.
