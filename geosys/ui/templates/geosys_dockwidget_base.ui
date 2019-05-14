@@ -115,7 +115,7 @@
            <item>
             <widget class="QCheckBox" name="single_geometry_checkbox">
              <property name="text">
-              <string>Features as single geometry</string>
+              <string>Bulk request (all objects as a single geometry)</string>
              </property>
             </widget>
            </item>
