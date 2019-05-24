@@ -2,6 +2,7 @@
 """Implementation of GEOSYS options dialog.
 """
 import os
+import sys
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import QDate
@@ -126,8 +127,11 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
             else:
                 QMessageBox.information(
                     self, message_title, bridge_api.authentication_message)
-        except Exception as e:
-            QMessageBox.critical(self, message_title, str(e))
+        except:
+            error_text = "{0}: {1}".format(
+                unicode(sys.exc_info()[0].__name__),
+                unicode(sys.exc_info()[1]))
+            QMessageBox.critical(self, message_title, error_text)
 
     def choose_directory(self, line_edit, title):
         """Show a directory selection dialog.
