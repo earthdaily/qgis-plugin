@@ -14,6 +14,11 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 
+class AuthenticationError(BaseException):
+    """Error when oauth token is missing for an authenticated request.
+    """
+
+
 class MapProduct(object):
     """Wrapper instance of Bridge API Coverage map product"""
 
@@ -110,6 +115,8 @@ class BridgeAPI(ApiClient):
 
         if self.authenticated:
             super(BridgeAPI, self).__init__(access_token=self.access_token)
+        else:
+            raise AuthenticationError(self.authentication_message)
 
     @staticmethod
     def get_crops():
@@ -154,9 +161,9 @@ class BridgeAPI(ApiClient):
                 return True, message
             else:
                 message = (
-                    'Authentication failed. Ensure your username, password, '
-                    'client id, and client secret are valid for the selected '
-                    'region service.')
+                    'Ensure your username, password, client id, and client '
+                    'secret are valid for the selected region service and then'
+                    'try again.')
                 return False, message
         except KeyError:
             message = 'Please enter a correct region (NA or EU)'

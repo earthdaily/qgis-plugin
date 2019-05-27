@@ -23,6 +23,7 @@
  ***************************************************************************/
 """
 import os
+import sys
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, QSettings, QMutex, QDate
@@ -492,13 +493,14 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def start_map_creation(self):
         """Map creation starts here."""
         # validate map creation parameters before creating the map
+        message_title = 'Map Creation Status'
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             is_success, message = self.validate_map_creation_parameters()
             if not is_success:
                 QMessageBox.critical(
                     self,
-                    'Map Creation Status',
+                    message_title,
                     'Error validating map creation parameters. {}'.format(
                         message))
                 return
@@ -509,12 +511,16 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # start map creation job
             self._start_map_creation(self.selected_coverage_results)
         except:
-            raise
+            error_text = "{0}: {1}".format(
+                unicode(sys.exc_info()[0].__name__),
+                unicode(sys.exc_info()[1]))
+            QMessageBox.critical(self, message_title, error_text)
         finally:
             QApplication.restoreOverrideCursor()
 
     def start_difference_map_creation(self):
         """Difference Map creation starts here."""
+        message_title = 'Difference Map Creation Status'
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
@@ -548,7 +554,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # Add map to qgis canvas
             self.load_layer(os.path.join(self.output_directory, filename))
         except:
-            raise
+            error_text = "{0}: {1}".format(
+                unicode(sys.exc_info()[0].__name__),
+                unicode(sys.exc_info()[1]))
+            QMessageBox.critical(self, message_title, error_text)
         finally:
             QApplication.restoreOverrideCursor()
 

@@ -95,11 +95,6 @@ class CoverageSearchThread(QThread):
 
         self.settings = QSettings()
 
-        self.searcher_client = BridgeAPI(
-            *credentials_parameters_from_settings(),
-            proxies=QGISSettings.get_qgis_proxy())
-        # TODO set QGIS proxy to the searcher
-
         self.need_stop = False
 
     def run(self):
@@ -109,9 +104,14 @@ class CoverageSearchThread(QThread):
         # search
         try:
             self.mutex.lock()
+
+            searcher_client = BridgeAPI(
+                *credentials_parameters_from_settings(),
+                proxies=QGISSettings.get_qgis_proxy())
+
             collected_results = []
             for geometry in self.geometries:
-                results = self.searcher_client.get_coverage(
+                results = searcher_client.get_coverage(
                     geometry, self.crop_type, self.sowing_date,
                     filters=self.filters)
 
@@ -135,7 +135,7 @@ class CoverageSearchThread(QThread):
 
                     thumbnail_url = requested_map['_links'].get('thumbnail')
                     if thumbnail_url:
-                        thumbnail_content = self.searcher_client.get_content(
+                        thumbnail_content = searcher_client.get_content(
                             thumbnail_url)
                         thumbnail_ba = QByteArray(thumbnail_content)
                     else:
@@ -152,7 +152,7 @@ class CoverageSearchThread(QThread):
                 self.data_downloaded.emit(result['data'], result['thumbnail'])
 
             self.search_finished.emit()
-        except Exception:
+        except:
             error_text = (self.tr(
                 "Error of processing!\n{0}: {1}")).format(
                 unicode(sys.exc_info()[0].__name__), unicode(
