@@ -44,8 +44,10 @@ from geosys.bridge_api.default import (
     ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
-    SAMZ, ELEVATION)
+    SAMZ, ELEVATION, ALL_COVERAGE_TYPES, COVERAGE_TYPES, ALL_SOIL_MATERIALS,
+    SOIL_MATERIALS, ALL_WEATHER, WEATHER)
 from geosys.bridge_api.utilities import get_definition
+from geosys.settings.default_values import PAGINATION_LIMIT
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
     CoverageSearchThread, create_map, create_difference_map, create_samz_map)
@@ -139,8 +141,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Set default date value
         self.populate_date()
 
+        # Set default value for advanced parameters
+        self.populate_advanced_parameters()
+
         # Set default behaviour
-        # self.help_push_button.setEnabled(False)
+        self.advanced_parameters_group_box.setVisible(False)
+        self.advanced_parameters_label.setVisible(False)
         self.back_push_button.setEnabled(False)
         self.next_push_button.setEnabled(True)
         self.difference_map_push_button.setVisible(False)
@@ -168,6 +174,45 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         last_year_date = current_date.addDays(-365)
         self.start_date_edit.setDate(last_year_date)
         self.end_date_edit.setDate(current_date)
+
+    def populate_advanced_parameters(self):
+        """Set default value for advanced parameters/filters."""
+        # Pagination limit
+        value = setting(
+            'pagination_limit', default=PAGINATION_LIMIT,
+            expected_type=int, qsettings=self.settings)
+        self.limit_spinbox.setValue(value)
+
+        # Coverage type
+        for coverage_type in [ALL_COVERAGE_TYPES]+COVERAGE_TYPES:
+            add_ordered_combo_item(
+                self.coverage_type_combobox,
+                coverage_type['name'],
+                coverage_type['key'])
+
+        # Soil Material
+        for soil_material in [ALL_SOIL_MATERIALS]+SOIL_MATERIALS:
+            add_ordered_combo_item(
+                self.soil_material_combobox,
+                soil_material['name'],
+                soil_material['key'])
+
+        # Weather
+        for weather in [ALL_WEATHER]+WEATHER:
+            add_ordered_combo_item(
+                self.weather_combobox,
+                weather['name'],
+                weather['key'])
+
+    def toggle_advanced_parameters_label(self, event):
+        """Toggle advanced parameters label."""
+        is_visible = self.advanced_parameters_group_box.isVisible()
+        if is_visible:
+            self.advanced_parameters_label.setText('Show advanced filter')
+        else:
+            self.advanced_parameters_label.setText('Hide advanced filter')
+
+        self.advanced_parameters_group_box.setVisible(not is_visible)
 
     def show_help(self):
         """Open the help dialog."""
@@ -746,6 +791,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # List widget item connector
         self.coverage_result_list.itemSelectionChanged.connect(
             self.update_selection_data)
+
+        # Advanced filter connector
+        self.advanced_parameters_label.mousePressEvent = (
+            self.toggle_advanced_parameters_label)
 
     def unblock_signals(self):
         """Let the combos listen for event changes again."""
