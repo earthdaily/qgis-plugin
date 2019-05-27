@@ -113,6 +113,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="single_geometry_checkbox">
+             <property name="text">
+              <string>Bulk request (all objects as a single geometry)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QLabel" name="map_product_label">
              <property name="text">
               <string>Choose a map product type</string>

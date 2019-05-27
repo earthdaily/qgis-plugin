@@ -23,6 +23,7 @@
  ***************************************************************************/
 """
 import os
+import sys
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, QSettings, QMutex, QDate
@@ -53,7 +54,7 @@ from geosys.ui.widgets.geosys_coverage_downloader import (
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
-    add_layer_to_canvas, reproject, item_data_from_combo)
+    add_layer_to_canvas, reproject, item_data_from_combo, wkt_geometries_from_feature_iterator)
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting, set_setting
 
@@ -84,7 +85,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.current_stacked_widget_index = 0
 
         # Coverage parameters from input values
-        self.geometry_wkt = None
+        self.wkt_geometries = None
         self.map_product = None
         self.sensor_type = None
         self.start_date = None
@@ -235,8 +236,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """Open next page of stacked widget."""
         # If current page is coverage parameters page, run coverage searcher.
         if self.current_stacked_widget_index == 0:
-            self.next_push_button.setEnabled(False)
             self.start_coverage_search()
+            self.next_push_button.setEnabled(False)
 
         # If current page is coverage results page, prepare map creation
         # parameters.
@@ -269,8 +270,20 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def handle_difference_map_button(self):
         """Handle difference map button behavior."""
         if self.current_stacked_widget_index == 2:
-            # show difference map button only if 2 items are being selected
-            if len(self.selected_coverage_results) == 2 and (
+            # Show difference map button only if 2 items are being selected
+            # and has same SeasonField ID.
+
+            # check SeasonField ID
+            has_same_id = False
+            season_field_id = None
+            for coverage_result in self.selected_coverage_results:
+                if not season_field_id:
+                    season_field_id = coverage_result['seasonField']['id']
+                else:
+                    has_same_id = season_field_id == (
+                        coverage_result['seasonField']['id'])
+
+            if len(self.selected_coverage_results) == 2 and has_same_id and (
                     self.map_product in [
                         INSEASON_NDVI['key'], INSEASON_EVI['key']]):
                 self.difference_map_push_button.setVisible(True)
@@ -416,6 +429,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         use_selected_features = (
             self.selected_features_checkbox.isChecked() and (
                 layer.selectedFeatureCount() > 0))
+        use_single_geometry = self.single_geometry_checkbox.isChecked()
 
         # Reproject layer to EPSG:4326
         if layer.crs().authid() != 'EPSG:4326':
@@ -431,20 +445,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Handle multi features
         # Merge features into multi-part polygon
         # TODO use Collect Geometries processing algorithm
-        geom = None
-        for index, feature in enumerate(feature_iterator):
-            if index >= MAX_FEATURE_NUMBERS:
-                break
-            if not feature.hasGeometry():
-                continue
-            if not geom:
-                geom = feature.geometry()
-            else:
-                geom = geom.combine(feature.geometry())
+        self.wkt_geometries = wkt_geometries_from_feature_iterator(
+            feature_iterator, MAX_FEATURE_NUMBERS, use_single_geometry)
 
-        if geom:
-            self.geometry_wkt = geom.asWkt()
-        else:
+        if not self.wkt_geometries:
             # geometry is not valid
             return False, 'Geometry is not valid.'
 
@@ -534,13 +538,14 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def start_map_creation(self):
         """Map creation starts here."""
         # validate map creation parameters before creating the map
+        message_title = 'Map Creation Status'
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             is_success, message = self.validate_map_creation_parameters()
             if not is_success:
                 QMessageBox.critical(
                     self,
-                    'Map Creation Status',
+                    message_title,
                     'Error validating map creation parameters. {}'.format(
                         message))
                 return
@@ -551,12 +556,16 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # start map creation job
             self._start_map_creation(self.selected_coverage_results)
         except:
-            raise
+            error_text = "{0}: {1}".format(
+                unicode(sys.exc_info()[0].__name__),
+                unicode(sys.exc_info()[1]))
+            QMessageBox.critical(self, message_title, error_text)
         finally:
             QApplication.restoreOverrideCursor()
 
     def start_difference_map_creation(self):
         """Difference Map creation starts here."""
+        message_title = 'Difference Map Creation Status'
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
@@ -590,7 +599,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # Add map to qgis canvas
             self.load_layer(os.path.join(self.output_directory, filename))
         except:
-            raise
+            error_text = "{0}: {1}".format(
+                unicode(sys.exc_info()[0].__name__),
+                unicode(sys.exc_info()[1]))
+            QMessageBox.critical(self, message_title, error_text)
         finally:
             QApplication.restoreOverrideCursor()
 
@@ -612,7 +624,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # start search thread
         searcher = CoverageSearchThread(
-            geometry=self.geometry_wkt,
+            geometries=self.wkt_geometries,
             crop_type=self.crop_type,
             sowing_date=self.sowing_date,
             map_product=self.map_product,
