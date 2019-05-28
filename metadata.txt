@@ -10,14 +10,16 @@
 name=GEOSYS Plugin
 qgisMinimumVersion=3.0
 description=Discover, request and use aggregate imagery products based on landsat-8, Sentinel 2 and other sensors from within QGIS, using the GEOSYS API.
-version=0.1
-author=Kartoza
-email=andre@kartoza.com
-
 about=Discover, request and use aggregate imagery products based on landsat-8, Sentinel 2 and other sensors from within QGIS, using the GEOSYS API.”
 
-tracker=https://github.com/kartoza/geosys-qgis-plugin/issues
-repository=https://github.com/kartoza/geosys-qgis-plugin
+# Version and release information
+version=1.0.0
+# alpha, beta, rc or final
+status=alpha
+
+# Author contact information
+author=GEOSYS
+email=sales.na@geosys.com
 # End of mandatory metadata
 
 # Recommended items:
@@ -28,7 +30,9 @@ repository=https://github.com/kartoza/geosys-qgis-plugin
 # Tags are comma separated with spaces allowed
 tags=
 
-homepage=https://github.com/kartoza/geosys-qgis-plugin
+homepage=https://github.com/GEOSYS/qgis-plugin
+tracker=https://github.com/GEOSYS/qgis-plugin/issues
+repository=https://github.com/GEOSYS/qgis-plugin
 category=Plugins
 icon=icon.png
 # experimental flag
