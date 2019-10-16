@@ -110,6 +110,14 @@ class BridgeAPI(ApiClient):
         if proxies:
             self.set_proxy(*proxies)
 
+        # create server url
+        self.identity_server = (IDENTITY_URLS[self.region]['test']
+                                if self.use_testing_service
+                                else IDENTITY_URLS[self.region]['prod'])
+        self.bridge_server = (BRIDGE_URLS[self.region]['test']
+                              if self.use_testing_service
+                              else BRIDGE_URLS[self.region]['prod'])
+
         # authenticate user
         self.authenticated, self.authentication_message = self.authenticate()
 
@@ -146,10 +154,7 @@ class BridgeAPI(ApiClient):
         :rtype: tuple
         """
         try:
-            identity_server = (IDENTITY_URLS[self.region]['test']
-                               if self.use_testing_service
-                               else IDENTITY_URLS[self.region]['prod'])
-            api_client = ConnectionAPIClient(identity_server)
+            api_client = ConnectionAPIClient(self.identity_server)
             response = api_client.get_access_token(
                 self.username,
                 self.password,
@@ -201,10 +206,8 @@ class BridgeAPI(ApiClient):
             'SowingDate': sowing_date
         }
 
-        bridge_server = (BRIDGE_URLS[self.region]['test']
-                         if self.use_testing_service
-                         else BRIDGE_URLS[self.region]['prod'])
-        api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
+        api_client = FieldLevelMapsAPIClient(
+            self.access_token, self.bridge_server)
         coverages_json = api_client.get_coverage(request_data, filters=filters)
 
         return coverages_json
@@ -225,10 +228,8 @@ class BridgeAPI(ApiClient):
             Map data specification based on given criteria.
         :rtype: dict
         """
-        bridge_server = (BRIDGE_URLS[self.region]['test']
-                         if self.use_testing_service
-                         else BRIDGE_URLS[self.region]['prod'])
-        api_client = FieldLevelMapsAPIClient(self.access_token, bridge_server)
+        api_client = FieldLevelMapsAPIClient(
+            self.access_token, self.bridge_server)
         field_map_json = api_client.get_field_map(
             map_type_key, request_data, params)
 
