@@ -21,6 +21,9 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 settings = QSettings()
+NDVI_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{date}'
+    '/base-reference-map/INSEASON_NDVI/thumbnail.png')
 
 
 class CoverageSearchThread(QThread):
@@ -133,7 +136,13 @@ class CoverageSearchThread(QThread):
                     if not requested_map:
                         continue
 
-                    thumbnail_url = requested_map['_links'].get('thumbnail')
+                    thumbnail_url = (
+                        requested_map['_links'].get('thumbnail') or (
+                            NDVI_THUMBNAIL_URL.format(
+                                bridge_url=searcher_client.bridge_server,
+                                id=result['seasonField']['id'],
+                                date=result['image']['date']
+                            )))
                     if thumbnail_url:
                         thumbnail_content = searcher_client.get_content(
                             thumbnail_url)

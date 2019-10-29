@@ -79,7 +79,7 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
         map_type_key = 'INSEASONFIELD_AVERAGE_NDVI'
         data = {
             "SeasonField": {
-                "Id": "zgzmbrm"
+                "Id": "vejnn6g"
             },
             "Image": {
                 "Date": "2018-10-13"
