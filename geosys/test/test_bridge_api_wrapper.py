@@ -42,7 +42,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
         expected_crops = [
             'SUGARCANE', 'CORN', 'MILLET', 'GRAPES', 'OTHERS', 'COTTON',
             'SUNFLOWER', 'PEANUT', 'SOYBEANS', 'ORANGE', 'RICE', 'SORGHUM']
-        self.assertEqual(crops, expected_crops)
+        self.assertEqual(sorted(crops), sorted(expected_crops))
 
     def test_get_regions(self):
         """Test we can get all available regions from definition"""
