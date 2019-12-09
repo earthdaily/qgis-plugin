@@ -460,7 +460,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             is_success, message = create_samz_map(
                 season_field_id, image_dates, self.output_directory, filename,
-                output_map_format=self.output_map_format, data=data)
+                output_map_format=self.output_map_format, params=data)
+
             if not is_success:
                 QMessageBox.critical(
                     self,
