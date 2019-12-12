@@ -76,14 +76,15 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
             self.access_token, endpoint_url=BRIDGE_URLS['na']['test'])
 
         # Test INSEASONFIELD_AVERAGE_NDVI map creation
-        map_type_key = 'INSEASONFIELD_AVERAGE_NDVI'
+        map_type_key = 'INSEASON_EVI'
         data = {
             "SeasonField": {
-                "Id": "vejnn6g"
+                "Id": "gb5zrpv"
             },
             "Image": {
-                "Date": "2018-10-13"
-            },
+                "Date": "2019-06-11"
+            }
+            ,
             "NPlanned": 48,
             "NMin": 20,
             "NMax": 70
