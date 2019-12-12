@@ -79,10 +79,10 @@ class BridgeAPIFieldLevelMapsTest(unittest.TestCase):
         map_type_key = 'INSEASON_EVI'
         data = {
             "SeasonField": {
-                "Id": "gb5zrpv"
+                "Id": "vejnn6g"
             },
             "Image": {
-                "Date": "2019-06-11"
+                "Date": "2018-09-23"
             }
             ,
             "NPlanned": 48,
