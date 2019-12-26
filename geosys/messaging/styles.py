@@ -22,14 +22,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from future import standard_library
-
 # This import is to enable SIP API V2
 # noinspection PyUnresolvedReferences
 import qgis  # NOQA pylint: disable=unused-import
 from geosys.utilities.resources import resources_path
-
-standard_library.install_aliases()
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
