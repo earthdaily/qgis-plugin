@@ -41,7 +41,7 @@ from qgis.PyQt.QtCore import Qt
 from geosys.bridge_api.default import (
     VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
-    ORGANIC_AVERAGE, SAMZ_ZONE, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
+    ORGANIC_AVERAGE, SAMZ_ZONE, SAMZ_ZONING, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
     SAMZ, ELEVATION)
@@ -95,6 +95,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.yield_maximum = None
         self.organic_average = None
         self.samz_zone = None
+        self.samz_zoning = None
         self.output_map_format = None
         self.map_creation_parameters_settings = {
             YIELD_AVERAGE: self.yield_average_form,
@@ -441,6 +442,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             ORGANIC_AVERAGE: self.organic_average,
             SAMZ_ZONE: self.samz_zone
         }
+
+        if self.samz_zone > 0:
+            self.samz_zoning = True
+            data.update({
+                SAMZ_ZONING: self.samz_zoning
+            })
         if map_product_definition == SAMZ:
             image_dates = []
             samz_mode = 'auto'

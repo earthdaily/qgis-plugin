@@ -42,7 +42,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="coverage_form_page">
        <property name="minimumSize">
@@ -386,7 +386,7 @@
            <item row="4" column="0">
             <widget class="QLabel" name="samz_zone_label">
              <property name="text">
-              <string>SAMZ zone</string>
+              <string>Number of Zones</string>
              </property>
             </widget>
            </item>
