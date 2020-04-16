@@ -67,6 +67,7 @@ YIELD_MINIMUM = 'MinYieldGoal'
 YIELD_MAXIMUM = 'MaxYieldGoal'
 ORGANIC_AVERAGE = 'AverageOrganicMatter'
 SAMZ_ZONE = 'zoneCount'
+SAMZ_ZONING = 'zoning'
 
 # map output format based on Bridge API
 
