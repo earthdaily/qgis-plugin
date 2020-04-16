@@ -14,6 +14,7 @@ from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.qgis_settings import QGISSettings
 from geosys.utilities.settings import setting
+from geosys.utilities.gui_utilities import create_hotspot_layer
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -246,6 +247,12 @@ def create_map(
         proxies=QGISSettings.get_qgis_proxy())
     field_map_json = bridge_api.get_field_map(
         map_type_key, season_field_id, image_date, **data)
+
+    if field_map_json.get('hotSpots'):
+        create_hotspot_layer(field_map_json.get('hotSpots'), 'hotspots')
+
+    if field_map_json.get('zones') and field_map_json.get('zones')['segments']:
+        create_hotspot_layer(field_map_json.get('zones')['segments'], 'segments')
 
     return download_field_map(
         field_map_json=field_map_json,

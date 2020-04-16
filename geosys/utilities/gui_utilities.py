@@ -11,8 +11,14 @@ from qgis.core import (
     QgsFeature,
     QgsMemoryProviderUtils,
     QgsFields,
-    QgsCoordinateReferenceSystem)
+    QgsCoordinateReferenceSystem,
+    QgsVectorLayer,
+    QgsField,
+    QgsFields,
+    QgsGeometry)
+
 from qgis.PyQt.QtCore import Qt
+from PyQt5.QtCore import QVariant
 
 from geosys.utilities.qgis import qgis_version
 
@@ -349,3 +355,86 @@ def wkt_geometries_from_feature_iterator(
         return [geom.asWkt() for geom in geoms]
     else:
         return []
+
+
+def create_hotspot_layer(source, source_type):
+    """Creates layer from wkt text in the source.
+
+        :param source: Array with json objects containing WKT text.
+        :type source: array
+            example
+            "source = [{
+                "geometry": "POINT (-100.26517713 38.99869576)",
+                "segmentId": 1
+            },
+            {
+                "geometry": "POINT (-100.26977919 38.99869091)",
+                "segmentId": 2
+            }]
+            or
+            source = [ {
+                  "id": 3,
+                  "geometry": "POLYGON ((
+                  -107.07693518495601 36.83928234462352,
+                  -107.04672278261226 36.83928234462352,
+                  -107.04672278261226 36.82169515605545,
+                  -107.07693518495601 36.82169515605545,
+                  -107.07693518495601 36.83928234462352))",
+                  "stats": {
+                    "mean": 76.566032409667969,
+                    "max": 95.4800033569336,
+                    "min": 68.2699966430664,
+                    "area": 20200.183288909735,
+                    "std": 6.545262336730957
+                  }
+                }]"
+    """
+    crs = QgsCoordinateReferenceSystem()
+    fields = QgsFields()
+    features = []
+
+    if source_type == 'hotspots':
+        layer_name = 'hotspots'
+    else:
+        layer_name = 'segments'
+
+    if source_type == "hotspots":
+        layer_type = "MULTIPOINT?crs=%s" % (crs.authid())
+        fields.append(QgsField("segmentId", QVariant.String))
+
+        for spot in source:
+            geom = QgsGeometry.fromWkt(spot['geometry'])
+            feature = QgsFeature()
+            feature.setFields(fields)
+            feature.setGeometry(geom)
+            feature[0] = spot['segmentId']
+            features.append(feature)
+    else:
+        layer_type = "MULTIPOLYGON?crs=%s" % (crs.authid())
+        fields.append(QgsField("id", QVariant.Int))
+        fields.append(QgsField("mean", QVariant.Double))
+        fields.append(QgsField("max", QVariant.Double))
+        fields.append(QgsField("min", QVariant.Double))
+        fields.append(QgsField("area", QVariant.Double))
+        fields.append(QgsField("std", QVariant.Double))
+
+        for polygon in source:
+            geom = QgsGeometry.fromWkt(polygon['geometry'])
+            feature = QgsFeature()
+            feature.setFields(fields)
+            feature.setGeometry(geom)
+            feature[0] = int(polygon['id'])
+            feature[1] = float(polygon['stats']['mean'])
+            feature[2] = float(polygon['stats']['max'])
+            feature[3] = float(polygon['stats']['min'])
+            feature[4] = float(polygon['stats']['area'])
+            feature[5] = float(polygon['stats']['std'])
+            features.append(feature)
+
+    layer = QgsVectorLayer(layer_type, layer_name, "memory")
+    layer.dataProvider().addAttributes(fields)
+    layer.dataProvider().addFeatures(features)
+    layer.updateExtents()
+    layer.reload()
+
+    add_layer_to_canvas(layer, layer_name)
