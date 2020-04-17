@@ -252,7 +252,8 @@ def create_map(
         map_type_key=map_type_key,
         destination_base_path=destination_base_path,
         output_map_format=output_map_format,
-        headers=bridge_api.headers)
+        headers=bridge_api.headers,
+        data=data)
 
 
 def create_difference_map(
@@ -343,7 +344,8 @@ def create_difference_map(
         map_type_key=map_type_key,
         destination_base_path=destination_base_path,
         output_map_format=output_map_format,
-        headers=bridge_api.headers)
+        headers=bridge_api.headers,
+        data=data)
 
 
 def create_samz_map(
@@ -400,12 +402,13 @@ def create_samz_map(
         map_type_key=map_type_key,
         destination_base_path=destination_base_path,
         output_map_format=output_map_format,
-        headers=bridge_api.headers)
+        headers=bridge_api.headers,
+        data=data)
 
 
 def download_field_map(
         field_map_json, map_type_key, destination_base_path,
-        output_map_format, headers):
+        output_map_format, headers, data=None):
     """Download field map from requested field map json.
 
     :param field_map_json: JSON response from Bridge API field map request.
@@ -423,6 +426,9 @@ def download_field_map(
 
     :param headers: Extra headers containing Bridge API authorization.
     :type headers: str
+
+    :param data: Map creation data
+    :type data: dict
     """
     message = '{} map successfully created.'.format(map_type_key)
     if not field_map_json.get('seasonField'):
@@ -438,6 +444,9 @@ def download_field_map(
 
     try:
         url = field_map_json['_links'][output_map_format['api_key']]
+        url = '{}?zoning=true&zoneCount={}'.format(
+            url, data.get('zoneCount')) \
+            if data.get('zoning') else url
     except KeyError:
         # requested map format not found
         message = (
