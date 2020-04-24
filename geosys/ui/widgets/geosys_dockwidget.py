@@ -41,7 +41,8 @@ from qgis.PyQt.QtCore import Qt
 from geosys.bridge_api.default import (
     VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
-    ORGANIC_AVERAGE, SAMZ_ZONE, SAMZ_ZONING, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
+    ORGANIC_AVERAGE, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
+    MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
     SAMZ, ELEVATION)
@@ -52,7 +53,8 @@ from geosys.ui.widgets.geosys_coverage_downloader import (
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
-    add_layer_to_canvas, reproject, item_data_from_combo, wkt_geometries_from_feature_iterator)
+    add_layer_to_canvas, reproject, item_data_from_combo,
+    wkt_geometries_from_feature_iterator)
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting, set_setting
 
@@ -96,6 +98,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.organic_average = None
         self.samz_zone = None
         self.samz_zoning = None
+        self.hotspot_polygon = None
+        self.hotspot_polygon_part = None
+        self.zoning_segmentation = None
         self.output_map_format = None
         self.map_creation_parameters_settings = {
             YIELD_AVERAGE: self.yield_average_form,
@@ -365,6 +370,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.yield_maximum = self.yield_maximum_form.value()
         self.organic_average = self.organic_average_form.value()
         self.samz_zone = self.samz_zone_form.value()
+        self.hotspot_polygon = self.hotspot_polygon_form.isChecked()
+        self.hotspot_polygon_part = self.hotspot_polygon_part_form.isChecked()
         self.output_map_format = self.get_map_format()
 
         # SaMZ map creation accept zero selected results, which means it will
@@ -446,8 +453,18 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.samz_zone > 0:
             self.samz_zoning = True
             data.update({
-                SAMZ_ZONING: self.samz_zoning
+                SAMZ_ZONING: 'true'
             })
+            if self.hotspot_polygon:
+                data.update({
+                    HOTSPOT: 'true'
+                })
+            if self.hotspot_polygon_part:
+                data.update({
+                    HOTSPOT: self.hotspot_polygon_part,
+                    ZONING_SEGMENTATION: 'polygon'
+                })
+
         if map_product_definition == SAMZ:
             image_dates = []
             samz_mode = 'auto'
