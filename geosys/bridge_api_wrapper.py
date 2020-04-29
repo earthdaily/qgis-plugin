@@ -235,6 +235,20 @@ class BridgeAPI(ApiClient):
 
         return field_map_json
 
+    def get_hotspot(self, url):
+        """Get zone hotspots.
+
+        :return: JSON response.
+            Map data specification based on given parameters.
+        :rtype: dict
+        """
+        api_client = FieldLevelMapsAPIClient(
+            self.access_token, self.bridge_server)
+        map_json = api_client.get_hotspot(
+            url)
+
+        return map_json
+
     def get_field_map(
             self, map_type_key, season_field_id, image_date, **kwargs):
         """Get requested field map.

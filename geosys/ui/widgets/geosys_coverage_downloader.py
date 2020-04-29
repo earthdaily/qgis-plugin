@@ -248,12 +248,6 @@ def create_map(
     field_map_json = bridge_api.get_field_map(
         map_type_key, season_field_id, image_date, **data)
 
-    if field_map_json.get('hotSpots'):
-        create_hotspot_layer(field_map_json.get('hotSpots'), 'hotspots')
-
-    if field_map_json.get('zones') and field_map_json.get('zones')['segments']:
-        create_hotspot_layer(field_map_json.get('zones')['segments'], 'segments')
-
     return download_field_map(
         field_map_json=field_map_json,
         map_type_key=map_type_key,
@@ -454,6 +448,34 @@ def download_field_map(
         url = '{}?zoning=true&zoneCount={}'.format(
             url, data.get('zoneCount')) \
             if data.get('zoning') else url
+
+        # Get hotspots for zones if they have been requested by user.
+        bridge_api = BridgeAPI(
+            *credentials_parameters_from_settings(),
+            proxies=QGISSettings.get_qgis_proxy())
+
+        if data.get('zoning') and data.get('hotspot'):
+            if data.get('zoningSegmentation'):
+                hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true' \
+                              '&zoneSegmentation=polygon'.format( \
+                    field_map_json['_links']['self'], data.get('zoneCount'))
+
+                map_json = bridge_api.get_hotspot(hotspot_url)
+
+                if map_json.get('zones') and map_json.get('zones'):
+                    create_hotspot_layer(
+                        map_json.get('zones'),
+                        'segments')
+            else:
+                hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true'.\
+                    format( \
+                    field_map_json['_links']['self'],
+                    data.get('zoneCount'))
+                map_json = bridge_api.get_hotspot(hotspot_url)
+
+                if map_json.get('hotSpots'):
+                    create_hotspot_layer(map_json.get('hotSpots'), 'hotspots')
+
     except KeyError:
         # requested map format not found
         message = (

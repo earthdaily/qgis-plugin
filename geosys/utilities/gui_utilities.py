@@ -372,7 +372,10 @@ def create_hotspot_layer(source, source_type):
                 "segmentId": 2
             }]
             or
-            source = [ {
+            source = [
+            {
+                id: 1,
+                segments:{
                   "id": 3,
                   "geometry": "POLYGON ((
                   -107.07693518495601 36.83928234462352,
@@ -387,16 +390,18 @@ def create_hotspot_layer(source, source_type):
                     "area": 20200.183288909735,
                     "std": 6.545262336730957
                   }
-                }]"
+                }
+            }
+            ]"
     """
     crs = QgsCoordinateReferenceSystem()
     fields = QgsFields()
     features = []
 
     if source_type == 'hotspots':
-        layer_name = 'hotspots'
+        layer_name = 'Hotspots'
     else:
-        layer_name = 'segments'
+        layer_name = 'Segments'
 
     if source_type == "hotspots":
         layer_type = "MULTIPOINT?crs=%s" % (crs.authid())
@@ -411,25 +416,26 @@ def create_hotspot_layer(source, source_type):
             features.append(feature)
     else:
         layer_type = "MULTIPOLYGON?crs=%s" % (crs.authid())
-        fields.append(QgsField("id", QVariant.Int))
-        fields.append(QgsField("mean", QVariant.Double))
-        fields.append(QgsField("max", QVariant.Double))
-        fields.append(QgsField("min", QVariant.Double))
-        fields.append(QgsField("area", QVariant.Double))
-        fields.append(QgsField("std", QVariant.Double))
+        for zone in source:
+            fields.append(QgsField("id", QVariant.Int))
+            fields.append(QgsField("mean", QVariant.Double))
+            fields.append(QgsField("max", QVariant.Double))
+            fields.append(QgsField("min", QVariant.Double))
+            fields.append(QgsField("area", QVariant.Double))
+            fields.append(QgsField("std", QVariant.Double))
 
-        for polygon in source:
-            geom = QgsGeometry.fromWkt(polygon['geometry'])
-            feature = QgsFeature()
-            feature.setFields(fields)
-            feature.setGeometry(geom)
-            feature[0] = int(polygon['id'])
-            feature[1] = float(polygon['stats']['mean'])
-            feature[2] = float(polygon['stats']['max'])
-            feature[3] = float(polygon['stats']['min'])
-            feature[4] = float(polygon['stats']['area'])
-            feature[5] = float(polygon['stats']['std'])
-            features.append(feature)
+            for polygon in zone.get('segments'):
+                geom = QgsGeometry.fromWkt(polygon['geometry'])
+                feature = QgsFeature()
+                feature.setFields(fields)
+                feature.setGeometry(geom)
+                feature[0] = int(polygon['id'])
+                feature[1] = float(polygon['stats']['mean'])
+                feature[2] = float(polygon['stats']['max'])
+                feature[3] = float(polygon['stats']['min'])
+                feature[4] = float(polygon['stats']['area'])
+                feature[5] = float(polygon['stats']['std'])
+                features.append(feature)
 
     layer = QgsVectorLayer(layer_type, layer_name, "memory")
     layer.dataProvider().addAttributes(fields)
