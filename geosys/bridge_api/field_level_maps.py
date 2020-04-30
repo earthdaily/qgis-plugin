@@ -131,3 +131,25 @@ class FieldLevelMapsAPIClient(ApiClient):
             return response.json()
 
         return {}
+
+    def get_hotspot(self, url, params=None):
+        """ Actual method to get zone hotspots.
+
+        :return: JSON response.
+            Map data specification based on given parameters.
+        :rtype: dict
+        """
+        params = params if params else {}
+        headers = {
+            'accept': 'application/json',
+            'content-type': 'application/json'
+        }
+        response = self.get(
+            url,
+            headers=headers,
+            params=params)
+
+        if response:
+            return response.json()
+
+        return {}
