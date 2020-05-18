@@ -513,7 +513,7 @@
            <item>
             <widget class="QRadioButton" name="hotspot_polygon_part_form">
              <property name="text">
-              <string>Hot Spot(for each polygon part)</string>
+              <string>Hot Spot (for each polygon part)</string>
              </property>
             </widget>
            </item>
