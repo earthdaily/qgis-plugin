@@ -1,5 +1,6 @@
 # coding=utf-8
 """GUI utilities for the dock and the multi Exposure Tool."""
+import os
 from past.builtins import cmp
 
 from qgis.core import (
@@ -15,12 +16,15 @@ from qgis.core import (
     QgsVectorLayer,
     QgsField,
     QgsFields,
-    QgsGeometry)
+    QgsGeometry,
+    QgsVectorFileWriter)
 
 from qgis.PyQt.QtCore import Qt
 from PyQt5.QtCore import QVariant
 
 from geosys.utilities.qgis import qgis_version
+from geosys.bridge_api.default import SHP_EXT
+from geosys.utilities.settings import setting
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -393,18 +397,21 @@ def create_hotspot_layer(source, source_type):
                 }
             }
             ]"
+
+        :param source_type: Source type
+        :type source_type: string
     """
     crs = QgsCoordinateReferenceSystem()
     fields = QgsFields()
     features = []
 
-    if source_type == 'hotspots':
-        layer_name = 'Hotspots'
+    if source_type == "hotspots":
+        layer_name = "Hotspots"
     else:
-        layer_name = 'Segments'
+        layer_name = "Segments"
 
     if source_type == "hotspots":
-        layer_type = "MULTIPOINT?crs=%s" % (crs.authid())
+        layer_type = "MULTIPOINT?crs={}".format(crs.authid())
         fields.append(QgsField("segmentId", QVariant.String))
 
         for spot in source:
@@ -415,7 +422,7 @@ def create_hotspot_layer(source, source_type):
             feature[0] = spot['segmentId']
             features.append(feature)
     else:
-        layer_type = "MULTIPOLYGON?crs=%s" % (crs.authid())
+        layer_type = "MULTIPOLYGON?crs={}".format(crs.authid())
         for zone in source:
             fields.append(QgsField("id", QVariant.Int))
             fields.append(QgsField("mean", QVariant.Double))
@@ -443,4 +450,19 @@ def create_hotspot_layer(source, source_type):
     layer.updateExtents()
     layer.reload()
 
-    add_layer_to_canvas(layer, layer_name)
+    file_name = '{}{}'.format(layer_name, SHP_EXT)
+    output_dir = setting(
+            'output_directory', expected_type=str)
+    file_name = os.path.join(output_dir, file_name)
+
+    # Save memory layer to disk
+    error, error_message = QgsVectorFileWriter.writeAsVectorFormat(
+        layer,
+        file_name,
+        "UTF-8",
+        crs,
+        "ESRI Shapefile")
+
+    if error == QgsVectorFileWriter.NoError:
+        saved_layer = QgsVectorLayer(file_name, layer_name, "ogr")
+        add_layer_to_canvas(saved_layer, layer_name)

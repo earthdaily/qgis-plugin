@@ -449,33 +449,6 @@ def download_field_map(
             url, data.get('zoneCount')) \
             if data.get('zoning') else url
 
-        # Get hotspots for zones if they have been requested by user.
-        bridge_api = BridgeAPI(
-            *credentials_parameters_from_settings(),
-            proxies=QGISSettings.get_qgis_proxy())
-
-        if data.get('zoning') and data.get('hotspot'):
-            if data.get('zoningSegmentation'):
-                hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true' \
-                              '&zoneSegmentation=polygon'.format( \
-                    field_map_json['_links']['self'], data.get('zoneCount'))
-
-                map_json = bridge_api.get_hotspot(hotspot_url)
-
-                if map_json.get('zones') and map_json.get('zones'):
-                    create_hotspot_layer(
-                        map_json.get('zones'),
-                        'segments')
-            else:
-                hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true'.\
-                    format( \
-                    field_map_json['_links']['self'],
-                    data.get('zoneCount'))
-                map_json = bridge_api.get_hotspot(hotspot_url)
-
-                if map_json.get('hotSpots'):
-                    create_hotspot_layer(map_json.get('hotSpots'), 'hotspots')
-
     except KeyError:
         # requested map format not found
         message = (
@@ -501,6 +474,36 @@ def download_field_map(
                     destination_filename = '{}{}'.format(
                         destination_base_path, item['extension'])
                     fetch_data(url, destination_filename, headers=headers)
+
+        # Get hotspots for zones if they have been requested by user.
+        bridge_api = BridgeAPI(
+            *credentials_parameters_from_settings(),
+            proxies=QGISSettings.get_qgis_proxy())
+
+        if data.get('zoning') and data.get('hotspot'):
+            if data.get('zoningSegmentation'):
+                hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true' \
+                              '&zoneSegmentation=polygon'.format( \
+                    field_map_json['_links']['self'], data.get('zoneCount'))
+
+                map_json = bridge_api.get_hotspot(hotspot_url)
+
+            else:
+                hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true'. \
+                    format( \
+                    field_map_json['_links']['self'],
+                    data.get('zoneCount'))
+                map_json = bridge_api.get_hotspot(hotspot_url)
+
+            if map_json.get('hotSpots'):
+                create_hotspot_layer(
+                    map_json.get('hotSpots'),
+                    'hotspots')
+
+            if map_json.get('zones'):
+                create_hotspot_layer(
+                    map_json.get('zones'),
+                    'segments')
     except:
         # zip extraction error
         message = 'Failed to download file.'
