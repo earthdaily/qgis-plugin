@@ -471,6 +471,9 @@ def download_field_map(
                 # the PNG file.
                 for item in [PGW, LEGEND]:
                     url = field_map_json['_links'][item['api_key']]
+                    url = '{}?zoning=true&zoneCount={}'.format(
+                        url, data.get('zoneCount')) \
+                        if data.get('zoning') else url
                     destination_filename = '{}{}'.format(
                         destination_base_path, item['extension'])
                     fetch_data(url, destination_filename, headers=headers)
