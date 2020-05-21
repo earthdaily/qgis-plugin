@@ -361,7 +361,7 @@ def wkt_geometries_from_feature_iterator(
         return []
 
 
-def create_hotspot_layer(source, source_type):
+def create_hotspot_layer(source, source_type, source_filename):
     """Creates layer from wkt text in the source.
 
         :param source: Array with json objects containing WKT text.
@@ -400,15 +400,13 @@ def create_hotspot_layer(source, source_type):
 
         :param source_type: Source type
         :type source_type: string
+
+        :param source_filename: Filename of the result layer
+        :type source_filename: string
     """
     crs = QgsCoordinateReferenceSystem()
     fields = QgsFields()
     features = []
-
-    if source_type == "hotspots":
-        layer_name = "Hotspots"
-    else:
-        layer_name = "Segments"
 
     if source_type == "hotspots":
         layer_type = "MULTIPOINT?crs={}".format(crs.authid())
@@ -444,13 +442,13 @@ def create_hotspot_layer(source, source_type):
                 feature[5] = float(polygon['stats']['std'])
                 features.append(feature)
 
-    layer = QgsVectorLayer(layer_type, layer_name, "memory")
+    layer = QgsVectorLayer(layer_type, source_filename, "memory")
     layer.dataProvider().addAttributes(fields)
     layer.dataProvider().addFeatures(features)
     layer.updateExtents()
     layer.reload()
 
-    file_name = '{}{}'.format(layer_name, SHP_EXT)
+    file_name = '{}{}'.format(source_filename, SHP_EXT)
     output_dir = setting(
             'output_directory', expected_type=str)
     file_name = os.path.join(output_dir, file_name)
@@ -464,5 +462,5 @@ def create_hotspot_layer(source, source_type):
         "ESRI Shapefile")
 
     if error == QgsVectorFileWriter.NoError:
-        saved_layer = QgsVectorLayer(file_name, layer_name, "ogr")
-        add_layer_to_canvas(saved_layer, layer_name)
+        saved_layer = QgsVectorLayer(file_name, source_filename, "ogr")
+        add_layer_to_canvas(saved_layer, source_filename)
