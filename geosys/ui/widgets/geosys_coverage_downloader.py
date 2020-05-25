@@ -254,6 +254,7 @@ def create_map(
         destination_base_path=destination_base_path,
         output_map_format=output_map_format,
         headers=bridge_api.headers,
+        map_specification=map_specification,
         data=data)
 
 
@@ -409,7 +410,7 @@ def create_samz_map(
 
 def download_field_map(
         field_map_json, map_type_key, destination_base_path,
-        output_map_format, headers, data=None):
+        output_map_format, headers, map_specification=None, data=None):
     """Download field map from requested field map json.
 
     :param field_map_json: JSON response from Bridge API field map request.
@@ -427,6 +428,33 @@ def download_field_map(
 
     :param headers: Extra headers containing Bridge API authorization.
     :type headers: str
+
+    :param map_specification: Result of single map coverage specifications.
+        example: {
+            "seasonField": {
+                "id": "zgzmbrm",
+                "customerExternalId": "..."
+            },
+            "image": {
+                "date": "2018-10-18",
+                "sensor": "SENTINEL_2",
+                "weather": "HOT",
+                "soilMaterial": "BARE"
+            }
+            "type": "INSEASON_NDVI",
+            "_links": {
+                "self": "the_url",
+                "worldFile": "the_url",
+                "thumbnail": "the_url",
+                "legend": "the_url",
+                "image:image/png": "the_url",
+                "image:image/tiff+zip": "the_url",
+                "image:application/shp+zip": "the_url",
+                "image:application/vnd.google-earth.kmz": "the_url"
+            },
+            "coverageType": "CLEAR"
+        }
+    :type map_specification: dict
 
     :param data: Map creation data
     :type data: dict
@@ -484,29 +512,57 @@ def download_field_map(
             proxies=QGISSettings.get_qgis_proxy())
 
         if data.get('zoning') and data.get('hotspot'):
+            hotspot_per_part = False
             if data.get('zoningSegmentation'):
                 hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true' \
                               '&zoneSegmentation=polygon'.format( \
                     field_map_json['_links']['self'], data.get('zoneCount'))
 
                 map_json = bridge_api.get_hotspot(hotspot_url)
+                hotspot_per_part = True
 
             else:
                 hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true'. \
-                    format( \
+                    format(\
                     field_map_json['_links']['self'],
                     data.get('zoneCount'))
                 map_json = bridge_api.get_hotspot(hotspot_url)
 
             if map_json.get('hotSpots'):
+                if map_specification:
+                    if hotspot_per_part:
+                        hotspot_filename = 'HotspotsPerPart_{}_{}'.format(
+                            map_specification['seasonField']['id'],
+                            map_specification['image']['date']
+                        )
+                    else:
+                        hotspot_filename = 'HotspotsPerPolygon_{}_{}'.format(
+                            map_specification['seasonField']['id'],
+                            map_specification['image']['date']
+                        )
                 create_hotspot_layer(
                     map_json.get('hotSpots'),
-                    'hotspots')
+                    'hotspots',
+                    hotspot_filename
+                )
 
             if map_json.get('zones'):
+                if map_specification:
+                    if hotspot_per_part:
+                        segment_filename = 'SegmentsPerPart_{}_{}'.format(
+                            map_specification['seasonField']['id'],
+                            map_specification['image']['date']
+                        )
+                    else:
+                        segment_filename = 'SegmentsPerPolygon_{}_{}'.format(
+                            map_specification['seasonField']['id'],
+                            map_specification['image']['date']
+                        )
                 create_hotspot_layer(
                     map_json.get('zones'),
-                    'segments')
+                    'segments',
+                    segment_filename
+                )
     except:
         # zip extraction error
         message = 'Failed to download file.'
