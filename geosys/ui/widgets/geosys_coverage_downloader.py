@@ -515,7 +515,7 @@ def download_field_map(
             hotspot_per_part = False
             if data.get('zoningSegmentation'):
                 hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true' \
-                              '&zoneSegmentation=polygon'.format( \
+                              '&zoningSegmentation=polygon'.format( \
                     field_map_json['_links']['self'], data.get('zoneCount'))
 
                 map_json = bridge_api.get_hotspot(hotspot_url)
