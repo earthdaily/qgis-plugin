@@ -62,8 +62,10 @@ class ConnectionAPIClient(ApiClient):
             'content-type': 'application/x-www-form-urlencoded'
         }
 
+        url = '{}{}/{}'.format(self.base_url, 'connect', 'token')
+
         response = self.post(
-            self.full_url('connect', 'token'),
+            url,
             headers=headers, data=data, timeout=10)
 
         return response.json()
