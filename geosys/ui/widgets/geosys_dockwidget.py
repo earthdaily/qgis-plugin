@@ -455,15 +455,16 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             data.update({
                 SAMZ_ZONING: 'true'
             })
-            if self.hotspot_polygon:
-                data.update({
-                    HOTSPOT: 'true'
-                })
-            if self.hotspot_polygon_part:
-                data.update({
-                    HOTSPOT: self.hotspot_polygon_part,
-                    ZONING_SEGMENTATION: 'polygon'
-                })
+            if self.hotspots_group.isChecked():
+                if self.hotspot_polygon:
+                    data.update({
+                        HOTSPOT: 'true'
+                    })
+                if self.hotspot_polygon_part:
+                    data.update({
+                        HOTSPOT: self.hotspot_polygon_part,
+                        ZONING_SEGMENTATION: 'polygon'
+                    })
 
         if map_product_definition == SAMZ:
             image_dates = []
