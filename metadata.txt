@@ -26,7 +26,7 @@ repository=https://github.com/kartoza/geosys-qgis-plugin
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=
+tags=precision-ag,accuracy,agriculture,agronomy,analysis,api,area,basemap,biomass,bounding box,cartography,catalog,change detection,cvi,earth observation,elevation,evi,field,fields,field vegetation indexes,field agronomy maps,nitogen,gis,gndvi,google earth,geosys,image,imagery,images,import,importer,json,kml,kmz,lai,maps,modis,ndvi,plot,sentinel,shape,shapefile,spatial,spatial data,satellite,quality,spectral,time series,timeseries,vector,vector layer,vegetation,wkt,sustainability,ecology,landsat,field,remote sensing,webservice,satellite,smart farming,satellite data,webservices,digital farming,python,raster
 
 homepage=https://github.com/kartoza/geosys-qgis-plugin
 category=Plugins
