@@ -64,6 +64,14 @@ yield_variability_map = {
     'key': 'yield-variability-map',
     'endpoint': 'yield-variability-map'
 }
+soil_map = {
+    'key': 'soilmap',
+    'endpoint': 'soilmap'
+}
+reflectance_map = {
+    'key': 'reflectance-map',
+    'endpoint': 'reflectance-map'
+}
 
 # Map types definition
 
@@ -173,9 +181,9 @@ INSEASON_LAI = {
     'key': 'INSEASON_LAI',
     'name': 'INSEASON_LAI',
     'map_family': base_reference_map,
-    'description': 'Provides the in-season Leave Area Index. '
-                   'The LAI is a dimensionless ranging from 0 (bare ground) '
-                   'to over 10 (dense conifer forests).'
+    'description': 'Provides the in-season LAI Index. '
+                   'It is used as an indicator of the amount of '
+                   'leaf material.'
 }
 INSEASONCANOPY_N_REVERSE_LAI = {
     'key': 'INSEASONCANOPY_N_REVERSE_LAI',
@@ -196,6 +204,42 @@ INSEASONFIELD_AVERAGE_REVERSE_LAI = {
     'description': ''
 }
 
+# Sentinel-2 Red-edge position index (S2REP)
+INSEASON_S2REP = {
+    'key': 'INSEASON_S2REP',
+    'name': 'INSEASON_S2REP',
+    'map_family': base_reference_map,
+    'description': 'Provides the in-season S2REP index. '
+                   'Generates a map according to the amount '
+                   'of chlorophyll content per unit of leaf (LCC).'
+}
+
+# Chlorophyll vegetation index
+INSEASON_CVIN = {
+    'key': 'INSEASON_CVIN',
+    'name': 'INSEASON_CVIN',
+    'map_family': base_reference_map,
+    'description': 'Provides the in-season Chlorophyll Vegetation Index normalized.'
+}
+
+# Soil
+SOIL = {
+    'key': 'SOIL',
+    'name': 'SOIL',
+    'map_family': soil_map,
+    'description': 'Provides the in-season Soil type map. '
+                   'Can be generated only in the USA, contains '
+                   'information about soil as collected by the '
+                   'National Cooperative Soil Survey.'
+}
+
+# Reflectance
+REFLECTANCE = {
+    'key': 'REFLECTANCE',
+    'name': 'REFLECTANCE',
+    'map_family': reflectance_map,
+    'description': 'Provides the reflectance at Top of Canopy for Sentinel 2 and Landsat-8.'
+}
 
 # OM (Organic Matter)
 OM = {
@@ -264,13 +308,18 @@ ARCHIVE_MAP_PRODUCTS = [
     INSEASON_CVI,
     INSEASONPARTIAL_NDVI,
     INSEASONPARTIAL_EVI,
+    INSEASON_LAI,
+    INSEASON_S2REP,
+    INSEASON_CVIN,
     COLOR_COMPOSITION,
     ELEVATION,
     OM,
     YGM,
     YVM,
     SAMZ,
-    NDVI
+    NDVI,
+    SOIL,
+    REFLECTANCE
 ]
 
 BASIC_INSEASON_MAP_PRODUCTS = [
@@ -278,7 +327,8 @@ BASIC_INSEASON_MAP_PRODUCTS = [
     INSEASON_EVI,
     INSEASON_CVI,
     INSEASON_GNDVI,
-    INSEASON_LAI
+    INSEASON_LAI,
+    INSEASON_S2REP
 ]
 
 INSEASON_MAP_PRODUCTS = BASIC_INSEASON_MAP_PRODUCTS + [
@@ -311,8 +361,9 @@ DMC = {
 LANDSAT_8 = {
     'key': 'LANDSAT_8',
     'name': 'LANDSAT_8',
-    'description': 'Providing moderate-resolution imagery, '
-                   'from 15 meters to 100 meters.'
+    'description': 'Providing moderate-resolution imagery at 30 meters '
+                   'resampled to 15 meters by Geosys. Revisiting every '
+                   '16 days.'
 }
 
 RESOURCESAT2 = {
@@ -320,7 +371,8 @@ RESOURCESAT2 = {
     'name': 'RESOURCESAT2',
     'description': 'The Linear Imaging Self-Scanning Sensor (LISS-III) '
                    'with 23.5 meter spatial resolution LISS-IV Camera with '
-                   '5.8 meter spatial resolution.'
+                   '5.8 meter spatial resolution. '
+                   'Revisiting every 24 days.'
 }
 
 SENTINEL_2 = {
@@ -328,7 +380,7 @@ SENTINEL_2 = {
     'name': 'SENTINEL_2',
     'description': 'Spatial resolution of 10 m, 20 m and 60 m. '
                    'Revisiting every 5 days under the same viewing angles. '
-                   'At high latitudes, Sentinel-2 swath overlap and some '
+                   'At high latitudes, Sentinel-2 swath overlap, and some '
                    'regions will be observed twice or more every 5 days, '
                    'but with different viewing angles. Multi-spectral data '
                    'with 13 bands in the visible, near infrared, and short '

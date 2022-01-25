@@ -78,11 +78,18 @@ class FieldLevelMapsAPIClient(ApiClient):
             'content-type': 'application/json'
         }
 
+        print("coverage: " + str(self.full_url('coverage')))
+        print("headers: " + str(headers))
+        print("filters: " + str(filters))
+        print("data: " + str(data))
+
         response = self.post(
             self.full_url('coverage'),
             headers=headers,
             params=filters,
             json=data)
+
+        print("response: " + str(response))
 
         return response.json()
 
