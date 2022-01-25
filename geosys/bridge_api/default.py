@@ -28,18 +28,18 @@ IDENTITY_URLS = {
         'prod': 'https://identity.geosys-na.com'
     },
     'eu': {
-        'test': 'https://identity.preprod.geosys-eu.com',
+        'test': 'https://identity.preprod.geosys-na.com',
         'prod': 'https://identity.geosys-eu.com'
     }
 }
 BRIDGE_URLS = {
     'na': {
-        'test': 'https://bridge.preprod.geosys-na.com',
-        'prod': 'https://bridge.geosys-na.com'
+        'test': 'http://api-pp.geosys-na.net',
+        'prod': 'http://api.geosys-na.net'
     },
     'eu': {
-        'test': 'https://bridge.preprod.geosys-eu.com',
-        'prod': 'https://bridge.geosys-eu.com'
+        'test': 'http://api-pp.geosys-na.net',
+        'prod': 'http://api.geosys-eu.net'
     }
 }
 
