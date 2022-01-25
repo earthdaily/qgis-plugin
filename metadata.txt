@@ -42,7 +42,6 @@ repository=https://github.com/GEOSYS/qgis-plugin
 tags=precision-ag,accuracy,agriculture,agronomy,analysis,api,area,basemap,biomass,bounding box,cartography,catalog,change detection,cvi,earth observation,elevation,evi,field,fields,field vegetation indexes,field agronomy maps,nitogen,gis,gndvi,google earth,geosys,image,imagery,images,import,importer,json,kml,kmz,lai,maps,modis,ndvi,plot,sentinel,shape,shapefile,spatial,spatial data,satellite,quality,spectral,time series,timeseries,vector,vector layer,vegetation,wkt,sustainability,ecology,landsat,field,remote sensing,webservice,satellite,smart farming,satellite data,webservices,digital farming,python,raster
 
 homepage=https://github.com/kartoza/geosys-qgis-plugin
-docs=https://developer.geosys.com/
 category=Plugins
 icon=icon.png
 # experimental flag
