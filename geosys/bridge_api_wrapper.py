@@ -154,8 +154,6 @@ class BridgeAPI(ApiClient):
         :rtype: tuple
         """
         try:
-            print("Authenticate")
-
             api_client = ConnectionAPIClient(self.identity_server)
             response = api_client.get_access_token(
                 self.username,
@@ -165,9 +163,6 @@ class BridgeAPI(ApiClient):
             if response.get('access_token'):
                 self.access_token = response['access_token']
                 message = 'Authentication succeeded.'
-
-                print("\nToken: " + str(self.access_token))
-
                 return True, message
             else:
                 message = (
@@ -214,8 +209,6 @@ class BridgeAPI(ApiClient):
         api_client = FieldLevelMapsAPIClient(
             self.access_token, self.bridge_server)
         coverages_json = api_client.get_coverage(request_data, filters=filters)
-
-        print("\njson: " + str(coverages_json))
 
         return coverages_json
 

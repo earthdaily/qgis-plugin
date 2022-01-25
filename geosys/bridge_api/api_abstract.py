@@ -117,9 +117,6 @@ class ApiClient(object):
         if kwargs.get('headers'):
             kwargs['headers'].update(self.headers)
 
-        print("URL: " + str(url))
-        print("proxy: " + str(self.proxy))
-
         response = post(url, proxies=self.proxy, **kwargs)
         return response
 

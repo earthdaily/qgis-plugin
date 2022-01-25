@@ -115,16 +115,9 @@ class CoverageSearchThread(QThread):
 
             collected_results = []
             for geometry in self.geometries:
-                print("geometries: " + str(geometry))
-                print("crop: " + str(self.crop_type))
-                print("date: " + str(self.sowing_date))
-                print("filters: " + str(self.filters))
-
                 results = searcher_client.get_coverage(
                     geometry, self.crop_type, self.sowing_date,
                     filters=self.filters)
-
-                print("\nresults: " + str(results))
 
                 if isinstance(results, dict) and results.get('message'):
                     # TODO handle model_validation_error

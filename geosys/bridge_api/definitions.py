@@ -89,12 +89,12 @@ DIFFERENCE_INSEASON_EVI = {
 
 # NDVI (Normalized Difference Vegetation Index)
 # https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index
-NDVI = {
-    'key': 'NDVI',
-    'name': 'NDVI',
-    'map_family': base_reference_map,
-    'description': 'Provides the Normalized Difference Vegetation Index.'
-}
+# NDVI = {
+#     'key': 'NDVI',
+#     'name': 'NDVI',
+#     'map_family': base_reference_map,
+#     'description': 'Provides the Normalized Difference Vegetation Index.'
+# }
 INSEASON_NDVI = {
     'key': 'INSEASON_NDVI',
     'name': 'INSEASON_NDVI',
@@ -309,6 +309,10 @@ ARCHIVE_MAP_PRODUCTS = [
     INSEASONPARTIAL_NDVI,
     INSEASONPARTIAL_EVI,
     INSEASON_LAI,
+    INSEASONFIELD_AVERAGE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI,
+    INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_REVERSE_LAI,
     INSEASON_S2REP,
     INSEASON_CVIN,
     COLOR_COMPOSITION,
@@ -317,7 +321,6 @@ ARCHIVE_MAP_PRODUCTS = [
     YGM,
     YVM,
     SAMZ,
-    NDVI,
     SOIL,
     REFLECTANCE
 ]
@@ -334,6 +337,8 @@ BASIC_INSEASON_MAP_PRODUCTS = [
 INSEASON_MAP_PRODUCTS = BASIC_INSEASON_MAP_PRODUCTS + [
     INSEASONFIELD_AVERAGE_NDVI,
     INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI,
+    INSEASONFIELD_AVERAGE_REVERSE_LAI,
     INSEASONPARTIAL_NDVI,
     INSEASONPARTIAL_EVI,
 ]
