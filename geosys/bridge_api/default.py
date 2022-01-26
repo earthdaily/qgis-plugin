@@ -28,7 +28,7 @@ IDENTITY_URLS = {
         'prod': 'https://identity.geosys-na.com'
     },
     'eu': {
-        'test': 'https://identity.preprod.geosys-na.com',
+        'test': 'https://identity.preprod.geosys-eu.com',
         'prod': 'https://identity.geosys-eu.com'
     }
 }
