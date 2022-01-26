@@ -11,7 +11,9 @@ from qgis.PyQt.QtCore import QSettings
 
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.ui.help.options_help import options_help
+from geosys.ui.about.options_about import options_about
 from geosys.ui.help.help_dialog import HelpDialog
+from geosys.ui.about.about_dialog import AboutDialog
 from geosys.utilities.qgis_settings import QGISSettings
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import set_setting, setting
@@ -81,6 +83,8 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
 
         help_button = self.button_box.button(QDialogButtonBox.Help)
         help_button.clicked.connect(self.show_help)
+
+        self.about_button.clicked.connect(self.show_about)
 
     def username(self):
         """Get current value of username."""
@@ -305,6 +309,12 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         """Open the help dialog."""
         # noinspection PyTypeChecker
         dialog = HelpDialog(self, options_help())
+        dialog.show()
+
+    def show_about(self):
+        """Open the about dialog."""
+        # noinspection PyTypeChecker
+        dialog = AboutDialog(self, options_about())
         dialog.show()
 
     def accept(self):

@@ -64,6 +64,26 @@ def html_help_header():
     return content
 
 
+def html_about_header():
+    """Get a standard about html header for wrapping content in.
+
+    This one differs from the normal html header in that it will
+    include style rules to number headings.
+
+    ..versionadded:: 4.0
+
+    :returns: A header containing a web page preamble in html - up to and
+        including the body open tag.
+    :rtype: str
+    """
+    file_path = resources_path('html', 'header-about.html')
+
+    with codecs.open(file_path, 'r', encoding='utf8') as header_file:
+        content = header_file.read()
+        content = content.replace('PATH', resources_path())
+    return content
+
+
 def resources_path(*args):
     """Get the path to our resources folder.
 
