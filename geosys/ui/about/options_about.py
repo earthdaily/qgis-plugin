@@ -59,14 +59,15 @@ def content():
     """
     message = m.Message()
     message.add(m.Paragraph(tr(
-        ' '
-        '- EarthDaily agro https://earthdailyagro.com/\n '
-        '- News https://earthdailyagro.com/news/\n '
-        '- Careers https://earthdailyagro.com/careers/\n '
-        '- Contact https://earthdailyagro.com/contact/\n '
-        '- Twitter - https://twitter.com/EarthDailyAgro/\n '
-        '- Linkedin - https://www.linkedin.com/company/115836/admin/\n '
-        '- Youtube https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g'
+        '<ul> '
+        '<li>EarthDaily agro: <a href="https://earthdailyagro.com/"> https://earthdailyagro.com/</a></li> '
+        '<li>News: <a href="https://earthdailyagro.com/news/"> https://earthdailyagro.com/news/</a></li> '
+        '<li>Careers: <a href="https://earthdailyagro.com/careers/"> https://earthdailyagro.com/careers/</a></li> '
+        '<li>Contact: <a href="https://earthdailyagro.com/contact/"> https://earthdailyagro.com/contact/</a></li> '
+        '<li>Twitter: <a href="https://twitter.com/EarthDailyAgro/"> https://twitter.com/EarthDailyAgro/</a></li> '
+        '<li>Linkedin: <a href="https://www.linkedin.com/company/115836/admin/"> https://www.linkedin.com/company/115836/admin/</a></li> '
+        '<li>YouTube: <a href="https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g"> https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g</a></li> '
+        '</ul>'
     )))
 
     return message
