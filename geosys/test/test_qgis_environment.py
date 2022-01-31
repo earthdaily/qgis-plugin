@@ -8,14 +8,14 @@
      (at your option) any later version.
 
 """
-__author__ = 'tim@linfiniti.com'
+
+__author__ = 'tim@kartoza.com'
 __date__ = '20/01/2011'
 __copyright__ = ('Copyright 2012, Australia Indonesia Facility for '
                  'Disaster Reduction')
 
 import os
 import unittest
-
 from qgis.core import (
     QgsProviderRegistry,
     QgsCoordinateReferenceSystem,
@@ -46,18 +46,25 @@ class QGISTest(unittest.TestCase):
             'SPHEROID["WGS_1984",6378137.0,298.257223563]],'
             'PRIMEM["Greenwich",0.0],UNIT["Degree",'
             '0.0174532925199433]]')
-        crs.createFromWkt(wkt)
+        wkt2 = (
+            'GEOGCS["WGS 84", DATUM["WGS_1984",'
+            'SPHEROID["WGS 84", 6378137, 298.257223563, AUTHORITY["EPSG", "7030"]],'
+            'AUTHORITY["EPSG", "6326"]],'
+            'PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]],'
+            'UNIT["degree", 0.0174532925199433, AUTHORITY["EPSG", "9122"]],'
+            'AUTHORITY["EPSG", "4326"]]'
+        )
+        crs.createFromWkt(wkt2)
         auth_id = crs.authid()
         expected_auth_id = 'EPSG:4326'
         self.assertEqual(auth_id, expected_auth_id)
 
         # now test for a loaded layer
-        path = os.path.join(os.path.dirname(__file__), 'tenbytenraster.asc')
+        path = os.path.join(os.path.dirname(__file__), 'tenbytenraster.tif')
         title = 'TestRaster'
         layer = QgsRasterLayer(path, title)
         auth_id = layer.crs().authid()
         self.assertEqual(auth_id, expected_auth_id)
-
 
 if __name__ == '__main__':
     unittest.main()

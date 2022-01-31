@@ -742,7 +742,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         project.layersAdded.connect(self.get_layers)
         project.layersRemoved.connect(self.get_layers)
 
-        self.iface.mapCanvas().layersChanged.connect(self.get_layers)
+        self.iface.mapCanvas().layersChanged.connect(self.get_layers) \
+            if self.iface is not None else None
 
     # pylint: disable=W0702
     def disconnect_layer_listener(self):

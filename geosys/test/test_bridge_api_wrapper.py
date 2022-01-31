@@ -80,9 +80,9 @@ class BridgeAPIWrapperTest(unittest.TestCase):
 
     def test_get_field_map(self):
         """Test we can successfully get the field map."""
-        map_type_key = 'INSEASONFIELD_AVERAGE_NDVI'
-        season_field_id = 'zgzmbrm'
-        image_date = '2018-10-13'
+        map_type_key = 'INSEASON_NDVI'
+        season_field_id = 'bg5bgq3'
+        image_date = '2021-11-30'
 
         bridge_api = BridgeAPI(
             username=self.username,
@@ -103,9 +103,9 @@ class BridgeAPIWrapperTest(unittest.TestCase):
     def test_get_difference_map(self):
         """Test we can successfully get the difference map."""
         map_type_key = 'INSEASON_NDVI'
-        season_field_id = 'zgzmbrm'
-        earliest_image_date = '2018-10-13'
-        latest_image_date = '2018-10-18'
+        season_field_id = 'bg5bgq3'
+        earliest_image_date = '2021-09-18'
+        latest_image_date = '2021-11-30'
 
         bridge_api = BridgeAPI(
             username=self.username,
@@ -122,7 +122,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
 
     def test_get_samz_map(self):
         """Test we can successfully get the SAMZ map."""
-        season_field_id = 'zgzmbrm'
+        season_field_id = 'lqlv9nb'
         params = {'zoneCount': 5}
 
         bridge_api = BridgeAPI(
@@ -148,10 +148,14 @@ class BridgeAPIWrapperTest(unittest.TestCase):
 
     def test_get_content(self):
         """Test we can successfully get the content of png response."""
+        image_id = 'IKc73hpUQ6t1tqdBqbWqEsD4IMwNnwN2zsF6EO4BM2e'
+        season_field = 'lqlv9nb'
+
         thumbnail_url = (
-            'https://bridge.preprod.geosys-na.com/field-level-maps/v4/'
-            'season-fields/zgzmbrm/coverage/2018-11-02/base-reference-map/'
-            'INSEASONPARTIAL_NDVI/thumbnail.png')
+            f"https://api-pp.geosys-na.net:443/field-level-maps/v4/"
+            f"season-fields/{season_field}/coverage/{image_id}"
+            "/base-reference-map/INSEASONPARTIAL_NDVI/thumbnail.png"
+        )
 
         bridge_api = BridgeAPI(
             username=self.username,
@@ -162,7 +166,8 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             use_testing_service=True)
 
         content = bridge_api.get_content(thumbnail_url)
-        self.assertTrue(isinstance(content, str))
+
+        self.assertTrue(isinstance(content, bytes))
 
 
 if __name__ == "__main__":

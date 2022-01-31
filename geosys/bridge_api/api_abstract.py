@@ -130,7 +130,7 @@ class ApiClient(object):
         :type params: str
 
         :return: Response content.
-        :rtype: str
+        :rtype: bytes
         """
         response = get(
             url, headers=self.headers, params=params, proxies=self.proxy,

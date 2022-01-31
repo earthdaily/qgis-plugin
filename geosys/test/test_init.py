@@ -43,14 +43,14 @@ class TestInit(unittest.TestCase):
             'author']
 
         file_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__), os.pardir,
+            os.path.dirname(__file__), os.pardir, os.pardir,
             'metadata.txt'))
         LOGGER.info(file_path)
         metadata = []
         parser = configparser.ConfigParser()
         parser.optionxform = str
         parser.read(file_path)
-        message = 'Cannot find a section named "general" in %s' % file_path
+        message = f'Cannot find a section named "general" in {file_path}'
         assert parser.has_section('general'), message
         metadata.extend(parser.items('general'))
 
