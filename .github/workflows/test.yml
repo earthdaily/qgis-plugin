@@ -32,15 +32,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qgis_version_tag: 
-          - latest
+        qgis_version_tag:
           - release-3_10
-          - release-3_12
-          - release-3_14
           - release-3_16
-          - release-3_18
-          - release-3_20
-          - final-3_22_0
+          - release-3_22
 
     steps:
 
