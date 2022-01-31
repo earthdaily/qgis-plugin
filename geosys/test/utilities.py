@@ -1,13 +1,10 @@
 # coding=utf-8
 """Common functionality used by regression tests."""
+
+
 import sys
 import logging
-import processing
 
-__copyright__ = "Copyright 2019, Kartoza"
-__license__ = "GPL version 3"
-__email__ = "rohmat@kartoza.com"
-__revision__ = "$Format:%H$"
 
 LOGGER = logging.getLogger('QGIS')
 QGIS_APP = None  # Static variable used to hold hand to running QGIS app
@@ -27,7 +24,7 @@ def get_qgis_app():
     """
 
     try:
-        from PyQt5 import QtGui, QtCore
+        from qgis.PyQt import QtGui, QtCore
         from qgis.core import QgsApplication
         from qgis.gui import QgsMapCanvas
         from .qgis_interface import QgisInterface
@@ -38,20 +35,10 @@ def get_qgis_app():
 
     if QGIS_APP is None:
         gui_flag = True  # All test will run qgis in gui mode
-
-        # noinspection PyPep8Naming
-        if 'argv' in dir(sys):
-            QGIS_APP = QgsApplication([p.encode('utf-8')
-                                       for p in sys.argv], gui_flag)
-        else:
-            QGIS_APP = QgsApplication([], gui_flag)
-
+        #noinspection PyPep8Naming
+        QGIS_APP = QgsApplication(sys.argv, gui_flag)
         # Make sure QGIS_PREFIX_PATH is set in your env if needed!
         QGIS_APP.initQgis()
-
-        # Initialize processing
-        processing.Processing.initialize()
-
         s = QGIS_APP.showSettings()
         LOGGER.debug(s)
 
