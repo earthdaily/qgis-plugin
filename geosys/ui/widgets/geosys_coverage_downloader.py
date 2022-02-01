@@ -119,9 +119,16 @@ class CoverageSearchThread(QThread):
                     geometry, self.crop_type, self.sowing_date,
                     filters=self.filters)
 
+                print("bla")
+
                 if isinstance(results, dict) and results.get('message'):
                     # TODO handle model_validation_error
+
+                    print("TEST: " + str(results['message']))
+
                     raise Exception(results['message'])
+
+                print("bla2")
 
                 for result in results:
                     if self.need_stop:
@@ -167,6 +174,8 @@ class CoverageSearchThread(QThread):
                 "Error of processing!\n{0}: {1}")).format(
                 unicode(sys.exc_info()[0].__name__), unicode(
                     sys.exc_info()[1]))
+
+            print("ERROR: " + str(error_text))
             self.error_occurred.emit(error_text)
         finally:
             self.mutex.unlock()

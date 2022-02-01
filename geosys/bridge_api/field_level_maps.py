@@ -78,8 +78,14 @@ class FieldLevelMapsAPIClient(ApiClient):
             'content-type': 'application/json'
         }
 
-        response = self.post(
-            self.full_url('coverage'),
+        # response = self.post(
+        #     self.full_url('coverage'),
+        #     headers=headers,
+        #     params=filters,
+        #     json=data)
+
+        response = self.get(
+            self.full_url('season-fields/e9yr2pm/coverage/IKc73hpUQ6sgL8CIby7hFAaqRbTRMoEPF7FyP01bSaK'),
             headers=headers,
             params=filters,
             json=data)

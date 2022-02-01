@@ -99,7 +99,17 @@ class ApiClient(object):
         if kwargs.get('headers'):
             kwargs['headers'].update(self.headers)
 
+        print("GET")
+
+        print("\nurl: " + str(url))
+        print("proxies: " + str(self.proxy))
+        print("\nkwargs: " + str(kwargs))
+        print("\n")
+
         response = get(url, proxies=self.proxy, **kwargs)
+
+        print("get response: " + str(response))
+
         return response
 
     def post(self, url, **kwargs):
@@ -117,7 +127,17 @@ class ApiClient(object):
         if kwargs.get('headers'):
             kwargs['headers'].update(self.headers)
 
+        print("POST")
+
+        print("\nurl: " + str(url))
+        print("proxies: " + str(self.proxy))
+        print("\nkwargs: " + str(kwargs))
+        print("\n")
+
         response = post(url, proxies=self.proxy, **kwargs)
+
+        print("post response: " + str(response))
+
         return response
 
     def get_content(self, url, params=None):
