@@ -130,6 +130,7 @@ class CoverageSearchThread(QThread):
 
                 print("bla2")
 
+
                 for result in results:
                     if self.need_stop:
                         break
@@ -176,6 +177,7 @@ class CoverageSearchThread(QThread):
                     sys.exc_info()[1]))
 
             print("ERROR: " + str(error_text))
+
             self.error_occurred.emit(error_text)
         finally:
             self.mutex.unlock()

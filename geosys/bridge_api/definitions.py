@@ -181,9 +181,9 @@ INSEASON_LAI = {
     'key': 'INSEASON_LAI',
     'name': 'INSEASON_LAI',
     'map_family': base_reference_map,
-    'description': 'Provides the in-season LAI Index. '
-                   'It is used as an indicator of the amount of '
-                   'leaf material.'
+    'description': 'Provides the in-season Leave Area Index. '
+                   'The LAI is a dimensionless ranging from 0 (bare ground) '
+                   'to over 10 (dense conifer forests).'
 }
 INSEASONCANOPY_N_REVERSE_LAI = {
     'key': 'INSEASONCANOPY_N_REVERSE_LAI',
@@ -385,7 +385,7 @@ SENTINEL_2 = {
     'name': 'SENTINEL_2',
     'description': 'Spatial resolution of 10 m, 20 m and 60 m. '
                    'Revisiting every 5 days under the same viewing angles. '
-                   'At high latitudes, Sentinel-2 swath overlap, and some '
+                   'At high latitudes, Sentinel-2 swath overlap and some '
                    'regions will be observed twice or more every 5 days, '
                    'but with different viewing angles. Multi-spectral data '
                    'with 13 bands in the visible, near infrared, and short '

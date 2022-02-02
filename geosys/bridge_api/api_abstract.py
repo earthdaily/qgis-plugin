@@ -136,7 +136,7 @@ class ApiClient(object):
 
         response = post(url, proxies=self.proxy, **kwargs)
 
-        print("post response: " + str(response))
+        print("get response: " + str(response))
 
         return response
 
