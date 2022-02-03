@@ -38,8 +38,8 @@ BRIDGE_URLS = {
         'prod': 'http://api.geosys-na.net'
     },
     'eu': {
-        'test': 'http://api-pp.geosys-na.net',
-        'prod': 'http://api.geosys-eu.net'
+        'test': 'https://api-pp.geosys-eu.net',
+        'prod': 'https://api.geosys-eu.net'
     }
 }
 
