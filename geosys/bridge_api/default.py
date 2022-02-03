@@ -34,12 +34,12 @@ IDENTITY_URLS = {
 }
 BRIDGE_URLS = {
     'na': {
-        'test': 'https://bridge.preprod.geosys-na.com',
-        'prod': 'https://bridge.geosys-na.com'
+        'test': 'http://api-pp.geosys-na.net',
+        'prod': 'http://api.geosys-na.net'
     },
     'eu': {
-        'test': 'https://bridge.preprod.geosys-eu.com',
-        'prod': 'https://bridge.geosys-eu.com'
+        'test': 'https://api-pp.geosys-eu.net',
+        'prod': 'https://api.geosys-eu.net'
     }
 }
 
