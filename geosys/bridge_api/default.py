@@ -28,7 +28,7 @@ IDENTITY_URLS = {
         'prod': 'https://identity.geosys-na.com'
     },
     'eu': {
-        'test': 'https://identity.preprod.geosys-eu.com',
+        'test': 'https://identity.preprod.geosys-na.com',
         'prod': 'https://identity.geosys-eu.com'
     }
 }
@@ -38,7 +38,7 @@ BRIDGE_URLS = {
         'prod': 'http://api.geosys-na.net'
     },
     'eu': {
-        'test': 'https://api-pp.geosys-eu.net',
+        'test': 'https://api-pp.geosys-na.net',
         'prod': 'https://api.geosys-eu.net'
     }
 }
