@@ -43,7 +43,7 @@ def heading():
     :returns: A heading object.
     :rtype: safe.messaging.heading.Heading
     """
-    message = m.Heading(tr('GEOSYS Plugin about'), **SUBSECTION_STYLE)
+    message = m.Heading(tr('About EarthDaily Agro'), **SUBSECTION_STYLE)
     return message
 
 
@@ -60,6 +60,15 @@ def content():
     message = m.Message()
     message.add(m.Paragraph(tr(
         '<ul> '
+        '<p><b>EarthDaily Agro is the agricultural analysis division '
+        'of EarthDaily Analytics. '
+        'Learn more about EarthDaily at earthdaily.com</b></p>'
+        ' '
+        '<p>EarthDaily Agro uses satellite imaging to provide '
+        'advanced analytics to mitigrate risk and the planet. '
+        'Increase efficienies - leading to more sustainable '
+        'outcomes for the organization and people who '
+        'feed.</p> '
         '<li>EarthDaily agro: <a href="https://earthdailyagro.com/"> https://earthdailyagro.com/</a></li> '
         '<li>News: <a href="https://earthdailyagro.com/news/"> https://earthdailyagro.com/news/</a></li> '
         '<li>Careers: <a href="https://earthdailyagro.com/careers/"> https://earthdailyagro.com/careers/</a></li> '
