@@ -10,7 +10,24 @@
 name=GEOSYS Plugin
 qgisMinimumVersion=3.0
 description=Discover, request and use aggregate imagery products based on landsat-8, Sentinel 2 and other sensors from within QGIS, using the GEOSYS API.
-about=Discover, request and use aggregate imagery products based on landsat-8, Sentinel 2 and other sensors from within QGIS, using the GEOSYS API.”
+
+about=GEOSYS® Plugin for QGIS is the easiest way to experience field level capabilities of the GEOSYS® Platform. The plugin will offer an easy way to interact with GEOSYS® Geospatial Analytics without any coding effort and will give you access to:
+ - GEOSYS® field historical maps
+ - GEOSYS® field in-season maps
+ - GEOSYS® processing services
+
+ Highlights:
+ - Polygon-based maps creation capabilities
+ - Multi index map option: NDVI, GNDVI, EVI, CVI, CVIN, S2REP
+ - Multi sensor option : Sentinel 2, Landsat 8, Deimos, Modis, Resourcesat
+ - Visualization of Spectral maps
+
+ Resources:
+ - Documentation: https://developer.geosys.com/
+ - Repository: https://github.com/GEOSYS/qgis-plugin
+
+tracker=https://github.com/GEOSYS/qgis-plugin/issues
+repository=https://github.com/GEOSYS/qgis-plugin
 
 # Version and release information
 version=1.0.1
@@ -20,6 +37,7 @@ status=final
 # Author contact information
 author=GEOSYS
 email=sales.na@geosys.com
+
 # End of mandatory metadata
 
 # Recommended items:
@@ -28,7 +46,7 @@ email=sales.na@geosys.com
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=
+tags=precision-ag,accuracy,agriculture,agronomy,analysis,api,area,basemap,biomass,bounding box,cartography,catalog,change detection,cvi,earth observation,elevation,evi,field,fields,field vegetation indexes,field agronomy maps,nitogen,gis,gndvi,google earth,geosys,image,imagery,images,import,importer,json,kml,kmz,lai,maps,modis,ndvi,plot,sentinel,shape,shapefile,spatial,spatial data,satellite,quality,spectral,time series,timeseries,vector,vector layer,vegetation,wkt,sustainability,ecology,landsat,field,remote sensing,webservice,satellite,smart farming,satellite data,webservices,digital farming,python,raster
 
 homepage=https://github.com/GEOSYS/qgis-plugin
 tracker=https://github.com/GEOSYS/qgis-plugin/issues
