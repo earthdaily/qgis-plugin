@@ -26,9 +26,6 @@ about=GEOSYS® Plugin for QGIS is the easiest way to experience field level capa
  - Documentation: https://developer.geosys.com/
  - Repository: https://github.com/GEOSYS/qgis-plugin
 
-tracker=https://github.com/GEOSYS/qgis-plugin/issues
-repository=https://github.com/GEOSYS/qgis-plugin
-
 # Version and release information
 version=1.0.1
 # alpha, beta, rc or final
