@@ -248,6 +248,8 @@ def create_map(
     field_map_json = bridge_api.get_field_map(
         map_type_key, season_field_id, image_date, **data)
 
+    print("before download field map")
+
     return download_field_map(
         field_map_json=field_map_json,
         map_type_key=map_type_key,

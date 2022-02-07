@@ -518,7 +518,7 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QCheckBox" name="cn_max">
+               <widget class="QCheckBox" name="cb_max">
                 <property name="text">
                  <string>Maximum</string>
                 </property>

@@ -98,8 +98,20 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.organic_average = None
         self.samz_zone = None
         self.samz_zoning = None
+        self.hotspot_fetch = None
         self.hotspot_polygon = None
         self.hotspot_polygon_part = None
+        self.hotspot_position = None
+        self.hot_spot_none = None
+        self.hot_spot_point_on_surface = None
+        self.hot_spot_min = None
+        self.hot_spot_ave = None
+        self.hot_spot_med = None
+        self.hot_spot_max = None
+        self.hot_spot_all = None
+        self.hot_spot_filters_apply = None
+        self.hot_spot_top = None
+        self.hot_spot_bottom = None
         self.zoning_segmentation = None
         self.output_map_format = None
         self.gain = 0.0
@@ -405,9 +417,40 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.yield_maximum = self.yield_maximum_form.value()
         self.organic_average = self.organic_average_form.value()
         self.samz_zone = self.samz_zone_form.value()
-        self.hotspot_polygon = self.hotspot_polygon_form.isChecked()
-        self.hotspot_polygon_part = self.hotspot_polygon_part_form.isChecked()
+        # self.hotspot_polygon = self.hotspot_polygon_form.isChecked()
+        # self.hotspot_polygon_part = self.hotspot_polygon_part_form.isChecked()
         self.output_map_format = self.get_map_format()
+
+        self.hotspot_fetch = self.hotspots_group.isChecked()
+        if self.hotspot_fetch:
+            self.hotspot_polygon = self.hotspot_polygon_form.isChecked()
+            self.hotspot_polygon_part = self.hotspot_polygon_part_form.isChecked()
+            self.hotspot_position = self.hotspots_position_group.isChecked()
+            if self.hotspot_position:
+                self.hot_spot_none = self.cb_none.isChecked()
+                self.hot_spot_point_on_surface = self.cb_point_on_surface.isChecked()
+                self.hot_spot_min = self.cb_min.isChecked()
+                self.hot_spot_ave = self.cb_ave.isChecked()
+                self.hot_spot_med = self.cb_med.isChecked()
+                self.hot_spot_max = self.cb_max.isChecked()
+                self.hot_spot_all = self.cb_all.isChecked()
+            else:
+                self.hot_spot_none = False
+                self.hot_spot_point_on_surface = False
+                self.hot_spot_min = False
+                self.hot_spot_ave = False
+                self.hot_spot_med = False
+                self.hot_spot_max = False
+                self.hot_spot_all = False
+            self.hot_spot_filters_apply = self.hotspots_filters_group.isChecked()
+            if self.hot_spot_filters_apply:
+                self.hot_spot_top = self.sb_top.value()
+                self.hot_spot_bottom = self.sb_bottom.value()
+            else:
+                self.hot_spot_top = 0
+                self.hot_spot_bottom = 0
+            self.zoning_segmentation = None
+            self.output_map_format = None
 
         # SaMZ map creation accept zero selected results, which means it will
         # trigger automatic SaMZ map creation.
@@ -525,6 +568,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     })
 
         if map_product_definition == SAMZ:
+            print("in samz")
             image_dates = []
             samz_mode = 'auto'
             if map_specifications:
@@ -555,16 +599,20 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # Add map to qgis canvas
             self.load_layer(os.path.join(self.output_directory, filename))
         else:
+            print("not samz")
             for map_specification in map_specifications:
                 filename = '{}_{}_{}'.format(
                     self.map_product,  # map_specification['maps'][0]['type'],
                     map_specification['seasonField']['id'],
                     map_specification['image']['date']
                 )
+                print("start")
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
                     data=data, output_map_format=self.output_map_format)
+                print("end")
                 if not is_success:
+                    print("KNOFFEL")
                     QMessageBox.critical(
                         self,
                         'Map Creation Status',
