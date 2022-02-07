@@ -81,12 +81,6 @@ DIFFERENCE_INSEASON_EVI = {
 
 # NDVI (Normalized Difference Vegetation Index)
 # https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index
-NDVI = {
-    'key': 'NDVI',
-    'name': 'NDVI',
-    'map_family': base_reference_map,
-    'description': 'Provides the Normalized Difference Vegetation Index.'
-}
 INSEASON_NDVI = {
     'key': 'INSEASON_NDVI',
     'name': 'INSEASON_NDVI',
@@ -196,6 +190,23 @@ INSEASONFIELD_AVERAGE_REVERSE_LAI = {
     'description': ''
 }
 
+# Sentinel-2 Red-edge position index (S2REP)
+INSEASON_S2REP = {
+    'key': 'INSEASON_S2REP',
+    'name': 'INSEASON_S2REP',
+    'map_family': base_reference_map,
+    'description': 'Provides the in-season S2REP index. '
+                   'Generates a map according to the amount '
+                   'of chlorophyll content per unit of leaf (LCC).'
+}
+
+# Chlorophyll vegetation index
+INSEASON_CVIN = {
+    'key': 'INSEASON_CVIN',
+    'name': 'INSEASON_CVIN',
+    'map_family': base_reference_map,
+    'description': 'Provides the in-season Chlorophyll Vegetation Index normalized.'
+}
 
 # OM (Organic Matter)
 OM = {
@@ -264,13 +275,19 @@ ARCHIVE_MAP_PRODUCTS = [
     INSEASON_CVI,
     INSEASONPARTIAL_NDVI,
     INSEASONPARTIAL_EVI,
+    INSEASON_LAI,
+    INSEASONFIELD_AVERAGE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI,
+    INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_REVERSE_LAI,
+    INSEASON_S2REP,
+    INSEASON_CVIN,
     COLOR_COMPOSITION,
     ELEVATION,
     OM,
     YGM,
     YVM,
-    SAMZ,
-    NDVI
+    SAMZ
 ]
 
 BASIC_INSEASON_MAP_PRODUCTS = [
@@ -278,12 +295,15 @@ BASIC_INSEASON_MAP_PRODUCTS = [
     INSEASON_EVI,
     INSEASON_CVI,
     INSEASON_GNDVI,
-    INSEASON_LAI
+    INSEASON_LAI,
+    INSEASON_S2REP
 ]
 
 INSEASON_MAP_PRODUCTS = BASIC_INSEASON_MAP_PRODUCTS + [
     INSEASONFIELD_AVERAGE_NDVI,
     INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI,
+    INSEASONFIELD_AVERAGE_REVERSE_LAI,
     INSEASONPARTIAL_NDVI,
     INSEASONPARTIAL_EVI,
 ]
@@ -311,8 +331,9 @@ DMC = {
 LANDSAT_8 = {
     'key': 'LANDSAT_8',
     'name': 'LANDSAT_8',
-    'description': 'Providing moderate-resolution imagery, '
-                   'from 15 meters to 100 meters.'
+    'description': 'Providing moderate-resolution imagery at 30 meters '
+                   'resampled to 15 meters by Geosys. Revisiting every '
+                   '16 days.'
 }
 
 RESOURCESAT2 = {
@@ -320,7 +341,8 @@ RESOURCESAT2 = {
     'name': 'RESOURCESAT2',
     'description': 'The Linear Imaging Self-Scanning Sensor (LISS-III) '
                    'with 23.5 meter spatial resolution LISS-IV Camera with '
-                   '5.8 meter spatial resolution.'
+                   '5.8 meter spatial resolution. '
+                   'Revisiting every 24 days.'
 }
 
 SENTINEL_2 = {
