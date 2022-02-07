@@ -64,14 +64,6 @@ yield_variability_map = {
     'key': 'yield-variability-map',
     'endpoint': 'yield-variability-map'
 }
-soil_map = {
-    'key': 'soilmap',
-    'endpoint': 'soilmap'
-}
-reflectance_map = {
-    'key': 'reflectance-map',
-    'endpoint': 'reflectance-map'
-}
 
 # Map types definition
 
@@ -216,25 +208,6 @@ INSEASON_CVIN = {
     'description': 'Provides the in-season Chlorophyll Vegetation Index normalized.'
 }
 
-# Soil
-SOIL = {
-    'key': 'SOIL',
-    'name': 'SOIL',
-    'map_family': soil_map,
-    'description': 'Provides the in-season Soil type map. '
-                   'Can be generated only in the USA, contains '
-                   'information about soil as collected by the '
-                   'National Cooperative Soil Survey.'
-}
-
-# Reflectance
-REFLECTANCE = {
-    'key': 'REFLECTANCE',
-    'name': 'REFLECTANCE',
-    'map_family': reflectance_map,
-    'description': 'Provides the reflectance at Top of Canopy for Sentinel 2 and Landsat-8.'
-}
-
 # OM (Organic Matter)
 OM = {
     'key': 'OM',
@@ -314,9 +287,7 @@ ARCHIVE_MAP_PRODUCTS = [
     OM,
     YGM,
     YVM,
-    SAMZ,
-    SOIL,
-    REFLECTANCE
+    SAMZ
 ]
 
 BASIC_INSEASON_MAP_PRODUCTS = [
