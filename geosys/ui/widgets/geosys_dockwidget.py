@@ -758,6 +758,36 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.iface.mapCanvas().layersChanged.disconnect(self.get_layers)
 
+    def populate_sensors_reflectance(self):
+        """Obtain a list of sensors from Bridge API definition.
+        For reflectance TOC, so only Landsat-8 and Sentinel-8 should be included, otherwise all of the sensors
+        """
+        for sensor in [ALL_SENSORS]+SENSORS:
+            sensor_name = sensor['name']
+            if sensor_name == 'LANDSAT_8' or sensor_name == 'SENTINEL_2':
+                add_ordered_combo_item(self.sensor_combo_box, sensor_name, sensor['key'])
+
+    def clear_combo_box(self, combo_box):
+        """Clears/removes all of the entries in the provided combo_box
+
+        :param combo_box: Combobox for which all of the entries should be removed
+        :type combo_box: QComboBox
+        """
+        cnt = combo_box.count()
+        while cnt >= 0:
+            combo_box.removeItem(cnt)
+
+            cnt = cnt - 1
+
+    def product_type_change(self):
+        map_product = self.map_product_combo_box.currentText()
+        if map_product == 'REFLECTANCE':  # If TOC reflectance has been chosen, only Sentinel-2 and Landsat-8 will be available as an option
+            self.clear_combo_box(self.sensor_combo_box)
+            self.populate_sensors_reflectance()
+        else:
+            self.clear_combo_box(self.sensor_combo_box)
+            self.populate_sensors()
+
     def setup_connectors(self):
         """Setup signal/slot mechanisms for dock elements."""
         # Button connector
@@ -766,6 +796,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.next_push_button.clicked.connect(self.show_next_page)
         self.difference_map_push_button.clicked.connect(
             self.start_difference_map_creation)
+
+        # Product type has changed
+        self.map_product_combo_box.currentIndexChanged.connect(self.product_type_change)
 
         # Stacked widget connector
         self.stacked_widget.currentChanged.connect(self.set_next_button_text)

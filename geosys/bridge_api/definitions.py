@@ -64,6 +64,10 @@ yield_variability_map = {
     'key': 'yield-variability-map',
     'endpoint': 'yield-variability-map'
 }
+reflectance_map = {
+    'key': 'reflectance-map',
+    'endpoint': 'reflectance-map'
+}
 
 # Map types definition
 
@@ -208,6 +212,14 @@ INSEASON_CVIN = {
     'description': 'Provides the in-season Chlorophyll Vegetation Index normalized.'
 }
 
+# Top of canopy reflectance
+REFLECTANCE = {
+    'key': 'TOC',
+    'name': 'REFLECTANCE',
+    'map_family': reflectance_map,
+    'description': 'Top of canopy reflectance based on either Sentinel-2 or Landsat-8.'
+}
+
 # OM (Organic Matter)
 OM = {
     'key': 'OM',
@@ -282,6 +294,7 @@ ARCHIVE_MAP_PRODUCTS = [
     INSEASONFIELD_AVERAGE_REVERSE_LAI,
     INSEASON_S2REP,
     INSEASON_CVIN,
+    REFLECTANCE,
     COLOR_COMPOSITION,
     ELEVATION,
     OM,
