@@ -64,6 +64,7 @@ yield_variability_map = {
     'key': 'yield-variability-map',
     'endpoint': 'yield-variability-map'
 }
+
 reflectance_map = {
     'key': 'reflectance-map',
     'endpoint': 'reflectance-map'
