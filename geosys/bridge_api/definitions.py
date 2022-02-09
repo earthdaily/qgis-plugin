@@ -68,6 +68,10 @@ reflectance_map = {
     'key': 'reflectance-map',
     'endpoint': 'reflectance-map'
 }
+samplemap = {
+    'key': 'sample',
+    'endpoint': 'sample'
+}
 
 # Map types definition
 
@@ -280,6 +284,14 @@ SLOPE = {
     'description': 'Provides the slope map.'
 }
 
+# Soil map
+SOIL = {
+    'key': 'SOILMAP',
+    'name': 'SOILMAP',
+    'map_family': samplemap,
+    'description': 'Provides the soil map.'
+}
+
 ARCHIVE_MAP_PRODUCTS = [
     INSEASON_NDVI,
     INSEASON_GNDVI,
@@ -297,6 +309,7 @@ ARCHIVE_MAP_PRODUCTS = [
     REFLECTANCE,
     COLOR_COMPOSITION,
     ELEVATION,
+    SOIL,
     OM,
     YGM,
     YVM,
