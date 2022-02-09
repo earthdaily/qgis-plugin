@@ -449,8 +449,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             else:
                 self.hot_spot_top = 0
                 self.hot_spot_bottom = 0
-            self.zoning_segmentation = None
-            self.output_map_format = None
 
         # SaMZ map creation accept zero selected results, which means it will
         # trigger automatic SaMZ map creation.
@@ -568,7 +566,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     })
 
         if map_product_definition == SAMZ:
-            print("in samz")
             image_dates = []
             samz_mode = 'auto'
             if map_specifications:
@@ -599,20 +596,16 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # Add map to qgis canvas
             self.load_layer(os.path.join(self.output_directory, filename))
         else:
-            print("not samz")
             for map_specification in map_specifications:
                 filename = '{}_{}_{}'.format(
                     self.map_product,  # map_specification['maps'][0]['type'],
                     map_specification['seasonField']['id'],
                     map_specification['image']['date']
                 )
-                print("start")
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
                     data=data, output_map_format=self.output_map_format)
-                print("end")
                 if not is_success:
-                    print("KNOFFEL")
                     QMessageBox.critical(
                         self,
                         'Map Creation Status',

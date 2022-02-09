@@ -439,7 +439,8 @@ def create_hotspot_layer(source, source_type, source_filename):
                 feature[2] = float(polygon['stats']['max'])
                 feature[3] = float(polygon['stats']['min'])
                 feature[4] = float(polygon['stats']['area'])
-                feature[5] = float(polygon['stats']['std'])
+                feature[5] = 1.2222
+                #feature[5] = float(polygon['stats']['std'])
                 features.append(feature)
 
     layer = QgsVectorLayer(layer_type, source_filename, "memory")

@@ -248,8 +248,6 @@ def create_map(
     field_map_json = bridge_api.get_field_map(
         map_type_key, season_field_id, image_date, **data)
 
-    print("before download field map")
-
     return download_field_map(
         field_map_json=field_map_json,
         map_type_key=map_type_key,
@@ -468,17 +466,14 @@ def download_field_map(
         if field_map_json.get('message'):
             message = '{} {}'.format(message, field_map_json['message'])
         return False, message
-
     # If request succeeded, download zipped map and extract it
     # in requested format.
     map_extension = output_map_format['extension']
-
     try:
         url = field_map_json['_links'][output_map_format['api_key']]
         url = '{}?zoning=true&zoneCount={}'.format(
             url, data.get('zoneCount')) \
             if data.get('zoning') else url
-
     except KeyError:
         # requested map format not found
         message = (
@@ -486,7 +481,6 @@ def download_field_map(
             'Please select another output format.'.format(
                 output_map_format['api_key']))
         return False, message
-
     try:
         if output_map_format in ZIPPED_FORMAT:
             zip_path = tempfile.mktemp('{}.zip'.format(map_extension))
@@ -507,7 +501,6 @@ def download_field_map(
                     destination_filename = '{}{}'.format(
                         destination_base_path, item['extension'])
                     fetch_data(url, destination_filename, headers=headers)
-
         # Get hotspots for zones if they have been requested by user.
         bridge_api = BridgeAPI(
             *credentials_parameters_from_settings(),
@@ -569,7 +562,6 @@ def download_field_map(
         # zip extraction error
         message = 'Failed to download file.'
         return False, message
-
     return True, message
 
 
