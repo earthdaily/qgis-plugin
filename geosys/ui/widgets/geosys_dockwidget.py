@@ -203,6 +203,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # If current page is coverage results page, prepare map creation
         # parameters.
         if self.current_stacked_widget_index == 1:
+            self.set_gain_offset_state()  # Disabled gain and offset for some map product types
             self.restore_parameter_values_from_setting()
 
         # If current page is map creation parameters page, create map without
@@ -218,6 +219,25 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.back_push_button.setEnabled(True)
 
         self.handle_difference_map_button()
+
+    def set_gain_offset_state(self):
+        """Disables the gain and offset options in the parameters menu for the COLORCOMPOSITION, ELEVATION,
+        OM, SOILMAP, SAMZ, YGM, and YPM map product types.
+        """
+        selected_map_product = self.map_product  # Map product type selected by the user
+        list_products_to_exclude = ['COLORCOMPOSITION', 'ELEVATION', 'OM', 'SOILMAP', 'SAMZ', 'YGM', 'YPM']
+
+        for map_product_to_exclude in list_products_to_exclude:
+            if selected_map_product == map_product_to_exclude:
+                # The gain and offset options will be disabled
+                self.spinBox_gain.setDisabled(True)
+                self.spinBox_offset.setDisabled(True)
+                return
+
+        # If the gain and offset options should be enabled
+        self.spinBox_gain.setDisabled(False)
+        self.spinBox_offset.setDisabled(False)
+
 
     def set_next_button_text(self, index):
         """Programmatically changed next button text based on current page."""
