@@ -1,6 +1,7 @@
 # coding=utf-8
 """About text for options dialog."""
 
+import os
 from geosys import messaging as m
 from geosys.messaging import styles
 from geosys.utilities.i18n import tr
@@ -47,6 +48,36 @@ def heading():
     return message
 
 
+def social_media_icon(*args):
+    """Get the path to our resources folder.
+
+    Note that in version 3.0 we removed the use of Qt Resource files in
+    favour of directly accessing on-disk resources.
+
+    :param args List of path elements e.g. ['img', 'logos', 'image.png']
+    :type args: str
+
+    :return: Absolute path to the resources folder.
+    :rtype: str
+    """
+    path = os.path.dirname(__file__)
+    path = os.path.abspath(
+        os.path.join(path, os.path.pardir, 'resources'))
+    for item in args:
+        path = os.path.abspath(os.path.join(path, item))
+
+    return path
+
+
+def to_html(uri, text, html_attributes):
+    """Render as html.
+    """
+    return '<img src="%s" title="%s" alt="%s" %s/>' % (
+        uri,
+        text,
+        text,
+        html_attributes)
+
 def content():
     """Method that returns just the content.
 
@@ -57,26 +88,43 @@ def content():
     :returns: A message object without brand element.
     :rtype: safe.messaging.message.Message
     """
+    # Social media icons for use in the about dialog
+    icon_instagram = resources_path('img', 'icons_about', 'instagram.svg')
+    icon_linkedin = resources_path('img', 'icons_about', 'jpg', 'linkedin.jpg')
+    icon_twitter = resources_path('img', 'icons_about', 'twitter.svg')
+    icon_youtube = resources_path('img', 'icons_about', 'youtube.svg')
+
+    print("dir: " + str(icon_linkedin))
+
     message = m.Message()
-    message.add(m.Paragraph(tr(
-        '<ul> '
-        '<p><b>EarthDaily Agro is the agricultural analysis division '
-        'of EarthDaily Analytics. '
-        'Learn more about EarthDaily at earthdaily.com</b></p>'
-        ' '
-        '<p>EarthDaily Agro uses satellite imaging to provide '
-        'advanced analytics to mitigrate risk and the planet. '
-        'Increase efficienies - leading to more sustainable '
-        'outcomes for the organization and people who '
-        'feed.</p> '
-        '<li>EarthDaily agro: <a href="https://earthdailyagro.com/"> https://earthdailyagro.com/</a></li> '
-        '<li>News: <a href="https://earthdailyagro.com/news/"> https://earthdailyagro.com/news/</a></li> '
-        '<li>Careers: <a href="https://earthdailyagro.com/careers/"> https://earthdailyagro.com/careers/</a></li> '
-        '<li>Contact: <a href="https://earthdailyagro.com/contact/"> https://earthdailyagro.com/contact/</a></li> '
-        '<li>Twitter: <a href="https://twitter.com/EarthDailyAgro/"> https://twitter.com/EarthDailyAgro/</a></li> '
-        '<li>Linkedin: <a href="https://www.linkedin.com/company/115836/admin/"> https://www.linkedin.com/company/115836/admin/</a></li> '
-        '<li>YouTube: <a href="https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g"> https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g</a></li> '
-        '</ul>'
-    )))
+
+    message.add(
+
+        #'<ul>'
+        '<img src="C:/Users/Divan/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qgis-plugin/geosys/resources/img/icons_about/jpg/linkedin.jpg" />'
+        #'</ul>'
+
+        # '<ul> '
+        # '<p><b>EarthDaily Agro is the agricultural analysis division '
+        # 'of EarthDaily Analytics. '
+        # 'Learn more about EarthDaily at <a href="https://earthdailyagro.com/"> earthdaily.com</a></b></p>'
+        # ' '
+        # '<p>EarthDaily Agro uses satellite imaging to provide '
+        # 'advanced analytics to mitigrate risk and the planet. '
+        # 'Increase efficienies - leading to more sustainable '
+        # 'outcomes for the organization and people who '
+        # 'feed.</p> '
+        # ' '
+        # '<a href="https://www.linkedin.com/company/115836/admin/">'
+        # '<img alt="png" height="36" src=' + icon_linkedin + ' width="36">'
+        # '</a>'
+        # ' '
+        # '<li>EarthDaily agro: <a href="https://earthdailyagro.com/"> https://earthdailyagro.com/</a></li> '
+        # '<li>Contact: <a href="https://earthdailyagro.com/contact/"> https://earthdailyagro.com/contact/</a></li> '
+        # '<li>Twitter: <a href="https://twitter.com/EarthDailyAgro/"> https://twitter.com/EarthDailyAgro/</a></li> '
+        # '<li>Linkedin: <a href="https://www.linkedin.com/company/115836/admin/"> https://www.linkedin.com/company/115836/admin/</a></li> '
+        # '<li>YouTube: <a href="https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g"> https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g</a></li> '
+        # '</ul>'
+    )
 
     return message
