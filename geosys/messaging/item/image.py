@@ -25,7 +25,7 @@ from .text import Text
 class Image(Text):
     """A class to model emphasized text in the messaging system."""
 
-    def __init__(self, uri, text=None, **kwargs):
+    def __init__(self, uri, text=None, width=None, height=None, url=None, **kwargs):
         """Creates a Emphasized Text Text object
 
         :param uri: A string to add to the message.
@@ -44,14 +44,25 @@ class Image(Text):
         else:
             self.text = text
 
+        self.url = url
+        self.width = width
+        self.height = height
+
     def to_html(self):
         """Render as html.
         """
-        return '<img src="%s" title="%s" alt="%s" %s/>' % (
-            self.uri,
-            self.text,
-            self.text,
-            self.html_attributes())
+        html_attributes = ''
+        if self.width is not None:
+            html_attributes = "width=%s" % (str(self.width))
+        if self.height is not None:
+            html_attributes = "%s height=%s" % (html_attributes, str(self.height))
+
+        final_html = '<img src="%s" title="%s" alt="%s" %s/>' % (self.uri, self.text, self.text, str(html_attributes))
+
+        if self.url is not None:
+            final_html = '<p><a href="%s">%s</a></p>' % (self.url, final_html)
+
+        return final_html
 
     def to_text(self):
         """Render as plain text.
