@@ -12,6 +12,7 @@ import unittest
 
 from geosys.test.utilities import get_qgis_app
 from geosys.ui.widgets.geosys_dockwidget import GeosysPluginDockWidget
+from PyQt5.QtWidgets import QComboBox
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -35,6 +36,21 @@ class GeosysPluginDockWidgetTest(unittest.TestCase):
     def test_dockwidget_ok(self):
         """Test we can click OK."""
         pass
+
+    def test_clear_combo_box(self):
+        """Test if the clear_combo_box method works as it should."""
+
+        test_list = ['First', 'Second', 'Third']
+        test_cb = QComboBox()
+        test_cb.addItems(test_list)
+
+        GeosysPluginDockWidget.clear_combo_box(test_cb)
+
+        expected_count = 0
+        cb_count = test_cb.count()
+
+        message = 'Expected %s items in the combobox, but got %s' % (expected_count, str(cb_count))
+        self.assertEqual(expected_count, str(cb_count), message)
 
 
 if __name__ == "__main__":
