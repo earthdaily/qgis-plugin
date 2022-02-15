@@ -42,7 +42,7 @@ from geosys.bridge_api.default import (
     VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
     ORGANIC_AVERAGE, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
-    MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
+    MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
     SAMZ, ELEVATION)
@@ -102,6 +102,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.hotspot_polygon_part = None
         self.zoning_segmentation = None
         self.output_map_format = None
+        self.gain = 0.0
+        self.offset = 0.0
         self.map_creation_parameters_settings = {
             YIELD_AVERAGE: self.yield_average_form,
             YIELD_MINIMUM: self.yield_minimum_form,
@@ -237,7 +239,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # If the gain and offset options should be enabled
         self.spinBox_gain.setDisabled(False)
         self.spinBox_offset.setDisabled(False)
-
 
     def set_next_button_text(self, index):
         """Programmatically changed next button text based on current page."""
@@ -461,14 +462,37 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         :param map_specifications: List of map specification.
         :type map_specifications: list
         """
+        # Checks whether the gain and offset values are allowed
+        selected_map_product = self.map_product  # Map product type selected by the user
+        list_products_to_exclude = ['COLORCOMPOSITION', 'ELEVATION', 'OM', 'SOILMAP', 'SAMZ', 'YGM', 'YPM']
+        gain_offset_allowed = True
+        for map_product_to_exclude in list_products_to_exclude:
+            if selected_map_product == map_product_to_exclude:
+                # The gain and offset values will not be included
+                gain_offset_allowed = False
+                break
+
         map_product_definition = get_definition(self.map_product)
-        data = {
-            YIELD_AVERAGE: self.yield_average,
-            YIELD_MINIMUM: self.yield_minimum,
-            YIELD_MAXIMUM: self.yield_maximum,
-            ORGANIC_AVERAGE: self.organic_average,
-            SAMZ_ZONE: self.samz_zone
-        }
+        if gain_offset_allowed:  # Gain and offset will be added to the data
+            self.gain = self.spinBox_gain.value()  # Gain set by user
+            self.offset = self.spinBox_offset.value()  # Offset set by user
+            data = {
+                YIELD_AVERAGE: self.yield_average,
+                YIELD_MINIMUM: self.yield_minimum,
+                YIELD_MAXIMUM: self.yield_maximum,
+                ORGANIC_AVERAGE: self.organic_average,
+                SAMZ_ZONE: self.samz_zone,
+                GAIN: self.gain,
+                OFFSET: self.offset
+            }
+        else:  # Gain and offset will not be included
+            data = {
+                YIELD_AVERAGE: self.yield_average,
+                YIELD_MINIMUM: self.yield_minimum,
+                YIELD_MAXIMUM: self.yield_maximum,
+                ORGANIC_AVERAGE: self.organic_average,
+                SAMZ_ZONE: self.samz_zone
+            }
 
         if self.samz_zone > 0:
             self.samz_zoning = True

@@ -70,6 +70,8 @@ SAMZ_ZONE = 'zoneCount'
 SAMZ_ZONING = 'zoning'
 HOTSPOT = 'hotspot'
 ZONING_SEGMENTATION = 'zoningSegmentation'
+GAIN = 'gain'
+OFFSET = 'offset'
 
 # map output format based on Bridge API
 
