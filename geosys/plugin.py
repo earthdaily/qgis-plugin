@@ -270,6 +270,12 @@ class GeosysPlugin:
             self.dock_widget.setVisible(True)
             self.dock_widget.raise_()
 
+    def populate_map_products(self):
+        """Obtain a list of map products from Bridge API definition.
+        If the US zone has been selected the soil option will be included, otherwise excluded.
+        """
+        self.dock_widget.populate_map_products()
+
     def show_options(self):
         """Show the options dialog."""
         # import here only so that it is AFTER i18n set up
@@ -278,4 +284,5 @@ class GeosysPlugin:
         dialog = GeosysOptionsDialog(
             self.iface, parent=self.iface.mainWindow())
         if dialog.exec_():  # modal
+            self.populate_map_products()  # Repopulates the maptypes combobox if the user clicked OK
             pass
