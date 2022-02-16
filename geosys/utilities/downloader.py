@@ -35,6 +35,16 @@ def fetch_data(url, output_path, headers=None, progress_dialog=None):
 
     :raises: ImportDialogError - when network error occurred
     """
+
+    # This is a TEMPORARY fix for a URL provided by a response from the API, which includes two filter characters (?).
+    # This fix checks if there are two filter characters and then replaces the second ? with &, which resolves the problem.
+    char_question_mark = '?'
+    list_indices = [i for i, ltr in enumerate(url) if ltr == char_question_mark]
+    if len(list_indices) > 1:
+        index = list_indices[1]
+        url = "%s%s%s" % (url[:index], '&', url[index + 1:])
+    # The TEMPORARY added fix ends here
+
     LOGGER.debug('Downloading file from URL: %s' % url)
     LOGGER.debug('Downloading to: %s' % output_path)
 
