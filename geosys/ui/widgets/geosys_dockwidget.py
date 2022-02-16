@@ -45,7 +45,7 @@ from geosys.bridge_api.default import (
     MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
-    SAMZ, ELEVATION)
+    SAMZ, SOIL, ELEVATION)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
@@ -175,7 +175,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             if us_option:  # If US zone is selected the SOILMAP option will be added
                 add_ordered_combo_item(self.map_product_combo_box, map_product['name'], map_product['key'])
             else:  # If EU area is selected the SOILMAP option will not be added
-                if product_name != "SOILMAP":
+                if product_name != SOIL['name']:
                     add_ordered_combo_item(self.map_product_combo_box, map_product['name'], map_product['key'])
 
     def populate_date(self):
