@@ -32,8 +32,7 @@ class AboutDialog(QtWidgets.QDialog, FORM_CLASS):
         """
 
         QtWidgets.QDialog.__init__(
-            self, parent,
-            flags=Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
+            self, parent)
         self.setupUi(self)
         self.parent = parent
         icon = resources_path('img', 'icons', 'icon.png')

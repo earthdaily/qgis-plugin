@@ -81,9 +81,6 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.output_directory_chooser.clicked.connect(
             self.open_output_directory_dialog)
 
-        help_button = self.button_box.button(QDialogButtonBox.Help)
-        help_button.clicked.connect(self.show_help)
-
         self.about_button.clicked.connect(self.show_about)
 
     def username(self):
@@ -304,12 +301,6 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         # Save date settings
         for key, date_edit in list(self.date_settings.items()):
             self.save_date_setting(key, date_edit)
-
-    def show_help(self):
-        """Open the help dialog."""
-        # noinspection PyTypeChecker
-        dialog = HelpDialog(self, options_help())
-        dialog.show()
 
     def show_about(self):
         """Open the about dialog."""

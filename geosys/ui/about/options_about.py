@@ -28,7 +28,6 @@ def options_about():
     """
 
     message = m.Message()
-    message.add(m.Brand())
     message.add(heading())
     message.add(content())
 
@@ -40,11 +39,27 @@ def options_about():
     icon_whatsapp = resources_path('img', 'icons_about', 'jpg', 'whatsapp.jpg')
 
     # Adds the icons to the about dialog
-    message.add(m.Image(resource_url(icon_instagram), "instagram.jpg", 35, 35, ""))
-    message.add(m.Image(resource_url(icon_linkedin), "linkedin.jpg", 35, 35, "https://www.linkedin.com/company/115836/admin/"))
-    message.add(m.Image(resource_url(icon_twitter), "twitter.jpg", 35, 35, "https://twitter.com/EarthDailyAgro/"))
-    message.add(m.Image(resource_url(icon_youtube), "youtube.jpg", 35, 35, "https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g"))
-    message.add(m.Image(resource_url(icon_whatsapp), "whatsapp.jpg", 35, 35, ""))
+    message.add(tr(
+        '<div class="col-4">'
+        '<div class="pull-right">'
+        '<p class="text-center"> Connect with us </p>'
+        '<ul class="nav  justify-content-center">'
+        '<li class="px-2">'
+        '<li class="px-2"> <a href="https://twitter.com/EarthDailyAgro/">'
+        f'<img src={resource_url(icon_twitter)} height=35 width=35 >'
+        '</a></li>'
+        '<li class="px-2"> <a href="https://www.linkedin.com/company/115836/admin/">'
+        f'<img src={resource_url(icon_linkedin)} height=35 width=35 /></li>'
+        '<a/></li>'
+        '<li class="px-2"> <a href="https://www.youtube.com/channel/UCy4X-hM2xRK3oyC_xYKSG_g">'
+        f'<img src={resource_url(icon_youtube)} height=35 width=35 >'
+        '</a></li>'
+        '</ul>'
+        '</div>'
+        '</div>'
+        '</div>'
+    )
+    )
 
     return message
 
@@ -58,10 +73,16 @@ def heading():
     .. versionadded:: 3.2.2
 
     :returns: A heading object.
-    :rtype: safe.messaging.heading.Heading
+    :rtype: geosys.messaging.heading.Heading
     """
-    message = m.Heading(tr('About EarthDaily Agro'), **SUBSECTION_STYLE)
-    return message
+    heading_message = tr(
+        '<div class="row subsection">'
+        '<div>'
+        '<h3><a id="None"> </a> About EarthDaily Agro </h3>'
+        '</div>'
+        '</div>'
+    )
+    return heading_message
 
 
 def content():
@@ -76,17 +97,22 @@ def content():
     """
     message = m.Message()
     message.add(m.Paragraph(tr(
-        '<ul> '
-        '<p><b>EarthDaily Agro is the agricultural analysis division '
+        '<div class="row">'
+        '<div class="col-8">'
+        '<ul class="list-unstyled">'
+        '<li>'
+        '<span class="hint">EarthDaily Agro</span><b> is the agricultural analysis division '
         'of EarthDaily Analytics. '
-        'Learn more about EarthDaily at <a href="https://earthdailyagro.com/"> earthdaily.com</a></b></p>'
-        ' '
-        '<p>EarthDaily Agro uses satellite imaging to provide '
-        'advanced analytics to mitigrate risk and the planet. '
-        'Increase efficienies - leading to more sustainable '
-        'outcomes for the organization and people who '
-        'feed.</p> '
+        'Learn more about EarthDaily at '
+        '<a class="links" href="https://earthdailyagro.com/"> earthdaily.com</a></b>'
+        '</li>'
+        '<li class="message">EarthDaily Agro uses satellite imaging to provide '
+        'advanced analytics to mitigate risk and the planet. '
+        'Increase efficiencies - leading to more sustainable '
+        'outcomes for the organization an people who '
+        'feed.</li> '
         '</ul>'
+        '</div>'
     )))
 
     return message
