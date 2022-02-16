@@ -286,8 +286,8 @@ SLOPE = {
 
 # Soil map
 SOIL = {
-    'key': 'SOILMAP',
-    'name': 'SOILMAP',
+    'key': 'SOIL',
+    'name': 'SOIL',
     'map_family': samplemap,
     'description': 'Provides the soil map.'
 }
