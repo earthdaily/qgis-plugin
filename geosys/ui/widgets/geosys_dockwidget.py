@@ -41,7 +41,7 @@ from qgis.PyQt.QtCore import Qt
 from geosys.bridge_api.default import (
     VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
-    ORGANIC_AVERAGE, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
+    ORGANIC_AVERAGE, POSITION, FILTER, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
     MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
@@ -564,6 +564,35 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         HOTSPOT: self.hotspot_polygon_part,
                         ZONING_SEGMENTATION: 'polygon'
                     })
+                if self.hotspot_position:
+                    position_values = {
+                        'None': self.hot_spot_none,
+                        'PointOnSurface': self.hot_spot_point_on_surface,
+                        'Min': self.hot_spot_min,
+                        'Max': self.hot_spot_max,
+                        'Average': self.hot_spot_ave,
+                        'Median': self.hot_spot_med,
+                        'All': self.hot_spot_all
+                    }
+                    position = ""
+                    for key, value in position_values:
+                        if value:
+                            position = f"{position}{key} "
+                    position = position.rstrip()
+                    position = position.replace(' ', '|')
+                    data.update({
+                        POSITION: position
+                    })
+
+                if self.hot_spot_filters_apply:
+                    data.update(
+                        {
+                            FILTER: {
+                                "bottom": self.hot_spot_bottom,
+                                "top": self.hot_spot_top,
+                            }
+                        }
+                    )
 
         if map_product_definition == SAMZ:
             image_dates = []
