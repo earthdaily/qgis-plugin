@@ -129,7 +129,7 @@ class Message(MessageElement):
                 last_was_text = False
         return message
 
-    # Argument count differs from overriden method
+    # Argument count differs from overridden method
     # pylint: disable=W0221
     def to_html(
             self,

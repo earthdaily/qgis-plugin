@@ -72,6 +72,21 @@ h5, .h5 {
   background-color: #3d9d45;
   line-height: 2;
   margin-bottom: 0;
+  margin-top: 10px;
+  padding: 10px 0 5px 5px;
+}
+
+.message{
+  color: #5c5e5ecc;
+  margin-top: 10px;
+}
+
+.hint{
+  color:  #0275d8;
+}
+
+.links{
+  color: #8fcc95;
 }
 
 .problem {

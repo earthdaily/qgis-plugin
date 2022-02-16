@@ -1,8 +1,6 @@
 """
 **Paragraph.**
-
 Contact : ole.moller.nielsen@gmail.com
-
 .. note:: This program is free software; you can redistribute it and/or modify
      it under the terms of the GNU General Public License as published by
      the Free Software Foundation; either version 2 of the License, or
@@ -27,13 +25,10 @@ class Image(Text):
 
     def __init__(self, uri, text=None, **kwargs):
         """Creates a Emphasized Text Text object
-
         :param uri: A string to add to the message.
         :type uri: str
-
         We pass the kwargs on to the base class so an exception is raised
         if invalid keywords were passed. See:
-
         http://stackoverflow.com/questions/13124961/
         how-to-pass-arguments-efficiently-kwargs-in-python
         """
