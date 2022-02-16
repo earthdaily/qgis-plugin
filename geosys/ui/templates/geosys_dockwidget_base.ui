@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>657</height>
+    <width>514</width>
+    <height>789</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>466</width>
-    <height>524</height>
+    <width>514</width>
+    <height>789</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -261,8 +261,8 @@
        </layout>
       </widget>
       <widget class="QWidget" name="map_creation_page">
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
          <widget class="QGroupBox" name="parameters_group">
           <property name="title">
            <string>Parameters</string>
@@ -441,7 +441,178 @@
           </layout>
          </widget>
         </item>
-        <item>
+        <item row="4" column="0">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="0">
+         <widget class="QGroupBox" name="hotspots_group">
+          <property name="title">
+           <string>Fetch Hotspots</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <layout class="QFormLayout" name="formLayout_2">
+             <item row="0" column="0">
+              <widget class="QRadioButton" name="hotspot_polygon_form">
+               <property name="text">
+                <string>Hot Spot (for each polygon)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="hotspot_polygon_part_form">
+               <property name="text">
+                <string>Hot Spot (for each polygon part)</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="hotspots_position_group">
+             <property name="title">
+              <string>Position</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="0" column="0">
+               <widget class="QCheckBox" name="cb_none">
+                <property name="text">
+                 <string>None</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QCheckBox" name="cb_med">
+                <property name="text">
+                 <string>Median</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QCheckBox" name="cb_point_on_surface">
+                <property name="text">
+                 <string>Point on surface</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QCheckBox" name="cb_max">
+                <property name="text">
+                 <string>Maximum</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QCheckBox" name="cb_min">
+                <property name="text">
+                 <string>Minimum</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QCheckBox" name="cb_all">
+                <property name="text">
+                 <string>All</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QCheckBox" name="cb_ave">
+                <property name="text">
+                 <string>Average</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="hotspots_filters_group">
+             <property name="title">
+              <string>Filters</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_4">
+              <item row="0" column="0">
+               <widget class="QLabel" name="lbl_top">
+                <property name="text">
+                 <string>Top</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>243</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="2">
+               <widget class="QSpinBox" name="sb_top"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="lbl_bottom">
+                <property name="text">
+                 <string>Bottom</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>243</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="1" column="2">
+               <widget class="QSpinBox" name="sb_bottom"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="3" column="0">
          <widget class="QGroupBox" name="map_format_group">
           <property name="title">
            <string>Map Format</string>
@@ -450,40 +621,6 @@
            <bool>false</bool>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="2" column="1">
-            <widget class="QRadioButton" name="shp_radio_button">
-             <property name="text">
-              <string>SHP</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QRadioButton" name="kmz_radio_button">
-             <property name="text">
-              <string>KMZ</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QRadioButton" name="png_radio_button">
-             <property name="text">
-              <string>PNG</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QRadioButton" name="tiff_radio_button">
-             <property name="text">
-              <string>TIFF</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="raster_label">
              <property name="maximumSize">
@@ -497,7 +634,17 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="0" column="1">
+            <widget class="QRadioButton" name="png_radio_button">
+             <property name="text">
+              <string>PNG</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
             <widget class="QLabel" name="vectorl_abel">
              <property name="maximumSize">
               <size>
@@ -510,50 +657,32 @@
              </property>
             </widget>
            </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="hotspots_group">
-          <property name="title">
-           <string>Fetch Hotspots</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <item>
-            <widget class="QRadioButton" name="hotspot_polygon_form">
+           <item row="0" column="3">
+            <widget class="QRadioButton" name="shp_radio_button">
              <property name="text">
-              <string>Hot Spot (for each polygon)</string>
+              <string>SHP</string>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QRadioButton" name="hotspot_polygon_part_form">
+           <item row="1" column="1">
+            <widget class="QRadioButton" name="tiff_radio_button">
              <property name="text">
-              <string>Hot Spot (for each polygon part)</string>
+              <string>TIFF</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QRadioButton" name="kmz_radio_button">
+             <property name="text">
+              <string>KMZ</string>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>

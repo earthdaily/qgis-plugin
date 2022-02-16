@@ -41,7 +41,7 @@ from qgis.PyQt.QtCore import Qt
 from geosys.bridge_api.default import (
     VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
-    ORGANIC_AVERAGE, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
+    ORGANIC_AVERAGE, POSITION, FILTER, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
     MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
@@ -62,7 +62,6 @@ FORM_CLASS = get_ui_class('geosys_dockwidget_base.ui')
 
 
 class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
-
     closingPlugin = pyqtSignal()
 
     def __init__(self, iface, parent=None):
@@ -98,8 +97,20 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.organic_average = None
         self.samz_zone = None
         self.samz_zoning = None
+        self.hotspot_fetch = None
         self.hotspot_polygon = None
         self.hotspot_polygon_part = None
+        self.hotspot_position = None
+        self.hot_spot_none = None
+        self.hot_spot_point_on_surface = None
+        self.hot_spot_min = None
+        self.hot_spot_ave = None
+        self.hot_spot_med = None
+        self.hot_spot_max = None
+        self.hot_spot_all = None
+        self.hot_spot_filters_apply = None
+        self.hot_spot_top = None
+        self.hot_spot_bottom = None
         self.zoning_segmentation = None
         self.output_map_format = None
         self.gain = 0.0
@@ -158,7 +169,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def populate_sensors(self):
         """Obtain a list of sensors from Bridge API definition."""
-        for sensor in [ALL_SENSORS]+SENSORS:
+        for sensor in [ALL_SENSORS] + SENSORS:
             add_ordered_combo_item(
                 self.sensor_combo_box, sensor['name'], sensor['key'])
 
@@ -281,7 +292,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             if len(self.selected_coverage_results) == 2 and has_same_id and (
                     self.map_product in [
-                        INSEASON_NDVI['key'], INSEASON_EVI['key']]):
+                INSEASON_NDVI['key'], INSEASON_EVI['key']]):
                 self.difference_map_push_button.setVisible(True)
             else:
                 self.difference_map_push_button.setVisible(False)
@@ -405,9 +416,38 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.yield_maximum = self.yield_maximum_form.value()
         self.organic_average = self.organic_average_form.value()
         self.samz_zone = self.samz_zone_form.value()
-        self.hotspot_polygon = self.hotspot_polygon_form.isChecked()
-        self.hotspot_polygon_part = self.hotspot_polygon_part_form.isChecked()
+        # self.hotspot_polygon = self.hotspot_polygon_form.isChecked()
+        # self.hotspot_polygon_part = self.hotspot_polygon_part_form.isChecked()
         self.output_map_format = self.get_map_format()
+
+        self.hotspot_fetch = self.hotspots_group.isChecked()
+        if self.hotspot_fetch:
+            self.hotspot_polygon = self.hotspot_polygon_form.isChecked()
+            self.hotspot_polygon_part = self.hotspot_polygon_part_form.isChecked()
+            self.hotspot_position = self.hotspots_position_group.isChecked()
+            if self.hotspot_position:
+                self.hot_spot_none = self.cb_none.isChecked()
+                self.hot_spot_point_on_surface = self.cb_point_on_surface.isChecked()
+                self.hot_spot_min = self.cb_min.isChecked()
+                self.hot_spot_ave = self.cb_ave.isChecked()
+                self.hot_spot_med = self.cb_med.isChecked()
+                self.hot_spot_max = self.cb_max.isChecked()
+                self.hot_spot_all = self.cb_all.isChecked()
+            else:
+                self.hot_spot_none = False
+                self.hot_spot_point_on_surface = False
+                self.hot_spot_min = False
+                self.hot_spot_ave = False
+                self.hot_spot_med = False
+                self.hot_spot_max = False
+                self.hot_spot_all = False
+            self.hot_spot_filters_apply = self.hotspots_filters_group.isChecked()
+            if self.hot_spot_filters_apply:
+                self.hot_spot_top = self.sb_top.value()
+                self.hot_spot_bottom = self.sb_bottom.value()
+            else:
+                self.hot_spot_top = 0
+                self.hot_spot_bottom = 0
 
         # SaMZ map creation accept zero selected results, which means it will
         # trigger automatic SaMZ map creation.
@@ -425,7 +465,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # layer is not selected
             return False, 'Layer is not selected.'
         use_selected_features = (
-            self.selected_features_checkbox.isChecked() and (
+                self.selected_features_checkbox.isChecked() and (
                 layer.selectedFeatureCount() > 0))
         use_single_geometry = self.single_geometry_checkbox.isChecked()
 
@@ -487,7 +527,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 break
 
         map_product_definition = get_definition(self.map_product)
-        if gain_offset_allowed:  # Gain and offset will be added to the data
+        if gain_offset_allowed and \
+                (self.spinBox_gain.value() > 0 or
+                 self.spinBox_offset.value() > 0):  # Gain and offset will be added to the data
             self.gain = self.spinBox_gain.value()  # Gain set by user
             self.offset = self.spinBox_offset.value()  # Offset set by user
             data = {
@@ -523,6 +565,35 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         HOTSPOT: self.hotspot_polygon_part,
                         ZONING_SEGMENTATION: 'polygon'
                     })
+                if self.hotspot_position:
+                    position_values = {
+                        'none': self.hot_spot_none,
+                        'pointonsurface': self.hot_spot_point_on_surface,
+                        'min': self.hot_spot_min,
+                        'max': self.hot_spot_max,
+                        'average': self.hot_spot_ave,
+                        'median': self.hot_spot_med,
+                        'all': self.hot_spot_all
+                    }
+                    position = ""
+                    for key, value in position_values.items():
+                        if value:
+                            position = f"{position}{key} "
+                    position = position.rstrip()
+                    position = position.replace(' ', '|')
+                    data.update({
+                        POSITION: position
+                    })
+
+                if self.hot_spot_filters_apply:
+                    data.update(
+                        {
+                            FILTER: 'top({})|bottom({})'.format(
+                                self.hot_spot_top,
+                                self.hot_spot_bottom
+                            )
+                        }
+                    )
 
         if map_product_definition == SAMZ:
             image_dates = []
@@ -820,7 +891,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """Obtain a list of sensors from Bridge API definition.
         For reflectance TOC, so only Landsat-8 and Sentinel-8 should be included, otherwise all of the sensors
         """
-        for sensor in [ALL_SENSORS]+SENSORS:
+        for sensor in [ALL_SENSORS] + SENSORS:
             sensor_name = sensor['name']
             if sensor_name == 'LANDSAT_8' or sensor_name == 'SENTINEL_2':
                 add_ordered_combo_item(self.sensor_combo_box, sensor_name, sensor['key'])
