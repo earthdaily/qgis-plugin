@@ -231,14 +231,18 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         for map_product_to_exclude in list_products_to_exclude:
             if selected_map_product == map_product_to_exclude:
-                # The gain and offset options will be disabled
-                self.spinBox_gain.setDisabled(True)
-                self.spinBox_offset.setDisabled(True)
+                # The gain and offset options will be hidden
+                self.gain_label.hide()
+                self.offset_label.hide()
+                self.spinBox_gain.hide()
+                self.spinBox_offset.hide()
                 return
 
-        # If the gain and offset options should be enabled
-        self.spinBox_gain.setDisabled(False)
-        self.spinBox_offset.setDisabled(False)
+        # If the gain and offset options should be shown
+        self.gain_label.show()
+        self.offset_label.show()
+        self.spinBox_gain.show()
+        self.spinBox_offset.show()
 
     def set_next_button_text(self, index):
         """Programmatically changed next button text based on current page."""
