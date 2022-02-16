@@ -783,7 +783,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         :type combo_box: QComboBox
         """
         cnt = combo_box.count()
-
         if cnt > 0:  # Skips if there are no items in the combobox
             while cnt >= 0:
                 combo_box.removeItem(cnt)
