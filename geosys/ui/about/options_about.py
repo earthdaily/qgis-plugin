@@ -3,7 +3,6 @@
 
 import os
 from geosys import messaging as m
-from geosys.messaging.item import image
 from geosys.messaging import styles
 from geosys.utilities.i18n import tr
 from geosys.utilities.resources import resources_path, resource_url
@@ -32,11 +31,9 @@ def options_about():
     message.add(content())
 
     # Social media icons for use in the about dialog
-    icon_instagram = resources_path('img', 'icons_about', 'jpg', 'instagram.jpg')
-    icon_linkedin = resources_path('img', 'icons_about', 'jpg', 'linkedin.jpg')
-    icon_twitter = resources_path('img', 'icons_about', 'jpg', 'twitter.jpg')
-    icon_youtube = resources_path('img', 'icons_about', 'jpg', 'youtube.jpg')
-    icon_whatsapp = resources_path('img', 'icons_about', 'jpg', 'whatsapp.jpg')
+    icon_linkedin = resources_path('img', 'icons', 'about', 'svg', 'linkedin.svg')
+    icon_twitter = resources_path('img', 'icons', 'about', 'svg', 'twitter.svg')
+    icon_youtube = resources_path('img', 'icons', 'about', 'svg', 'youtube.svg')
 
     # Adds the icons to the about dialog
     message.add(tr(
