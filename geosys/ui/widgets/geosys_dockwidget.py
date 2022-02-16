@@ -62,7 +62,6 @@ FORM_CLASS = get_ui_class('geosys_dockwidget_base.ui')
 
 
 class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
-
     closingPlugin = pyqtSignal()
 
     def __init__(self, iface, parent=None):
@@ -170,7 +169,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def populate_sensors(self):
         """Obtain a list of sensors from Bridge API definition."""
-        for sensor in [ALL_SENSORS]+SENSORS:
+        for sensor in [ALL_SENSORS] + SENSORS:
             add_ordered_combo_item(
                 self.sensor_combo_box, sensor['name'], sensor['key'])
 
@@ -293,7 +292,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             if len(self.selected_coverage_results) == 2 and has_same_id and (
                     self.map_product in [
-                        INSEASON_NDVI['key'], INSEASON_EVI['key']]):
+                INSEASON_NDVI['key'], INSEASON_EVI['key']]):
                 self.difference_map_push_button.setVisible(True)
             else:
                 self.difference_map_push_button.setVisible(False)
@@ -466,7 +465,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # layer is not selected
             return False, 'Layer is not selected.'
         use_selected_features = (
-            self.selected_features_checkbox.isChecked() and (
+                self.selected_features_checkbox.isChecked() and (
                 layer.selectedFeatureCount() > 0))
         use_single_geometry = self.single_geometry_checkbox.isChecked()
 
@@ -528,7 +527,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 break
 
         map_product_definition = get_definition(self.map_product)
-        if gain_offset_allowed:  # Gain and offset will be added to the data
+        if gain_offset_allowed and \
+                (self.spinBox_gain.value() > 0 or
+                 self.spinBox_offset.value() > 0):  # Gain and offset will be added to the data
             self.gain = self.spinBox_gain.value()  # Gain set by user
             self.offset = self.spinBox_offset.value()  # Offset set by user
             data = {
@@ -575,7 +576,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         'all': self.hot_spot_all
                     }
                     position = ""
-                    for key, value in position_values:
+                    for key, value in position_values.items():
                         if value:
                             position = f"{position}{key} "
                     position = position.rstrip()
@@ -593,8 +594,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                             )
                         }
                     )
-        print("filters")
-        print(data)
 
         if map_product_definition == SAMZ:
             image_dates = []
@@ -892,7 +891,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """Obtain a list of sensors from Bridge API definition.
         For reflectance TOC, so only Landsat-8 and Sentinel-8 should be included, otherwise all of the sensors
         """
-        for sensor in [ALL_SENSORS]+SENSORS:
+        for sensor in [ALL_SENSORS] + SENSORS:
             sensor_name = sensor['name']
             if sensor_name == 'LANDSAT_8' or sensor_name == 'SENTINEL_2':
                 add_ordered_combo_item(self.sensor_combo_box, sensor_name, sensor['key'])
