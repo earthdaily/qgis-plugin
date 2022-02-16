@@ -566,13 +566,13 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     })
                 if self.hotspot_position:
                     position_values = {
-                        'None': self.hot_spot_none,
-                        'PointOnSurface': self.hot_spot_point_on_surface,
-                        'Min': self.hot_spot_min,
-                        'Max': self.hot_spot_max,
-                        'Average': self.hot_spot_ave,
-                        'Median': self.hot_spot_med,
-                        'All': self.hot_spot_all
+                        'none': self.hot_spot_none,
+                        'pointonsurface': self.hot_spot_point_on_surface,
+                        'min': self.hot_spot_min,
+                        'max': self.hot_spot_max,
+                        'average': self.hot_spot_ave,
+                        'median': self.hot_spot_med,
+                        'all': self.hot_spot_all
                     }
                     position = ""
                     for key, value in position_values:
@@ -587,12 +587,14 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 if self.hot_spot_filters_apply:
                     data.update(
                         {
-                            FILTER: {
-                                "bottom": self.hot_spot_bottom,
-                                "top": self.hot_spot_top,
-                            }
+                            FILTER: 'top({})|bottom({})'.format(
+                                self.hot_spot_top,
+                                self.hot_spot_bottom
+                            )
                         }
                     )
+        print("filters")
+        print(data)
 
         if map_product_definition == SAMZ:
             image_dates = []

@@ -513,7 +513,6 @@ def download_field_map(
                               '&zoningSegmentation=polygon'.format( \
                     field_map_json['_links']['self'], data.get('zoneCount'))
 
-                map_json = bridge_api.get_hotspot(hotspot_url)
                 hotspot_per_part = True
 
             else:
@@ -521,7 +520,13 @@ def download_field_map(
                     format(\
                     field_map_json['_links']['self'],
                     data.get('zoneCount'))
-                map_json = bridge_api.get_hotspot(hotspot_url)
+
+            hotspot_url = '{}&hotSpotPosition={}'.format(hotspot_url, data.get('position')) \
+                if data.get('position') else hotspot_url
+            hotspot_url = '{}&hotSpotFilter={}'.format(hotspot_url, data.get('filter')) \
+                if data.get('filter') else hotspot_url
+
+            map_json = bridge_api.get_hotspot(hotspot_url)
 
             if map_json.get('hotSpots'):
                 if map_specification:
