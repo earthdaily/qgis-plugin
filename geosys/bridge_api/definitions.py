@@ -108,13 +108,15 @@ INSEASONFIELD_AVERAGE_NDVI = {
     'key': 'INSEASONFIELD_AVERAGE_NDVI',
     'name': 'INSEASONFIELD_AVERAGE_NDVI',
     'map_family': model_map,
-    'description': ''
+    'description': 'Provides the input map and the variable-rate application '
+                   'map based on NDVI map to better inform input placement.'
 }
 INSEASONFIELD_AVERAGE_REVERSE_NDVI = {
     'key': 'INSEASONFIELD_AVERAGE_REVERSE_NDVI',
     'name': 'INSEASONFIELD_AVERAGE_REVERSE_NDVI',
     'map_family': model_map,
-    'description': ''
+    'description': 'Provides the input map and the variable-rate application '
+                   'map based on NDVI map to better inform input placement.'
 }
 
 # EVI (Enhanced Vegetation Index)
@@ -189,13 +191,15 @@ INSEASONFIELD_AVERAGE_LAI = {
     'key': 'INSEASONFIELD_AVERAGE_LAI',
     'name': 'INSEASONFIELD_AVERAGE_LAI',
     'map_family': model_map,
-    'description': ''
+    'description': 'Provides the input map and the variable-rate application '
+                   'map based on LAI map to better inform input placement.'
 }
 INSEASONFIELD_AVERAGE_REVERSE_LAI = {
     'key': 'INSEASONFIELD_AVERAGE_REVERSE_LAI',
     'name': 'INSEASONFIELD_AVERAGE_REVERSE_LAI',
     'map_family': model_map,
-    'description': ''
+    'description': 'Provides the input map and the variable-rate application '
+                   'map based on LAI map to better inform input placement.'
 }
 
 # Sentinel-2 Red-edge position index (S2REP)
