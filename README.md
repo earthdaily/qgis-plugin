@@ -85,10 +85,11 @@ We have a team of experts around the world that understand local crops and ag in
 
 We have established a developer community to provide you with plug-ins and integrations to be able to discover, request and use aggregate imagery products based on Landsat, Sentinel, Modis and many other open and commercial satellite sensors.
 
-<a href="https://earthdailyagro.com/geosys/">
+<p align="center">
+  <a href="https://earthdailyagro.com/geosys/">
     <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/Logo.svg" alt="Logo" width="200" height="100">
   </a>
-
+</p>
 The QGIS plugin project aims to provide an easy and ready to use connector allowign any QGIS users to quickly experience Earthdaily Agro capabilities.
 
 
