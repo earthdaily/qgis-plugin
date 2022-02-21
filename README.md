@@ -112,8 +112,14 @@ This project has been testes with QGIS 3.22.3
 <!-- FEATURES -->
 ## Features
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+The plugin once configured provides an easy way to get satelitte imagery derived map on polygon of interest. User can select one or multiple polygon object on the map canvas and request maps creation. For more detailed information, please see the [user documentation](https://developer.geosys.com/docs/qgis-plugin-doc/ZG9jOjY3MzU1MA-get-analytics-on-the-map). 
 
+Here is an example of QGIS with field level maps
+<p align="center">
+  <a href="https://earthdailyagro.com/geosys/">
+    <img src="https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/doc17.png" alt="Logo" width="500" height="500">
+  </a>
+</p>
 
 
 <!-- USAGE EXAMPLES -->
