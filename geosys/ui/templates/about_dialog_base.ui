@@ -31,16 +31,24 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="MessageViewer" name="about_web_view" native="true"/>
+    <widget class="QWebView" name="about_web_view">
+     <property name="styleSheet">
+      <string notr="true">background:transparent;</string>
+     </property>
+     <property name="url">
+      <url>
+       <string>about:blank</string>
+      </url>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MessageViewer</class>
+   <class>QWebView</class>
    <extends>QWidget</extends>
-   <header>geosys.ui.widgets.message_viewer</header>
-   <container>1</container>
+   <header location="global">QtWebKitWidgets/QWebView</header>
   </customwidget>
  </customwidgets>
  <resources/>
