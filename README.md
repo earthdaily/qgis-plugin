@@ -95,8 +95,6 @@ The QGIS plugin project aims to provide an easy and ready to use connector allow
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
-
 ### Prerequisites
 
 To be able to get maps within QGIS, please make sure you have valid credentials. If you need to get trial access, please register [here](https://earthdailyagro.com/geosys-api/#get-started).
