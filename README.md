@@ -117,7 +117,7 @@ The plugin once configured provides an easy way to get satelitte imagery derived
 Here is an example of QGIS with field level maps
 <p align="center">
   <a href="https://earthdailyagro.com/geosys/">
-    <img src="https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/doc17.png" alt="Logo" width="500" height="500">
+    <img src="https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/doc17.png" alt="Logo" width="800" height="500">
   </a>
 </p>
 
