@@ -79,13 +79,17 @@
 
 EarthDaily Agro is the agricultural analysis division of EartDaily Analytics. Learn more about Earth Daily at [EarthDaily Analytics | Satellite imagery & data for agriculture, insurance, surveillance](https://earthdaily.com/).  EarthDaily Agro uses satellite imaging to provide advanced analytics to mitigate risk and increase efficiencies – leading to more sustainable outcomes for the organizations and people who feed the planet.
 
+Throught our <geosys/> platform, we make geospatial analytics easily accessible for you to be browsed or analyzed, within our cloud or within your own environment. We provide developers and data scientists both flexibility and extensibility with analytic ready data and digital agriculture ready development blocks. We empower your team to enrich your systems with information at the field, regional or continent level via our API or Apps.
 
-### Built With
+We have a team of experts around the world that understand local crops and ag industry, as well as advanced analytics to support your business.
 
-* []()
-* []()
-* []()
+We have established a developer community to provide you with plug-ins and integrations to be able to discover, request and use aggregate imagery products based on Landsat, Sentinel, Modis and many other open and commercial satellite sensors.
 
+<a href="https://earthdailyagro.com/geosys/">
+    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/Logo.svg" alt="Logo" width="200" height="100">
+  </a>
+
+The QGIS plugin project aims to provide an easy and ready to use connector allowign any QGIS users to quickly experience Earthdaily Agro capabilities.
 
 
 <!-- GETTING STARTED -->
@@ -95,7 +99,9 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-To be able to get maps within QGIS, please make sure you have valid credentials. If you need to get trial access, please register [here](https://earthdailyagro.com/geosys-api/#get-started)
+To be able to get maps within QGIS, please make sure you have valid credentials. If you need to get trial access, please register [here](https://earthdailyagro.com/geosys-api/#get-started).
+
+This project has been testes with QGIS 3.22.3
 
 ### Installation
 
