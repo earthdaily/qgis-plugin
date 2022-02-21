@@ -31,7 +31,6 @@
 </p>
 
 
-<p align="center">
 
 <div align="center">
   
@@ -85,7 +84,7 @@
 EarthDaily Agro is the agricultural analysis division of EartDaily Analytics. Learn more about Earth Daily at [EarthDaily Analytics | Satellite imagery & data for agriculture, insurance, surveillance](https://earthdaily.com/).  EarthDaily Agro uses satellite imaging to provide advanced analytics to mitigate risk and increase efficiencies – leading to more sustainable outcomes for the organizations and people who feed the planet.
 <p align="center">
   <a href="https://earthdailyagro.com/geosys/">
-    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/new-logo.png" alt="Logo" width="200" height="100">
+    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/new-logo.png" alt="Logo" width="400">
   </a>
 </p>
 
@@ -125,12 +124,9 @@ Here is an example of QGIS with field level maps
   </a>
 </p>
 
-
 <!-- USAGE EXAMPLES -->
 ## Use cases
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
+This project is used by prospect interested to create field level maps in few clicks to better understand the interest and benefits of maps available trought the <'geosys/> API. It has been also used to support various innovation projects on precison agriculture and regeneratice Ag with Organic matter maps used to optimize in field sampling.
 
 
 <!-- RESOURCES -->
