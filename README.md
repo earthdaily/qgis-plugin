@@ -11,7 +11,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/GEOSYS">
-    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/new-logo.png" alt="Logo" width="200" height="200">
+    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/new-logo.png" alt="Logo" width="200" height="100">
   </a>
 
   <h3 align="center">QGIS Plugin</h3>
@@ -99,16 +99,15 @@ To be able to get maps within QGIS, please make sure you have valid credentials.
 
 ### Installation
 
-1. Within the QGIS plugin manager
+1. Within the QGIS plugin manager as described [here](https://developer.geosys.com/docs/qgis-plugin-doc/ZG9jOjY3MzU0OQ-installation)
    
-2. Manual install
+2. Manual install by download a zip of the project and use the manual plugin install from QGIS. Please see https://docs.qgis.org/3.4/en/docs/user_manual/plugins/plugins.html#the-install-from-zip-tab
    
 <!-- FEATURES -->
 ## Features
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 
 
@@ -143,15 +142,13 @@ Distributed under the GPL 3.0 License.
 <!-- CONTACT -->
 ## Contact
 
-For any additonal information, please contact
+For any additonal information, please <a href="mailto: sales@earthdailyagro.com">Email us at it-support@kth.se</a>
 
 
 <!-- COPYRIGHT -->
 ## Copyrights
 
-* []()
-* []()
-* 
+© 2022 Geosys Holdings ULC, an Antarctica Capital portfolio company | All Rights Reserved.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
