@@ -142,7 +142,7 @@ Distributed under the GPL 3.0 License.
 <!-- CONTACT -->
 ## Contact
 
-For any additonal information, please <a href="mailto: sales@earthdailyagro.com">Email us at it-support@kth.se</a>
+For any additonal information, please <a href="mailto: sales@earthdailyagro.com">email us</a>
 
 
 <!-- COPYRIGHT -->
