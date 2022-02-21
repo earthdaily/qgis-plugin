@@ -32,7 +32,7 @@
 
 
 
-
+<p align="center">
 [![LinkedIn][linkedin-shield]][linkedin-url]
 [![Twitter][twitter-shield]][twitter-url]
 [![Youtube][youtube-shield]][youtube-url]
@@ -44,7 +44,7 @@
 <!--[![Stargazers][GitStars-shield]][GitStars-url]-->
 <!--[![Forks][forks-shield]][forks-url]-->
 <!--[![Stargazers][stars-shield]][stars-url]-->
-
+</p>
 
 
 <!-- TABLE OF CONTENTS -->
