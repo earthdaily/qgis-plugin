@@ -20,7 +20,14 @@ CROPS = {
     'sugarcane': 'SUGARCANE',
     'sunflower': 'SUNFLOWER',
     'sorghum': 'SORGHUM',
-    'soybeans': 'SOYBEANS'
+    'soybeans': 'SOYBEANS',
+    'wheat_winter_durum': 'WHEAT_WINTER_DURUM',
+    'wheat_winter_soft': 'WHEAT_WINTER_SOFT',
+    'wheat_spring_durum': 'WHEAT_SPRING_DURUM',
+    'wheat_spring_soft': 'WHEAT_SPRING_SOFT',
+    'triticale': 'TRITICALE',
+    'barley_winter': 'BARLEY_WINTER',
+    'barley_spring': 'BARLEY_SPRING'
 }
 
 # Map type families definition
