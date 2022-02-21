@@ -41,7 +41,10 @@ class BridgeAPIWrapperTest(unittest.TestCase):
         crops = BridgeAPI.get_crops()
         expected_crops = [
             'SUGARCANE', 'CORN', 'MILLET', 'GRAPES', 'OTHERS', 'COTTON',
-            'SUNFLOWER', 'PEANUT', 'SOYBEANS', 'ORANGE', 'RICE', 'SORGHUM']
+            'SUNFLOWER', 'PEANUT', 'SOYBEANS', 'ORANGE', 'RICE', 'SORGHUM',
+            'WHEAT_WINTER_DURUM', 'WHEAT_WINTER_SOFT', 'WHEAT_SPRING_DURUM',
+            'WHEAT_SPRING_SOFT', 'TRITICALE', 'BARLEY_WINTER', 'BARLEY_SPRING',
+        ]
         self.assertEqual(sorted(crops), sorted(expected_crops))
 
     def test_get_regions(self):
