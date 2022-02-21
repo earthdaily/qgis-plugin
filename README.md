@@ -33,10 +33,11 @@
 
 
 <p align="center">
+  <br />
 [![LinkedIn][linkedin-shield]][linkedin-url]
 [![Twitter][twitter-shield]][twitter-url]
 [![Youtube][youtube-shield]][youtube-url]
-
+<br />
 [![languages][language-python-shiedl]][issues-url]
 [![CITest][CITest-shield]][CITest-url]
 [![Issues][issues-shield]][issues-url]
@@ -44,6 +45,7 @@
 <!--[![Stargazers][GitStars-shield]][GitStars-url]-->
 <!--[![Forks][forks-shield]][forks-url]-->
 <!--[![Stargazers][stars-shield]][stars-url]-->
+  <br />
 </p>
 
 
