@@ -1,4 +1,4 @@
-
+<div id="top"></div>
 <!-- PROJECT SHIELDS -->
 <!--
 *** See the bottom of this document for the declaration of the reference variables
@@ -90,6 +90,8 @@ We have established a developer community to provide you with plug-ins and integ
 
 The QGIS plugin project aims to provide an easy and ready to use connector allowign any QGIS users to quickly experience Earthdaily Agro capabilities.
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -106,6 +108,8 @@ This project has been testes with QGIS 3.22.3
    
 2. Manual install by download a zip of the project and use the manual plugin install from QGIS. Please see https://docs.qgis.org/3.4/en/docs/user_manual/plugins/plugins.html#the-install-from-zip-tab
    
+<p align="right">(<a href="#top">back to top</a>)</p>
+   
 <!-- FEATURES -->
 ## Features
 
@@ -118,6 +122,8 @@ Here is an example of QGIS with field level maps
   </a>
 </p>
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 <!-- USAGE EXAMPLES -->
 ## Use cases
 This project is used by prospect interested to create field level maps in few clicks to better understand the interest and benefits of maps available trought the <'geosys/> API. It has been also used to support various innovation projects on precison agriculture and regeneratice Ag with Organic matter maps used to optimize in field sampling.
@@ -129,29 +135,35 @@ The following links will provide access to more information:
 - [EarthDaily agro developer portal  ](https://developer.geosys.com/)
 - [QGIS website  ](https://www.qgis.org/en/site/)
 
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
 ## Support development
 
 If this project has been useful, that it helped you or your business to save precious time, don't hesitate to give it a star.
 
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- LICENSE -->
 ## License
 
 Distributed under the [GPL 3.0 License](https://www.gnu.org/licenses/gpl-3.0.en.html). 
 
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- CONTACT -->
 ## Contact
 
 For any additonal information, please <a href="mailto: sales@earthdailyagro.com">email us</a>
 
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- COPYRIGHT -->
 ## Copyrights
 
 © 2022 Geosys Holdings ULC, an Antarctica Capital portfolio company | All Rights Reserved.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
