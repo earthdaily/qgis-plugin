@@ -48,7 +48,6 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.boolean_settings = {
             'geosys_region_na': self.us_radio_button,
             'geosys_region_eu': self.eu_radio_button,
-            'save_credentials': self.save_credentials_checkbox,
             'use_testing_service': self.testing_service_checkbox
         }
         self.credentials_settings = {
@@ -284,11 +283,6 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         # Save boolean settings
         for key, check_box in list(self.boolean_settings.items()):
             self.save_boolean_setting(key, check_box)
-
-        if not self.save_credentials_checkbox.isChecked():
-            for key in self.credentials_settings.keys():
-                del text_settings[key]
-                set_setting(key, '')
 
         # Save text settings
         for key, line_edit in list(self.text_settings.items()):
