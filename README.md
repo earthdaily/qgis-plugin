@@ -11,8 +11,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/GEOSYS">
-    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/new-logo.png
-    " alt="Logo" width="200" height="200">
+    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/new-logo.png" alt="Logo" width="200" height="200">
   </a>
 
   <h3 align="center">QGIS Plugin</h3>
