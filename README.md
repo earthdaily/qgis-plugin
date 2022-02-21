@@ -32,14 +32,15 @@
 
 
 
-[![languages][language-python-shiedl]][issues-url]
-[![MIT License][license-shield]][license-url]
+
 [![LinkedIn][linkedin-shield]][linkedin-url]
 [![Twitter][twitter-shield]][twitter-url]
 [![Youtube][youtube-shield]][youtube-url]
 
+[![languages][language-python-shiedl]][issues-url]
 [![CITest][CITest-shield]][CITest-url]
 [![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
 <!--[![Stargazers][GitStars-shield]][GitStars-url]-->
 <!--[![Forks][forks-shield]][forks-url]-->
 <!--[![Stargazers][stars-shield]][stars-url]-->
@@ -115,13 +116,10 @@ Use this space to show useful examples of how a project can be used. Additional 
 
 
 
-
 <!-- USAGE EXAMPLES -->
 ## Use cases
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 
 
@@ -141,7 +139,7 @@ If this project has been useful, that it helped you or your business to save pre
 <!-- LICENSE -->
 ## License
 
-Distributed under the GPL 3.0 License. 
+Distributed under the [GPL 3.0 License](https://www.gnu.org/licenses/gpl-3.0.en.html). 
 
 
 <!-- CONTACT -->
