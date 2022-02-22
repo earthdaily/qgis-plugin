@@ -471,9 +471,17 @@ def download_field_map(
     map_extension = output_map_format['extension']
     try:
         url = field_map_json['_links'][output_map_format['api_key']]
-        url = '{}?zoning=true&zoneCount={}'.format(
-            url, data.get('zoneCount')) \
-            if data.get('zoning') else url
+
+        char_question_mark = '?'  # Filtering char
+        if char_question_mark in url:  # Filtering, which starts with '?' has already been added, so appending with '&'
+            url = '{}&zoning=true&zoneCount={}'.format(
+                url, data.get('zoneCount')) \
+                if data.get('zoning') else url
+        else:  # No filtering added yet, so appending with '?'
+            url = '{}?zoning=true&zoneCount={}'.format(
+                url, data.get('zoneCount')) \
+                if data.get('zoning') else url
+
     except KeyError:
         # requested map format not found
         message = (
@@ -495,9 +503,17 @@ def download_field_map(
                 # the PNG file.
                 for item in [PGW, LEGEND]:
                     url = field_map_json['_links'][item['api_key']]
-                    url = '{}?zoning=true&zoneCount={}'.format(
-                        url, data.get('zoneCount')) \
-                        if data.get('zoning') else url
+
+                    char_question_mark = '?'  # Filtering char
+                    if char_question_mark in url:  # Filtering, which starts with '?' has already been added, so appending with '&'
+                        url = '{}&zoning=true&zoneCount={}'.format(
+                            url, data.get('zoneCount')) \
+                            if data.get('zoning') else url
+                    else:  # No filtering added yet, so appending with '?'
+                        url = '{}?zoning=true&zoneCount={}'.format(
+                            url, data.get('zoneCount')) \
+                            if data.get('zoning') else url
+
                     destination_filename = '{}{}'.format(
                         destination_base_path, item['extension'])
                     fetch_data(url, destination_filename, headers=headers)
