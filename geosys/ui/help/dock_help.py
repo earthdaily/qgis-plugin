@@ -127,8 +127,8 @@ def content():
     message.add(paragraph)
 
     spotlight_paragraph = m.Paragraph(tr(
-        '<p> The <b> Stoplight </b> developer portal is available here'
-        '<a href="https://geosys.stoplight.io" > https://geosys.stoplight.io</a></p>'
+        '<p> The <b> Geosys API </b> developer portal is available here'
+        '<a href="https://developer.geosys.com" > https://developer.geosys.com</a></p>'
     ))
 
     message.add(spotlight_paragraph)
