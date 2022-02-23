@@ -6,7 +6,6 @@
 -->
 
 
-
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
@@ -30,10 +29,7 @@
   </p>
 </p>
 
-
-
 <div align="center">
-  
 [![LinkedIn][linkedin-shield]][linkedin-url]
 [![Twitter][twitter-shield]][twitter-url]
 [![Youtube][youtube-shield]][youtube-url]
@@ -43,14 +39,12 @@
 [![MIT License][license-shield]][license-url]
 </div>
 
-
 <!--[![Stargazers][GitStars-shield]][GitStars-url]-->
 <!--[![Forks][forks-shield]][forks-url]-->
 <!--[![Stargazers][stars-shield]][stars-url]-->
 
 <!-- TABLE OF CONTENTS -->
 <details open>
-  
   <summary>Table of Contents</summary>
   <ol>
     <li>
