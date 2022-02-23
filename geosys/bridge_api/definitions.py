@@ -214,7 +214,7 @@ INSEASON_S2REP = {
     'key': 'INSEASON_S2REP',
     'name': 'INSEASON_S2REP',
     'map_family': base_reference_map,
-    'description': 'Provides the in-season S2REP index. '
+    'description': 'Provides the in-season Sentinel-2 Red-Edge Position Index. '
                    'Generates a map according to the amount '
                    'of chlorophyll content per unit of leaf (LCC).'
 }
@@ -232,7 +232,7 @@ REFLECTANCE = {
     'key': 'TOC',
     'name': 'REFLECTANCE',
     'map_family': reflectance_map,
-    'description': 'Top of canopy reflectance based on either Sentinel-2 or Landsat-8.'
+    'description': 'Provides the Reflectance map at Top of Canopy for Sentinel 2 and Lansat-8.'
 }
 
 # OM (Organic Matter)
@@ -300,7 +300,7 @@ SOIL = {
     'key': 'SOIL',
     'name': 'SOIL',
     'map_family': samplemap,
-    'description': 'Provides the soil map.'
+    'description': 'Provides the in-season Soil type map. Can be generate only in the USA, contains information about soil as collected by the National Cooperative Soil Survey.'
 }
 
 ARCHIVE_MAP_PRODUCTS = [
@@ -355,7 +355,7 @@ DIFFERENCE_MAPS = [
 DEIMOS = {
     'key': 'DEIMOS',
     'name': 'DEIMOS',
-    'description': 'Commercial data at 0.75 metre resolution.'
+    'description': 'Commercial data at 22 m ground resolution with an approximate 2-day revisit (combined).'
 }
 
 DMC = {
@@ -394,8 +394,26 @@ SENTINEL_2 = {
                    'wave infrared part of the spectrum.'
 }
 
+ALSAT_1B = {
+    'key': 'ALSAT_1B',
+    'name': 'ALSAT_1B',
+    'description': 'Algeria Satellite 1B with a spatial resolution at 24 m ground resolution, up to 3 days of revisit'
+}
+
+GAOFEN = {
+    'key': 'GAOFEN',
+    'name': 'GAOFEN',
+    'description': 'GAOFEN-1-WFV1 and GAOFEN-6-WFV, have respectively a ground resolution equal to 8 meters and 16 meters with a revisited equal to 4 days.'
+}
+
+CBERS_4 = {
+    'key': 'CBERS_4',
+    'name': 'CBERS_4',
+    'description': 'The China-Brazil Earth Resources Satellite Program with 20 meters spatial resolution and a revisit capacity of 26 days. Images are available only in Brazil via the Geosys virtual constellation.'
+}
+
 SENSORS = [
-    DEIMOS, DMC, LANDSAT_8, RESOURCESAT2, SENTINEL_2
+    DEIMOS, DMC, ALSAT_1B, GAOFEN, CBERS_4, LANDSAT_8, RESOURCESAT2, SENTINEL_2
 ]
 
 ALL_SENSORS = {
