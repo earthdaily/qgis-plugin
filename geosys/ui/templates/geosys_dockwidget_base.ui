@@ -612,7 +612,7 @@
           </layout>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="1" column="0">
          <widget class="QGroupBox" name="map_format_group">
           <property name="title">
            <string>Map Format</string>
