@@ -57,6 +57,7 @@ from geosys.utilities.gui_utilities import (
     wkt_geometries_from_feature_iterator)
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting, set_setting
+from geosys.utilities.utilities import check_if_file_exists
 
 FORM_CLASS = get_ui_class('geosys_dockwidget_base.ui')
 
@@ -611,6 +612,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             filename = '{}_{}_{}'.format(
                 SAMZ['key'], season_field_id, samz_mode)
+            filename = check_if_file_exists(self.output_directory, filename, self.output_map_format['extension'])
 
             is_success, message = create_samz_map(
                 season_field_id, image_dates, self.output_directory, filename,
@@ -632,6 +634,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     map_specification['seasonField']['id'],
                     map_specification['image']['date']
                 )
+                filename = check_if_file_exists(self.output_directory, filename, self.output_map_format['extension'])
+
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
                     data=data, output_map_format=self.output_map_format)
