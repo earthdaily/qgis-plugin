@@ -96,6 +96,10 @@ class CoverageSearchThread(QThread):
             self.sensor_type and self.filters.update({
                 IMAGE_SENSOR: self.sensor_type
             })
+        else:  # If elevation product is selected
+            self.filters.update({
+                MAPS_TYPE: self.map_product
+            })
 
         self.settings = QSettings()
 
