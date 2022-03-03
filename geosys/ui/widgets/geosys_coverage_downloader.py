@@ -9,7 +9,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings, QDate
 
 from geosys.bridge_api.default import (
     MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PGW, LEGEND, SHP_EXT)
-from geosys.bridge_api.definitions import SAMZ, ELEVATION
+from geosys.bridge_api.definitions import SAMZ, ELEVATION, COLOR_COMPOSITION
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.qgis_settings import QGISSettings
@@ -500,9 +500,17 @@ def download_field_map(
                     destination_base_path + output_map_format['extension'])
             fetch_data(url, destination_filename, headers=headers)
             if output_map_format == PNG:
+                # This step check if the map type is color composition
+                # If that is the case, legend will not be included to the items
+                # list as the API does not include a legend for color composition
+                if map_type_key == COLOR_COMPOSITION['key']:
+                    list_items = [PGW]
+                else:
+                    list_items = [PGW, LEGEND]
+
                 # Download associated legend and world-file for geo-referencing
                 # the PNG file.
-                for item in [PGW, LEGEND]:
+                for item in list_items:
                     url = field_map_json['_links'][item['api_key']]
 
                     char_question_mark = '?'  # Filtering char
@@ -587,6 +595,7 @@ def download_field_map(
                     segment_filename
                 )
     except:
+        print("ERROR2")
         # zip extraction error
         message = 'Failed to download file.'
         return False, message
