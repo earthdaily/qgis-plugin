@@ -8,13 +8,14 @@ import tempfile
 from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings, QDate
 
 from geosys.bridge_api.default import (
-    MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PGW, LEGEND)
+    MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PGW, LEGEND, SHP_EXT)
 from geosys.bridge_api.definitions import SAMZ, ELEVATION
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.qgis_settings import QGISSettings
 from geosys.utilities.settings import setting
 from geosys.utilities.gui_utilities import create_hotspot_layer
+from geosys.utilities.utilities import check_if_file_exists
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -544,6 +545,8 @@ def download_field_map(
 
             map_json = bridge_api.get_hotspot(hotspot_url)
 
+            output_dir = setting('output_directory', expected_type=str)
+
             if map_json.get('hotSpots'):
                 if map_specification:
                     if hotspot_per_part:
@@ -551,11 +554,13 @@ def download_field_map(
                             map_specification['seasonField']['id'],
                             map_specification['image']['date']
                         )
+                        hotspot_filename = check_if_file_exists(output_dir, hotspot_filename, SHP_EXT)
                     else:
                         hotspot_filename = 'HotspotsPerPolygon_{}_{}'.format(
                             map_specification['seasonField']['id'],
                             map_specification['image']['date']
                         )
+                        hotspot_filename = check_if_file_exists(output_dir, hotspot_filename, SHP_EXT)
                 create_hotspot_layer(
                     map_json.get('hotSpots'),
                     'hotspots',
@@ -569,11 +574,13 @@ def download_field_map(
                             map_specification['seasonField']['id'],
                             map_specification['image']['date']
                         )
+                        segment_filename = check_if_file_exists(output_dir, segment_filename, SHP_EXT)
                     else:
                         segment_filename = 'SegmentsPerPolygon_{}_{}'.format(
                             map_specification['seasonField']['id'],
                             map_specification['image']['date']
                         )
+                        segment_filename = check_if_file_exists(output_dir, segment_filename, SHP_EXT)
                 create_hotspot_layer(
                     map_json.get('zones'),
                     'segments',

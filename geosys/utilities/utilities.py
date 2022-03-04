@@ -311,3 +311,33 @@ def readable_os_version():
         return ' {version}'.format(version=platform.mac_ver()[0])
     elif platform.system() == 'Windows':
         return platform.platform()
+
+def check_if_file_exists(output_dir, file_name, extension):
+    """The method checks if a file exists, and if it does, then it adds an increment to the filename.
+    This is done until there are no longer a clash with the filename.
+
+    :param output_dir: The directory in which the file is stored.
+    :param output_dir: str
+
+    :param file_name: The name which to use for the file.
+    :type file_name: str
+
+    :param extension: The output file extension.
+    :type extension: str
+
+    :returns: Returns the updated name for the output file which will have no clashes with existing files.
+    :rtype: str
+    """
+    cur_file_name = file_name
+    file_full_dir = '{}\\{}{}'.format(output_dir, cur_file_name, extension)
+
+    i = 1
+    while True:  # Will break out of the loop if no clash is found
+        if os.path.exists(file_full_dir):  # Filename exists, add counter value
+            cur_file_name = '{}_{}'.format(file_name, str(i))
+            file_full_dir = '{}\\{}{}'.format(output_dir, cur_file_name, extension)
+            i = i + 1
+        else:  # Filename does not exist, use current filename
+            break
+
+    return cur_file_name
