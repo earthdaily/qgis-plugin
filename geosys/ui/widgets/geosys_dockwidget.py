@@ -208,7 +208,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def show_previous_page(self):
         """Open previous page of stacked widget."""
         if self.current_stacked_widget_index > 0:
-            self.current_stacked_widget_index -= 1
+            # If the current map type is elevation and the widget is on the map creation page,
+            # the back button should take the user to the coverage parameters page
+            if self.map_product == ELEVATION['key'] and self.current_stacked_widget_index == 2:
+                self.current_stacked_widget_index -= 2
+            else:
+                self.current_stacked_widget_index -= 1
             self.stacked_widget.setCurrentIndex(
                 self.current_stacked_widget_index)
             self.next_push_button.setEnabled(True)
