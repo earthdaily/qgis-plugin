@@ -106,7 +106,7 @@ def content():
         '<li class="message">EarthDaily Agro uses satellite imaging to provide '
         'advanced analytics to mitigate risk and the planet. '
         'Increase efficiencies - leading to more sustainable '
-        'outcomes for the organization an people who '
+        'outcomes for the organization and people who '
         'feed.</li> '
         '</ul>'
         '</div>'
