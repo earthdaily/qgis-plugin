@@ -792,9 +792,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         else:
             self.coverage_result_list.setCurrentRow(0)
 
-            # When user selected Elevation map, we want to skip the coverage
+            # When user selected Elevation/Soil map, we want to skip the coverage
             # results panel and go straight to the map creation panel rather.
-            if self.map_product == ELEVATION['key']:
+            if self.map_product == ELEVATION['key'] or self.map_product == SOIL['key']:
                 self.show_next_page()
 
     def show_coverage_result(self, coverage_map_json, thumbnail_ba):

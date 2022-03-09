@@ -297,8 +297,8 @@ SLOPE = {
 
 # Soil map
 SOIL = {
-    'key': 'SOIL',
-    'name': 'SOIL',
+    'key': 'SOILMAP',
+    'name': 'SOILMAP',
     'map_family': samplemap,
     'description': 'Provides the in-season Soil type map. Can be generate only in the USA, contains information about soil as collected by the National Cooperative Soil Survey.'
 }
