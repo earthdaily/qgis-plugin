@@ -105,13 +105,57 @@ def content():
 
     bullets = m.BulletedList()
     for sensor in SENSORS:
-        bullets.add(m.Text(
-            '{} - {}'.format(
-                m.ImportantText(tr(
-                    sensor['name']
-                )).to_html(),
-                sensor['description'])
-        ))
+        sensor_name = sensor['name']
+        if sensor_name == 'LANDSAT_8':
+            bullets.add(m.Text(
+                '{} - {}'.format(
+                    m.ImportantText(tr(
+                        "LANDSAT_8 and LANDSAT_9"
+                    )).to_html(),
+                    sensor['description'])
+            ))
+        elif sensor_name == 'CBERS_4':
+            bullets.add(m.Text(
+                '{} - {}'.format(
+                    m.ImportantText(tr(
+                        "CBERS-4 (MUXCam)"
+                    )).to_html(),
+                    sensor['description'])
+            ))
+        elif sensor_name == 'GAOFEN':
+            bullets.add(m.Text(
+                '{} - {}'.format(
+                    m.ImportantText(tr(
+                        "GAOFEN-1 and GAOFEN-6"
+                    )).to_html(),
+                    sensor['description'])
+            ))
+        elif sensor_name == 'DEIMOS':
+            bullets.add(m.Text(
+                '{} - {}'.format(
+                    m.ImportantText(tr(
+                        "DEIMOS-1"
+                    )).to_html(),
+                    sensor['description'])
+            ))
+        elif sensor_name == 'ALSAT_1B':
+            bullets.add(m.Text(
+                '{} - {}'.format(
+                    m.ImportantText(tr(
+                        "ALSAT-1B"
+                    )).to_html(),
+                    sensor['description'])
+            ))
+        elif sensor_name == "DMC":
+            pass
+        else:
+            bullets.add(m.Text(
+                '{} - {}'.format(
+                    m.ImportantText(tr(
+                        sensor_name
+                    )).to_html(),
+                    sensor['description'])
+            ))
     message.add(bullets)
 
     paragraph = m.Paragraph(tr(
