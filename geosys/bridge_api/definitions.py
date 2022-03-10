@@ -377,19 +377,17 @@ RESOURCESAT2 = {
     'key': 'RESOURCESAT2',
     'name': 'RESOURCESAT2',
     'description': 'The Linear Imaging Self-Scanning Sensor (LISS-III) '
-                   'with 23.5 meter spatial resolution LISS-IV Camera with '
-                   '5.8 meter spatial resolution. '
+                   'with 23.5-meter spatial resolution LISS-IV Camera with '
+                   '5.8-meter spatial resolution. '
                    'Revisiting every 24 days.'
 }
 
 SENTINEL_2 = {
     'key': 'SENTINEL_2',
     'name': 'SENTINEL_2',
-    'description': 'Spatial resolution of 10 m, 20 m and 60 m. '
+    'description': 'Spatial resolution of 10 m. '
                    'Revisiting every 5 days under the same viewing angles. '
-                   'At high latitudes, Sentinel-2 swath overlap and some '
-                   'regions will be observed twice or more every 5 days, '
-                   'but with different viewing angles. Multi-spectral data '
+                   'Multi-spectral data '
                    'with 13 bands in the visible, near infrared, and short '
                    'wave infrared part of the spectrum.'
 }
@@ -397,13 +395,13 @@ SENTINEL_2 = {
 ALSAT_1B = {
     'key': 'ALSAT_1B',
     'name': 'ALSAT_1B',
-    'description': 'Algeria Satellite 1B with a spatial resolution at 24 m ground resolution, up to 3 days of revisit'
+    'description': 'Algeria Satellite-1B with a spatial resolution at 24 m ground resolution, up to 3 days of revisit.'
 }
 
 GAOFEN = {
     'key': 'GAOFEN',
     'name': 'GAOFEN',
-    'description': 'GAOFEN-1-WFV1 and GAOFEN-6-WFV, have respectively a ground resolution equal to 8 meters and 16 meters with a revisited equal to 4 days.'
+    'description': 'Have respectively a ground resolution equal to 16 meters with a revisited equal to 4 days.'
 }
 
 CBERS_4 = {
