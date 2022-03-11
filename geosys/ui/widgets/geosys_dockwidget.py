@@ -154,6 +154,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.populate_map_products()
 
         # Populate sensor combo box
+        self.clear_combo_box(self.sensor_combo_box)
         self.populate_sensors()
 
         # Set default date value
