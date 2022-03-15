@@ -16,7 +16,7 @@
   <h1 align="center">QGIS Plugin</h3>
 
   <p align="center">
-    To be able to discover, request and use imagery products based on <geosys/> virtual constellation within QGIS, using the <geosys/> API.
+    To be able to discover, request and use imagery products based on <geosys/> virtual constellation within QGIS, using the &ltgeosys/&gt API.
     <br />
     <a href="https://earthdailyagro.com/"><strong>Who we are</strong></a>
     <br />
