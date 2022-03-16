@@ -297,8 +297,8 @@ SLOPE = {
 
 # Soil map
 SOIL = {
-    'key': 'SOIL',
-    'name': 'SOIL',
+    'key': 'soilmap',
+    'name': 'SOILMAP',
     'map_family': samplemap,
     'description': 'Provides the in-season Soil type map. Can be generate only in the USA, contains information about soil as collected by the National Cooperative Soil Survey.'
 }
@@ -334,6 +334,13 @@ BASIC_INSEASON_MAP_PRODUCTS = [
     INSEASON_GNDVI,
     INSEASON_LAI,
     INSEASON_S2REP
+]
+
+INSEASON_NITROGEN = [
+    INSEASONFIELD_AVERAGE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI,
+    INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_REVERSE_LAI
 ]
 
 INSEASON_MAP_PRODUCTS = BASIC_INSEASON_MAP_PRODUCTS + [
