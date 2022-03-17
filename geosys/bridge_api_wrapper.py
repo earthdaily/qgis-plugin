@@ -212,7 +212,45 @@ class BridgeAPI(ApiClient):
 
         return coverages_json
 
-    def _get_field_map(self, map_type_key, request_data, params):
+    def get_catalog_imagery(self, geometry, crop, sowing_date, filters=None):
+        """Get catalog imagery for given parameters.
+
+        :param geometry: A geometry in WKT format.
+        :type geometry: str
+
+        :param crop: Crop type.
+        :type crop: str
+
+        :param sowing_date: Sowing date. YYYY-MM-DD
+        :type sowing_date: str
+
+        :param filters: Filter coverage results.
+            example: {
+                "Image.Date": "$gte:2010-01-01",
+                "coverageType": "CLEAR"
+            }
+        :type filters: dict
+
+        :return: JSON response.
+            List of maps data specification based on given criteria.
+        :rtype: list
+        """
+        # Construct parameter
+        request_data = {
+            'Geometry': geometry,
+            'Crop': {
+                'ID': crop
+            },
+            'SowingDate': sowing_date
+        }
+
+        api_client = FieldLevelMapsAPIClient(
+            self.access_token, self.bridge_server)
+        coverages_json = api_client.get_catalog_imagery(request_data, filters=filters)
+
+        return coverages_json
+
+    def _get_field_map(self, map_type_key, request_data, yield_ave, params):
         """Actual method to call field map creation request.
 
         :param map_type_key: Map type key.
@@ -224,6 +262,9 @@ class BridgeAPI(ApiClient):
         :param params: Request parameters.
         :type params: dict
 
+        :param yield_ave: Average yield provided by the user
+        :type yield_ave: int
+
         :return: JSON response.
             Map data specification based on given criteria.
         :rtype: dict
@@ -231,7 +272,7 @@ class BridgeAPI(ApiClient):
         api_client = FieldLevelMapsAPIClient(
             self.access_token, self.bridge_server)
         field_map_json = api_client.get_field_map(
-            map_type_key, request_data, params)
+            map_type_key, request_data, yield_ave, params)
 
         return field_map_json
 
@@ -250,7 +291,7 @@ class BridgeAPI(ApiClient):
         return map_json
 
     def get_field_map(
-            self, map_type_key, season_field_id, image_date, **kwargs):
+            self, map_type_key, season_field_id, image_date, image_id, yield_ave, **kwargs):
         """Get requested field map.
 
         :param map_type_key: Map type key.
@@ -261,6 +302,12 @@ class BridgeAPI(ApiClient):
 
         :param image_date: Date of the image. yyyy-MM-dd
         :type image_date: str
+
+        :param image_id: ID of the sensor image
+        :type image_id: str
+
+        :param yield_ave: Average yield provided by the user
+        :type yield_ave: int
 
         :param kwargs: Other map creation and request parameters.
 
@@ -274,7 +321,8 @@ class BridgeAPI(ApiClient):
                 'Id': season_field_id
             },
             'Image': {
-                'Date': image_date
+                'Date': image_date,
+                'Id': image_id
             }
         }
         request_data.update(kwargs)
@@ -282,7 +330,7 @@ class BridgeAPI(ApiClient):
         # Get request parameters
         params = kwargs.get('params')
 
-        return self._get_field_map(map_type_key, request_data, params)
+        return self._get_field_map(map_type_key, request_data, yield_ave, params)
 
     def get_difference_map(
             self, map_type_key, season_field_id,

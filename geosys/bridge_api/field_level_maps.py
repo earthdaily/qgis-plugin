@@ -3,7 +3,7 @@
 """
 from geosys.bridge_api.api_abstract import ApiClient
 from geosys.bridge_api.default import BRIDGE_URLS
-from geosys.bridge_api.definitions import COLOR_COMPOSITION
+from geosys.bridge_api.definitions import COLOR_COMPOSITION, REFLECTANCE, SOIL, INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_LAI, INSEASON_S2REP
 from geosys.bridge_api.utilities import get_definition
 
 __copyright__ = "Copyright 2019, Kartoza"
@@ -86,7 +86,50 @@ class FieldLevelMapsAPIClient(ApiClient):
 
         return response.json()
 
-    def get_field_map(self, map_type_key, data, params=None):
+    def get_catalog_imagery(self, data, filters=None):
+        """Get catalog-imagery based on given parameters.
+
+        :param data: Data passed to the API to get specific coverage.
+            example: {
+                "Geometry": "POLYGON((
+                                -86.86701653386694 41.331532756357426,
+                                -86.86263916875464 41.331532756357426,
+                                -86.86263916875464 41.32450729144166,
+                                -86.86701653386694 41.32450729144166,
+                                -86.86701653386694 41.331532756357426))",
+                "Crop": {
+                    "Id": "CORN"
+                },
+                "SowingDate": "2018-04-15"
+            }
+        :type data: dict
+
+        :param filters: Filter coverage results.
+            example: {
+                "Image.Date": "$gte:2010-01-01",
+                "coverageType": "CLEAR"
+            }
+        :type filters: dict
+
+        :return: JSON response.
+            List of maps data specification based on given criteria.
+        :rtype: list
+        """
+        filters = filters if filters else {}
+        headers = {
+            'accept': 'application/json',
+            'content-type': 'application/json'
+        }
+
+        response = self.post(
+            self.full_url('catalog-imagery'),
+            headers=headers,
+            params=filters,
+            json=data)
+
+        return response.json()
+
+    def get_field_map(self, map_type_key, data, yield_ave, params=None):
         """Get requested field map.
 
         :param map_type_key: Map type key.
@@ -102,6 +145,9 @@ class FieldLevelMapsAPIClient(ApiClient):
                 }
             }
         :type data: dict
+
+        :param yield_ave: Average yield provided by the user
+        :type yield_ave: int
 
         :param params: Map creation parameters.
         :type params: dict
@@ -121,12 +167,52 @@ class FieldLevelMapsAPIClient(ApiClient):
                 'mapType': COLOR_COMPOSITION['name']
             })
             map_family = map_type['map_family']
-            response = self.post(
-                self.full_url(
-                    'maps', map_family['endpoint'], map_type['name']),
-                headers=headers,
-                params=params,
-                json=data)
+
+            image_id = data['Image']['Id']
+            seasonfield_id = data['SeasonField']['Id']
+
+            if map_type['key'] == REFLECTANCE['key'] or map_type['key'] == INSEASON_S2REP['key']:
+                # Reflectance and S2REP maps needs to make use of the catalog-imagery API
+                full_url = self.full_url('season-fields', seasonfield_id, 'coverage', image_id, map_family['endpoint'], map_type['key'])
+
+                response = self.get(
+                    full_url,
+                    headers=headers,
+                    params=params,
+                    json=data)
+            elif map_type['key'] == INSEASONFIELD_AVERAGE_NDVI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_LAI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
+                full_url = self.full_url('season-fields', seasonfield_id, 'coverage', image_id, map_family['endpoint'], map_type['key'], 'n-planned', str(yield_ave))
+
+                response = self.get(
+                    full_url,
+                    headers=headers,
+                    params=params,
+                    json=data)
+            elif map_type['key'] == SOIL['key']:
+                # Body required by soilmap
+                # This is a workaround provided by GeoSys
+                data = {
+                    "provider": "Shared",
+                    "asset": "USA",
+                    "seasonField": {
+                        "id": seasonfield_id
+                    }
+                }
+
+                full_url = self.full_url('maps', map_family['endpoint'], map_type['key'])
+                response = self.post(
+                    full_url,
+                    headers=headers,
+                    params=params,
+                    json=data)
+            else:
+                full_url = self.full_url('maps', map_family['endpoint'], map_type['name'])
+
+                response = self.post(
+                     full_url,
+                     headers=headers,
+                     params=params,
+                     json=data)
 
             return response.json()
 

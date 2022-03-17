@@ -45,7 +45,7 @@ from geosys.bridge_api.default import (
     MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
-    SAMZ, SOIL, ELEVATION)
+    SAMZ, SOIL, ELEVATION, REFLECTANCE)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
@@ -209,9 +209,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def show_previous_page(self):
         """Open previous page of stacked widget."""
         if self.current_stacked_widget_index > 0:
-            # If the current map type is elevation and the widget is on the map creation page,
+            # If the current map type is elevation or soil map and the widget is on the map creation page,
             # the back button should take the user to the coverage parameters page
-            if self.map_product == ELEVATION['key'] and self.current_stacked_widget_index == 2:
+            if (self.map_product == ELEVATION['key'] or self.map_product == SOIL['key']) and self.current_stacked_widget_index == 2:
                 self.current_stacked_widget_index -= 2
             else:
                 self.current_stacked_widget_index -= 1
@@ -233,6 +233,25 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # If current page is coverage results page, prepare map creation
         # parameters.
         if self.current_stacked_widget_index == 1:
+            if self.map_product == REFLECTANCE['key']:
+                # Reflectance can only make use of the tiff.zip format
+                self.tiff_radio_button.setChecked(True)
+
+                # Unchecks and disabled all other options for reflectance maps
+                self.png_radio_button.setChecked(False)
+                self.png_radio_button.setEnabled(False)
+
+                self.shp_radio_button.setChecked(False)
+                self.shp_radio_button.setEnabled(False)
+
+                self.kmz_radio_button.setChecked(False)
+                self.kmz_radio_button.setEnabled(False)
+            else:
+                # If these radio buttons has been disabled, it is reenabled
+                self.png_radio_button.setEnabled(True)
+                self.shp_radio_button.setEnabled(True)
+                self.kmz_radio_button.setEnabled(True)
+
             self.set_gain_offset_state()  # Disabled gain and offset for some map product types
             self.restore_parameter_values_from_setting()
 
@@ -311,7 +330,15 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # update data based on selected coverage results
         self.selected_coverage_results = []
         for item in self.coverage_result_list.selectedItems():
-            self.selected_coverage_results.append(item.data(Qt.UserRole))
+            item_json = item.data(Qt.UserRole)
+            if self.map_product == REFLECTANCE['key']:
+                # NDVI used for coverage. This is a workaround suggested by GeoSys
+                item_json['maps'][0]['type'] = REFLECTANCE['key']
+            elif self.map_product == SOIL['key']:
+                # Used when soilmap type. This is a workaround suggested by GeoSys
+                item_json['maps'][0]['type'] = SOIL['key']
+
+            self.selected_coverage_results.append(item_json)
 
         self.handle_difference_map_button()
 
@@ -644,7 +671,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
-                    data=data, output_map_format=self.output_map_format)
+                    data=data, output_map_format=self.output_map_format,
+                    yield_ave=self.yield_average
+                )
                 if not is_success:
                     QMessageBox.critical(
                         self,
@@ -753,10 +782,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             start_date=self.start_date,
             mutex=self.one_process_work,
             parent=self.iface.mainWindow())
-        searcher.data_downloaded.connect(self.show_coverage_result)
-        searcher.error_occurred.connect(self.show_error)
         searcher.search_started.connect(self.coverage_search_started)
         searcher.search_finished.connect(self.coverage_search_finished)
+        searcher.data_downloaded.connect(self.show_coverage_result)
+        searcher.error_occurred.connect(self.show_error)
         self.search_threads = searcher
         searcher.start()
 
@@ -793,9 +822,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         else:
             self.coverage_result_list.setCurrentRow(0)
 
-            # When user selected Elevation map, we want to skip the coverage
+            # When user selected Elevation or Soil map, we want to skip the coverage
             # results panel and go straight to the map creation panel rather.
-            if self.map_product == ELEVATION['key']:
+            if self.map_product == ELEVATION['key'] or self.map_product == SOIL['key']:
                 self.show_next_page()
 
     def show_coverage_result(self, coverage_map_json, thumbnail_ba):
@@ -843,7 +872,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             new_item.setData(Qt.UserRole, coverage_map_json)
             self.coverage_result_list.addItem(new_item)
             self.coverage_result_list.setItemWidget(new_item, custom_widget)
-
         else:
             new_item = QListWidgetItem()
             new_item.setText(self.tr('No results!'))
