@@ -232,7 +232,7 @@ REFLECTANCE = {
     'key': 'TOC',
     'name': 'REFLECTANCE',
     'map_family': reflectance_map,
-    'description': 'Provides the Reflectance map at Top of Canopy for Sentinel 2, Lansat-8 and 9.'
+    'description': 'Provides the Reflectance map at Top of Canopy for Sentinel 2, Landsat-8 and 9.'
 }
 
 # OM (Organic Matter)
