@@ -378,7 +378,7 @@ class BridgeAPI(ApiClient):
         difference_map_definition = map_type_definition['difference_map']
 
         return self._get_field_map(
-            difference_map_definition['key'], request_data, 0, params)
+            difference_map_definition['key'], request_data, params=params)
 
     def get_samz_map(self, season_field_id, list_of_image_date=None, **kwargs):
         """Get requested SAMZ map.
@@ -411,4 +411,4 @@ class BridgeAPI(ApiClient):
         # Get request parameters
         params = kwargs.get('params')
 
-        return self._get_field_map(SAMZ['key'], request_data, 0, params)
+        return self._get_field_map(SAMZ['key'], request_data, params=params)

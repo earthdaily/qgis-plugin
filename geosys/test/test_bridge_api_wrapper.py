@@ -95,7 +95,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
             client_secret='mapproduct_api.secret',
             use_testing_service=True)
         field_map = bridge_api.get_field_map(
-            map_type_key, season_field_id, image_date, '', 0,
+            map_type_key, season_field_id, image_date,
             # map creation parameters
             NPlanned=48,
             NMin=20,
