@@ -232,7 +232,7 @@ REFLECTANCE = {
     'key': 'TOC',
     'name': 'REFLECTANCE',
     'map_family': reflectance_map,
-    'description': 'Provides the Reflectance map at Top of Canopy for Sentinel 2 and Lansat-8.'
+    'description': 'Provides the Reflectance map at Top of Canopy for Sentinel 2, Lansat-8 and 9.'
 }
 
 # OM (Organic Matter)
@@ -380,6 +380,14 @@ LANDSAT_8 = {
                    '16 days.'
 }
 
+LANDSAT_9 = {
+    'key': 'LANDSAT_9',
+    'name': 'LANDSAT_9',
+    'description': 'Providing moderate-resolution imagery at 30 meters '
+                   'resampled to 15 meters by Geosys. Revisiting every '
+                   '16 days.'
+}
+
 RESOURCESAT2 = {
     'key': 'RESOURCESAT2',
     'name': 'RESOURCESAT2',
@@ -418,7 +426,7 @@ CBERS_4 = {
 }
 
 SENSORS = [
-    DEIMOS, DMC, ALSAT_1B, GAOFEN, CBERS_4, LANDSAT_8, RESOURCESAT2, SENTINEL_2
+    DEIMOS, DMC, ALSAT_1B, GAOFEN, CBERS_4, LANDSAT_8, LANDSAT_9, RESOURCESAT2, SENTINEL_2
 ]
 
 ALL_SENSORS = {
