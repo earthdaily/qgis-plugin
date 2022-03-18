@@ -45,7 +45,7 @@ from geosys.bridge_api.default import (
     MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
-    SAMZ, SOIL, ELEVATION, REFLECTANCE)
+    SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
@@ -931,7 +931,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """
         for sensor in [ALL_SENSORS] + SENSORS:
             sensor_name = sensor['name']
-            if sensor_name == 'LANDSAT_8' or sensor_name == 'SENTINEL_2':
+            if sensor_name == LANDSAT_8['name'] or sensor_name == LANDSAT_9['name'] or sensor_name == SENTINEL_2['name']:
                 add_ordered_combo_item(self.sensor_combo_box, sensor_name, sensor['key'])
 
     def clear_combo_box(self, combo_box):

@@ -146,7 +146,7 @@ def content():
                     )).to_html(),
                     sensor['description'])
             ))
-        elif sensor_name == "DMC":
+        elif sensor_name == "DMC" or sensor_name == "LANDSAT_9":
             pass
         else:
             bullets.add(m.Text(
