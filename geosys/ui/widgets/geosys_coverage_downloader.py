@@ -19,7 +19,8 @@ from geosys.bridge_api.definitions import (SAMZ,
                                            INSEASONFIELD_AVERAGE_NDVI,
                                            INSEASONFIELD_AVERAGE_LAI,
                                            INSEASONFIELD_AVERAGE_REVERSE_NDVI,
-                                           INSEASONFIELD_AVERAGE_REVERSE_LAI)
+                                           INSEASONFIELD_AVERAGE_REVERSE_LAI,
+                                           INSEASON_CVIN)
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.qgis_settings import QGISSettings
@@ -42,6 +43,10 @@ NITROGEN_THUMBNAIL_URL = (
 S2REP_THUMBNAIL_URL = (
     '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
     '/base-reference-map/INSEASON_S2REP/thumbnail.png')
+CVIN_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/base-reference-map/INSEASON_CVIN/thumbnail.png')
+
 
 
 class CoverageSearchThread(QThread):
@@ -156,7 +161,7 @@ class CoverageSearchThread(QThread):
             collected_results = []
             for geometry in self.geometries:
                 # Determines the approach required to do the coverage check
-                if self.map_product == INSEASON_S2REP['key'] or self.map_product == REFLECTANCE['key']:
+                if self.map_product == INSEASON_S2REP['key'] or self.map_product == REFLECTANCE['key'] or INSEASON_CVIN['key']:
                     # Makes use of the 'catalog-imagery' API calls
                     results = searcher_client.get_catalog_imagery(
                         geometry, self.crop_type, self.sowing_date,
@@ -204,6 +209,13 @@ class CoverageSearchThread(QThread):
                                     bridge_url=searcher_client.bridge_server,
                                     id=result['seasonField']['id'],
                                     date=result['image']['date']
+                                ))
+                    elif self.map_product == INSEASON_CVIN['key']:
+                        thumbnail_url = (
+                                CVIN_THUMBNAIL_URL.format(
+                                    bridge_url=searcher_client.bridge_server,
+                                    id=result['seasonField']['id'],
+                                    image=result['image']['id']
                                 ))
                     elif self.map_product == INSEASON_S2REP['key']:
                         thumbnail_url = (
