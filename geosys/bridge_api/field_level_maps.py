@@ -129,7 +129,7 @@ class FieldLevelMapsAPIClient(ApiClient):
 
         return response.json()
 
-    def get_field_map(self, map_type_key, data, yield_ave, params=None):
+    def get_field_map(self, map_type_key, data, yield_ave=None, params=None):
         """Get requested field map.
 
         :param map_type_key: Map type key.
@@ -168,8 +168,8 @@ class FieldLevelMapsAPIClient(ApiClient):
             })
             map_family = map_type['map_family']
 
-            image_id = data['Image']['Id']
-            seasonfield_id = data['SeasonField']['Id']
+            image_id = data['Image']['Id'] if data.get('Image', None) else None
+            seasonfield_id = data['SeasonField']['Id'] if data.get('SeasonField', None) else None
 
             if map_type['key'] == REFLECTANCE['key'] or map_type['key'] == INSEASON_S2REP['key']:
                 # Reflectance and S2REP maps needs to make use of the catalog-imagery API

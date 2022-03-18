@@ -250,7 +250,7 @@ class BridgeAPI(ApiClient):
 
         return coverages_json
 
-    def _get_field_map(self, map_type_key, request_data, yield_ave, params):
+    def _get_field_map(self, map_type_key, request_data, yield_ave=None, params=None):
         """Actual method to call field map creation request.
 
         :param map_type_key: Map type key.
@@ -291,7 +291,7 @@ class BridgeAPI(ApiClient):
         return map_json
 
     def get_field_map(
-            self, map_type_key, season_field_id, image_date, image_id, yield_ave, **kwargs):
+            self, map_type_key, season_field_id, image_date, image_id=None, yield_ave=None, **kwargs):
         """Get requested field map.
 
         :param map_type_key: Map type key.
