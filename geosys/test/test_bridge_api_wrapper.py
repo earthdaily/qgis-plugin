@@ -42,8 +42,8 @@ class BridgeAPIWrapperTest(unittest.TestCase):
         expected_crops = [
             'SUGARCANE', 'CORN', 'MILLET', 'GRAPES', 'OTHERS', 'COTTON',
             'SUNFLOWER', 'PEANUT', 'SOYBEANS', 'ORANGE', 'RICE', 'SORGHUM',
-            'WHEAT_WINTER_DURUM', 'WHEAT_WINTER_SOFT', 'WHEAT_SPRING_DURUM',
-            'WHEAT_SPRING_SOFT', 'TRITICALE', 'BARLEY_WINTER', 'BARLEY_SPRING',
+            'WINTER_DURUM_WHEAT', 'WINTER_SOFT_WHEAT', 'SPRING_DURUM_WHEAT',
+            'SOFT_WHITE_SPRING_WHEAT', 'TRITICALE', 'WINTER_BARLEY', 'SPRING_BERALY', 'WINTER_OSR'
         ]
         self.assertEqual(sorted(crops), sorted(expected_crops))
 
