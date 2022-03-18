@@ -21,13 +21,14 @@ CROPS = {
     'sunflower': 'SUNFLOWER',
     'sorghum': 'SORGHUM',
     'soybeans': 'SOYBEANS',
-    'wheat_winter_durum': 'WHEAT_WINTER_DURUM',
-    'wheat_winter_soft': 'WHEAT_WINTER_SOFT',
-    'wheat_spring_durum': 'WHEAT_SPRING_DURUM',
-    'wheat_spring_soft': 'WHEAT_SPRING_SOFT',
+    'winter_durum_wheat': 'WINTER_DURUM_WHEAT',
+    'winter_soft_wheat': 'WINTER_SOFT_WHEAT',
+    'spring_durum_wheat': 'SPRING_DURUM_WHEAT',
+    'soft_white_spring_wheat': 'SOFT_WHITE_SPRING_WHEAT',
     'triticale': 'TRITICALE',
-    'barley_winter': 'BARLEY_WINTER',
-    'barley_spring': 'BARLEY_SPRING'
+    'winter_barley': 'WINTER_BARLEY',
+    'spring_barley': 'SPRING_BARLEY',
+    'winter_osr': 'WINTER_OSR'
 }
 
 # Map type families definition
