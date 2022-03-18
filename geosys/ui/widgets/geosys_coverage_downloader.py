@@ -37,11 +37,12 @@ NDVI_THUMBNAIL_URL = (
     '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{date}'
     '/base-reference-map/INSEASON_NDVI/thumbnail.png')
 NITROGEN_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/catalog-imagery/{date}'
-    '/model-map/{nitrogen_map_type}/thumbnail.png')
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/model-map/{nitrogen_map_type}/n-planned/{n_value}/thumbnail.png')
 S2REP_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/catalog-imagery/{date}'
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
     '/base-reference-map/INSEASON_S2REP/thumbnail.png')
+
 
 class CoverageSearchThread(QThread):
     """Thread object wrapper for coverage search."""
@@ -209,9 +210,10 @@ class CoverageSearchThread(QThread):
                             S2REP_THUMBNAIL_URL.format(
                                 bridge_url=searcher_client.bridge_server,
                                 id=result['seasonField']['id'],
-                                date=result['image']['date']
+                                image=result['image']['id']
                             ))
                     elif self.map_product == INSEASONFIELD_AVERAGE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_LAI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
+                        n_planned_value = 30
                         # Nitrogen map type
                         if self.map_product == INSEASONFIELD_AVERAGE_NDVI['key']:
                             # INSEASON AVERAGE NDVI
@@ -219,8 +221,9 @@ class CoverageSearchThread(QThread):
                                 NITROGEN_THUMBNAIL_URL.format(
                                     bridge_url=searcher_client.bridge_server,
                                     id=result['seasonField']['id'],
-                                    date=result['image']['date'],
-                                    nitrogen_map_type=INSEASONFIELD_AVERAGE_NDVI['key']
+                                    image=result['image']['id'],
+                                    nitrogen_map_type=INSEASONFIELD_AVERAGE_NDVI['key'],
+                                    n_value=str(n_planned_value)
                                 ))
                         elif self.map_product == INSEASONFIELD_AVERAGE_LAI['key']:
                             # INSEASON AVERAGE LAI
@@ -228,8 +231,9 @@ class CoverageSearchThread(QThread):
                                 NITROGEN_THUMBNAIL_URL.format(
                                     bridge_url=searcher_client.bridge_server,
                                     id=result['seasonField']['id'],
-                                    date=result['image']['date'],
-                                    nitrogen_map_type=INSEASONFIELD_AVERAGE_LAI['key']
+                                    image=result['image']['id'],
+                                    nitrogen_map_type=INSEASONFIELD_AVERAGE_LAI['key'],
+                                    n_value=str(n_planned_value)
                                 ))
                         elif self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key']:
                             # INSEASON AVERAGE REVERSE NDVI
@@ -237,8 +241,9 @@ class CoverageSearchThread(QThread):
                                 NITROGEN_THUMBNAIL_URL.format(
                                     bridge_url=searcher_client.bridge_server,
                                     id=result['seasonField']['id'],
-                                    date=result['image']['date'],
-                                    nitrogen_map_type=INSEASONFIELD_AVERAGE_REVERSE_NDVI['key']
+                                    image=result['image']['id'],
+                                    nitrogen_map_type=INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
+                                    n_value=str(n_planned_value)
                                 ))
                         elif self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
                             # INSEASON AVERAGE REVERSE LAI
@@ -246,8 +251,9 @@ class CoverageSearchThread(QThread):
                                 NITROGEN_THUMBNAIL_URL.format(
                                     bridge_url=searcher_client.bridge_server,
                                     id=result['seasonField']['id'],
-                                    date=result['image']['date'],
-                                    nitrogen_map_type=INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
+                                    image=result['image']['id'],
+                                    nitrogen_map_type=INSEASONFIELD_AVERAGE_REVERSE_LAI['key'],
+                                    n_value=str(n_planned_value)
                                 ))
                     else:  # All other map types
                         thumbnail_url = (
