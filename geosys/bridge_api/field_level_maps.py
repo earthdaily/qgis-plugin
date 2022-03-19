@@ -129,7 +129,7 @@ class FieldLevelMapsAPIClient(ApiClient):
 
         return response.json()
 
-    def get_field_map(self, map_type_key, data, yield_ave=None, params=None):
+    def get_field_map(self, map_type_key, data, n_planned=1.0, params=None):
         """Get requested field map.
 
         :param map_type_key: Map type key.
@@ -146,8 +146,8 @@ class FieldLevelMapsAPIClient(ApiClient):
             }
         :type data: dict
 
-        :param yield_ave: Average yield provided by the user
-        :type yield_ave: int
+        :param n_planned: Value used for nitrogen maps
+        :type n_planned: float
 
         :param params: Map creation parameters.
         :type params: dict
@@ -181,7 +181,7 @@ class FieldLevelMapsAPIClient(ApiClient):
                     params=params,
                     json=data)
             elif map_type['key'] == INSEASONFIELD_AVERAGE_NDVI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_LAI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
-                full_url = self.full_url('season-fields', seasonfield_id, 'coverage', image_id, map_family['endpoint'], map_type['key'], 'n-planned', str(yield_ave))
+                full_url = self.full_url('season-fields', seasonfield_id, 'coverage', image_id, map_family['endpoint'], map_type['key'], 'n-planned', str(n_planned))
 
                 response = self.get(
                     full_url,

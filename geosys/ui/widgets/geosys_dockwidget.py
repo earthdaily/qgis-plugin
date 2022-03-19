@@ -90,6 +90,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.sensor_type = None
         self.start_date = None
         self.end_date = None
+        self.n_planned_value = 1.0  # Default value
 
         # Map creation parameters from input values
         self.yield_average = None
@@ -542,6 +543,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.start_date = self.start_date_edit.date().toString('yyyy-MM-dd')
         self.end_date = self.end_date_edit.date().toString('yyyy-MM-dd')
 
+        self.n_planned_value = self.n_planned_value_spinbox.value()
+
         return True, ''
 
     def _start_map_creation(self, map_specifications):
@@ -672,7 +675,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
                     data=data, output_map_format=self.output_map_format,
-                    yield_ave=self.yield_average
+                    n_planned_value=self.n_planned_value
                 )
                 if not is_success:
                     QMessageBox.critical(
@@ -781,6 +784,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             end_date=self.end_date,
             start_date=self.start_date,
             mutex=self.one_process_work,
+            n_planned_value=self.n_planned_value,
             parent=self.iface.mainWindow())
         searcher.search_started.connect(self.coverage_search_started)
         searcher.search_finished.connect(self.coverage_search_finished)
