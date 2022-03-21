@@ -59,7 +59,7 @@ class CoverageSearchThread(QThread):
 
     def __init__(
             self, geometries, crop_type, sowing_date, map_product, sensor_type,
-            start_date, end_date, mutex, parent=None):
+            start_date, end_date, mutex, n_planned_value=1.0, parent=None):
         """Thread object wrapper for coverage search.
 
         :param geometries: List of geometry filter in WKT format.
@@ -86,6 +86,9 @@ class CoverageSearchThread(QThread):
         :param mutex: Access serializer.
         :type mutex: QMutex
 
+        :param n_planned_value: Value used by the nitrogen map requests
+        :type n_planned_value: Numeric
+
         :param parent: Parent class.
         :type parent: QWidget
         """
@@ -98,6 +101,7 @@ class CoverageSearchThread(QThread):
         self.start_date = start_date
         self.end_date = end_date
         self.mutex = mutex
+        self.n_planned_value = n_planned_value
         self.parent = parent
 
         # setup coverage search filters
@@ -225,7 +229,6 @@ class CoverageSearchThread(QThread):
                                 image=result['image']['id']
                             ))
                     elif self.map_product == INSEASONFIELD_AVERAGE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_LAI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
-                        n_planned_value = 30
                         # Nitrogen map type
                         if self.map_product == INSEASONFIELD_AVERAGE_NDVI['key']:
                             # INSEASON AVERAGE NDVI
@@ -235,7 +238,7 @@ class CoverageSearchThread(QThread):
                                     id=result['seasonField']['id'],
                                     image=result['image']['id'],
                                     nitrogen_map_type=INSEASONFIELD_AVERAGE_NDVI['key'],
-                                    n_value=str(n_planned_value)
+                                    n_value=str(self.n_planned_value)
                                 ))
                         elif self.map_product == INSEASONFIELD_AVERAGE_LAI['key']:
                             # INSEASON AVERAGE LAI
@@ -245,7 +248,7 @@ class CoverageSearchThread(QThread):
                                     id=result['seasonField']['id'],
                                     image=result['image']['id'],
                                     nitrogen_map_type=INSEASONFIELD_AVERAGE_LAI['key'],
-                                    n_value=str(n_planned_value)
+                                    n_value=str(self.n_planned_value)
                                 ))
                         elif self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key']:
                             # INSEASON AVERAGE REVERSE NDVI
@@ -255,7 +258,7 @@ class CoverageSearchThread(QThread):
                                     id=result['seasonField']['id'],
                                     image=result['image']['id'],
                                     nitrogen_map_type=INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
-                                    n_value=str(n_planned_value)
+                                    n_value=str(self.n_planned_value)
                                 ))
                         elif self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
                             # INSEASON AVERAGE REVERSE LAI
@@ -265,7 +268,7 @@ class CoverageSearchThread(QThread):
                                     id=result['seasonField']['id'],
                                     image=result['image']['id'],
                                     nitrogen_map_type=INSEASONFIELD_AVERAGE_REVERSE_LAI['key'],
-                                    n_value=str(n_planned_value)
+                                    n_value=str(self.n_planned_value)
                                 ))
                     else:  # All other map types
                         thumbnail_url = (
@@ -313,7 +316,7 @@ def create_map(
         output_dir,
         filename,
         output_map_format,
-        yield_ave,
+        n_planned_value,
         data=None,
         params=None):
     """Create map based on given parameters.
@@ -354,8 +357,8 @@ def create_map(
     :param output_map_format: Output map format.
     :type output_map_format: dict
     
-    :param yield_ave: Average yield provided by the user
-    :type yield_ave: int
+    :param n_planned_value: Value used for nitrogen map type
+    :type n_planned_value: Numeric
     
     :param data: Map creation data.
         example: {
@@ -383,7 +386,7 @@ def create_map(
         *credentials_parameters_from_settings(),
         proxies=QGISSettings.get_qgis_proxy())
     field_map_json = bridge_api.get_field_map(
-        map_type_key, season_field_id, image_date, image_id, yield_ave, **data)
+        map_type_key, season_field_id, image_date, image_id, n_planned_value, **data)
 
     return download_field_map(
         field_map_json=field_map_json,
@@ -695,7 +698,6 @@ def download_field_map(
                     field_map_json['_links']['self'], data.get('zoneCount'))
 
                 hotspot_per_part = True
-
             else:
                 hotspot_url = '{}?zoning=true&zoneCount={}&hotspot=true'. \
                     format(\
