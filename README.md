@@ -61,6 +61,7 @@
     </li>
     <li><a href="#features">Features</a></li>
     <li><a href="#use-cases">Use cases</a></li>
+    <li><a href="#resources">Resources</a></li>
     <li><a href="#support-development">Support development</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
