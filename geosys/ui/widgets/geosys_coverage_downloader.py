@@ -165,7 +165,7 @@ class CoverageSearchThread(QThread):
             collected_results = []
             for geometry in self.geometries:
                 # Determines the approach required to do the coverage check
-                if self.map_product == INSEASON_S2REP['key'] or self.map_product == REFLECTANCE['key'] or INSEASON_CVIN['key']:
+                if self.map_product == INSEASON_S2REP['key'] or self.map_product == REFLECTANCE['key'] or self.map_product == INSEASON_CVIN['key']:
                     # Makes use of the 'catalog-imagery' API calls
                     results = searcher_client.get_catalog_imagery(
                         geometry, self.crop_type, self.sowing_date,
