@@ -17,6 +17,7 @@ from geosys.ui.about.about_dialog import AboutDialog
 from geosys.utilities.qgis_settings import QGISSettings
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import set_setting, setting
+from geosys.utilities.resources import resources_path
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -43,6 +44,9 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.iface = iface
         self.parent = parent
         self.settings = QSettings()
+
+        icon_path = resources_path('img', 'icons', 'icon.png')
+        self.setWindowIcon(QtGui.QIcon(icon_path))
 
         # List of setting key and control
         self.boolean_settings = {
@@ -110,7 +114,7 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def request_token(self):
         """Request access token to GEOSYS's identity server."""
-        message_title = "Bridge API Authentication Status"
+        message_title = "Geosys API Authentication Status"
         try:
             bridge_api = BridgeAPI(
                 username=self.username(),
@@ -121,12 +125,14 @@ class GeosysOptionsDialog(QtWidgets.QDialog, FORM_CLASS):
                 use_testing_service=self.use_testing_service(),
                 proxies=QGISSettings.get_qgis_proxy())
 
+            # Those spaces has been added because the QMessageBox does not correctly update its width
+            # according to the Title length. This solved the problem by slightly lengthening the contents.
             if not bridge_api.authenticated:
                 QMessageBox.critical(
-                    self, message_title, bridge_api.authentication_message)
+                    self, message_title, "{}{}".format(bridge_api.authentication_message, "        "))
             else:
                 QMessageBox.information(
-                    self, message_title, bridge_api.authentication_message)
+                    self, message_title, "{}{}".format(bridge_api.authentication_message, "        "))
         except:
             error_text = "{0}: {1}".format(
                 unicode(sys.exc_info()[0].__name__),
