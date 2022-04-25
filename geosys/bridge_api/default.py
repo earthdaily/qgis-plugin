@@ -49,6 +49,7 @@ GRANT_TYPE = 'password'
 SCOPE = 'openid offline_access'
 MAX_FEATURE_NUMBERS = 10
 DEFAULT_ZONE_COUNT = 0
+DEFAULT_N_PLANNED = 0.01
 
 # coverage filters
 
