@@ -343,6 +343,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             elif self.map_product == SOIL['key']:
                 # Used when soilmap type. This is a workaround suggested by GeoSys
                 item_json['maps'][0]['type'] = SOIL['key']
+            elif self.map_product == ELEVATION['key']:
+                # For elevation map type
+                item_json['maps'][0]['type'] = ELEVATION['key']
 
             self.selected_coverage_results.append(item_json)
 
