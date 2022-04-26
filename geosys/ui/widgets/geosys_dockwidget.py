@@ -42,10 +42,12 @@ from geosys.bridge_api.default import (
     VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
     ORGANIC_AVERAGE, POSITION, FILTER, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
-    MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET)
+    MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET, DEFAULT_N_PLANNED)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
-    SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2)
+    SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2,
+    INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_LAI)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
@@ -90,7 +92,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.sensor_type = None
         self.start_date = None
         self.end_date = None
-        self.n_planned_value = 1.0  # Default value
+
+        # Nitrogen map type parameter
+        self.n_planned_value = DEFAULT_N_PLANNED
+        self.n_planned_value_spinbox.setValue(self.n_planned_value)
 
         # Map creation parameters from input values
         self.yield_average = None
@@ -952,12 +957,22 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def product_type_change(self):
         map_product = self.map_product_combo_box.currentText()
-        if map_product == 'REFLECTANCE':  # If TOC reflectance has been chosen, only Sentinel-2 and Landsat-8 will be available as an option
+        if map_product == REFLECTANCE['name']:  # If TOC reflectance has been chosen, only Sentinel-2 and Landsat-8 will be available as an option
             self.clear_combo_box(self.sensor_combo_box)
             self.populate_sensors_reflectance()
         else:
             self.clear_combo_box(self.sensor_combo_box)
             self.populate_sensors()
+
+        list_nitrogen_maps = [INSEASONFIELD_AVERAGE_NDVI['name'], INSEASONFIELD_AVERAGE_REVERSE_NDVI['name'],
+                              INSEASONFIELD_AVERAGE_LAI['name'], INSEASONFIELD_AVERAGE_REVERSE_LAI['name']]
+
+        if map_product in list_nitrogen_maps:
+            # The n-planned parameter should be enabled for nitrogen map types
+            self.n_planned_value_spinbox.setEnabled(True)
+        else:
+            # The n-planned parameter should be disabled for other map types
+            self.n_planned_value_spinbox.setEnabled(False)
 
     def setup_connectors(self):
         """Setup signal/slot mechanisms for dock elements."""

@@ -196,8 +196,11 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="n_planned_value_spinbox">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="minimum">
-              <double>1.000000000000000</double>
+              <double>0.010000000000000</double>
              </property>
              <property name="maximum">
               <double>100.000000000000000</double>
@@ -206,7 +209,7 @@
               <double>0.500000000000000</double>
              </property>
              <property name="value">
-              <double>1.000000000000000</double>
+              <double>0.010000000000000</double>
              </property>
             </widget>
            </item>
