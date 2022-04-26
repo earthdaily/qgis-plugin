@@ -637,6 +637,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         }
                     )
 
+        zone_cnt = self.samz_zone_form.value()
         if map_product_definition == SAMZ:
             image_dates = []
             samz_mode = 'auto'
@@ -651,8 +652,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 item_data = item.data(Qt.UserRole)
                 season_field_id = item_data['seasonField']['id']
 
-            filename = '{}_{}_{}'.format(
-                SAMZ['key'], season_field_id, samz_mode)
+            filename = '{}_{}_zones_{}_{}'.format(
+                SAMZ['key'], str(zone_cnt), season_field_id, samz_mode)
             filename = check_if_file_exists(self.output_directory, filename, self.output_map_format['extension'])
 
             is_success, message = create_samz_map(
@@ -670,8 +671,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.load_layer(os.path.join(self.output_directory, filename))
         else:
             for map_specification in map_specifications:
-                filename = '{}_{}_{}'.format(
+                filename = '{}_{}_zones_{}_{}'.format(
                     self.map_product,  # map_specification['maps'][0]['type'],
+                    str(zone_cnt),
                     map_specification['seasonField']['id'],
                     map_specification['image']['date']
                 )
