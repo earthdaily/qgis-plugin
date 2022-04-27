@@ -349,6 +349,14 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             elif self.map_product == ELEVATION['key']:
                 # For elevation map type
                 item_json['maps'][0]['type'] = ELEVATION['key']
+            elif self.map_product == INSEASONFIELD_AVERAGE_NDVI['key']:
+                item_json['maps'][0]['type'] = INSEASONFIELD_AVERAGE_NDVI['key']
+            elif self.map_product == INSEASONFIELD_AVERAGE_LAI['key']:
+                item_json['maps'][0]['type'] = INSEASONFIELD_AVERAGE_LAI['key']
+            elif self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key']:
+                item_json['maps'][0]['type'] = INSEASONFIELD_AVERAGE_REVERSE_NDVI['key']
+            elif self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
+                item_json['maps'][0]['type'] = INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
 
             self.selected_coverage_results.append(item_json)
 
