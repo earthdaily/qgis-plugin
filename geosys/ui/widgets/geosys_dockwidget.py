@@ -458,8 +458,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def set_parameter_values_as_default(self):
         """Set parameter values to default values."""
         for key, form in self.map_creation_parameters_settings.items():
-            print("KEY: " + str(key))
-
             value = 0  # Default value if none is given
             if key == YIELD_AVERAGE:
                 value = DEFAULT_AVE_YIELD
@@ -471,8 +469,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 value = DEFAULT_ORGANIC_AVE
             elif key == SAMZ_ZONE:
                 value = DEFAULT_ZONE_COUNT
-
-            print("VALUE: " + str(value))
 
             form.setValue(value)
 
