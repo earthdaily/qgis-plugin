@@ -42,7 +42,9 @@ from geosys.bridge_api.default import (
     VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
     ORGANIC_AVERAGE, POSITION, FILTER, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
-    MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET, DEFAULT_N_PLANNED)
+    MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET, DEFAULT_N_PLANNED,
+    DEFAULT_AVE_YIELD, DEFAULT_MIN_YIELD, DEFAULT_MAX_YIELD, DEFAULT_ORGANIC_AVE,
+    DEFAULT_GAIN, DEFAULT_OFFSET)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
     SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2,
@@ -120,8 +122,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.hot_spot_bottom = None
         self.zoning_segmentation = None
         self.output_map_format = None
-        self.gain = 0.0
-        self.offset = 0.0
+        self.gain = DEFAULT_GAIN
+        self.offset = DEFAULT_OFFSET
         self.map_creation_parameters_settings = {
             YIELD_AVERAGE: self.yield_average_form,
             YIELD_MINIMUM: self.yield_minimum_form,
@@ -259,7 +261,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 self.kmz_radio_button.setEnabled(True)
 
             self.set_gain_offset_state()  # Disabled gain and offset for some map product types
-            self.restore_parameter_values_from_setting()
+            self.set_parameter_values_as_default()
+            # self.restore_parameter_values_from_setting()
 
         # If current page is map creation parameters page, create map without
         # increasing index.
@@ -451,6 +454,23 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         for key, form in self.map_creation_parameters_settings.items():
             value = setting(key, expected_type=int, qsettings=self.settings)
             value and form.setValue(value)
+
+    def set_parameter_values_as_default(self):
+        """Set parameter values to default values."""
+        for key, form in self.map_creation_parameters_settings.items():
+            value = 0  # Default value if none is given
+            if key == YIELD_AVERAGE:
+                value = DEFAULT_AVE_YIELD
+            elif key == YIELD_MINIMUM:
+                value = DEFAULT_MIN_YIELD
+            elif key == YIELD_MAXIMUM:
+                value = DEFAULT_MAX_YIELD
+            elif key == ORGANIC_AVERAGE:
+                value = DEFAULT_ORGANIC_AVE
+            elif key == SAMZ_ZONE:
+                value = DEFAULT_ZONE_COUNT
+
+            form.setValue(value)
 
     def validate_map_creation_parameters(self):
         """Check current state of map creation parameters."""
