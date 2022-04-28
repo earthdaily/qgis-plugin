@@ -8,7 +8,7 @@ import tempfile
 from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings, QDate
 
 from geosys.bridge_api.default import (
-    MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PGW, LEGEND, SHP_EXT, BRIDGE_URLS)
+    MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PNG_CC, PGW, LEGEND, SHP_EXT, BRIDGE_URLS)
 from geosys.bridge_api.definitions import (SAMZ,
                                            ELEVATION,
                                            COLOR_COMPOSITION,
@@ -658,7 +658,7 @@ def download_field_map(
             destination_filename = (
                     destination_base_path + output_map_format['extension'])
             fetch_data(url, destination_filename, headers=headers)
-            if output_map_format == PNG:
+            if output_map_format == PNG or output_map_format == PNG_CC:
                 # Download associated legend and world-file for geo-referencing
                 # the PNG file.
                 

@@ -39,7 +39,7 @@ from qgis.core import (
 from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.default import (
-    VECTOR_FORMAT, PNG, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
+    VECTOR_FORMAT, PNG, PNG_CC, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
     ORGANIC_AVERAGE, POSITION, FILTER, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
     MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET, DEFAULT_N_PLANNED,
@@ -49,7 +49,8 @@ from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
     SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2,
     INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_NDVI,
-    INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_LAI)
+    INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_LAI,
+    COLOR_COMPOSITION)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
@@ -254,9 +255,24 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
                 self.kmz_radio_button.setChecked(False)
                 self.kmz_radio_button.setEnabled(False)
+            elif self.map_product == COLOR_COMPOSITION['key']:
+                # Color composition can only work with png
+                self.png_radio_button.setChecked(True)
+                self.png_radio_button.setEnabled(True)
+
+                # These formats are not available for color composition
+                self.tiff_radio_button.setChecked(False)
+                self.tiff_radio_button.setEnabled(False)
+
+                self.shp_radio_button.setChecked(False)
+                self.shp_radio_button.setEnabled(False)
+
+                self.kmz_radio_button.setChecked(False)
+                self.kmz_radio_button.setEnabled(False)
             else:
                 # If these radio buttons has been disabled, it is reenabled
                 self.png_radio_button.setEnabled(True)
+                self.tiff_radio_button.setEnabled(True)
                 self.shp_radio_button.setEnabled(True)
                 self.kmz_radio_button.setEnabled(True)
 
@@ -412,10 +428,19 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def get_map_format(self):
         """Get selected map format from the radio button."""
+
+        if self.map_product == COLOR_COMPOSITION['key']:
+            # Color composition will make use of the '.png' format
+            # No other format works with color composition
+            png = PNG_CC
+        else:
+            # All other formats will make use of the '.png.kmz' format
+            png = PNG
+
         widget_data = [
             {
                 'widget': self.png_radio_button,
-                'data': PNG
+                'data': png
             },
             {
                 'widget': self.tiff_radio_button,

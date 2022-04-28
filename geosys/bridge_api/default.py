@@ -88,14 +88,16 @@ OFFSET = 'offset'
 
 # file extension
 PGW_EXT = '.pgw'
-PNG_EXT = '.png'
+PNG_EXT = '.png.kmz'
+PNG_EXT_CC = '.png'  # PNG format used by color composition
 TIFF_EXT = '.tif'
 SHP_EXT = '.shp'
 KMZ_EXT = '.kmz'
 LEGEND_EXT = '.legend.png'
 
 # API key
-PNG_KEY = 'image:image/png'
+PNG_KEY = 'image:application/vnd.google-earth.kmz+png'
+PNG_KEY_CC = 'image:image/png'  # PNG format used by color composition
 ZIPPED_TIFF_KEY = 'image:image/tiff+zip'
 ZIPPED_SHP_KEY = 'image:application/shp+zip'
 KMZ_KEY = 'image:application/vnd.google-earth.kmz'
@@ -110,6 +112,10 @@ PGW = {
 PNG = {
     'api_key': PNG_KEY,
     'extension': PNG_EXT
+}
+PNG_CC = {  # Only required by color composition
+    'api_key': PNG_KEY_CC,
+    'extension': PNG_EXT_CC
 }
 ZIPPED_TIFF = {
     'api_key': ZIPPED_TIFF_KEY,
@@ -129,6 +135,6 @@ LEGEND = {
 }
 
 ZIPPED_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP]
-RASTER_FORMAT = [ZIPPED_TIFF, PNG]
+RASTER_FORMAT = [ZIPPED_TIFF, PNG, PNG_CC]
 VECTOR_FORMAT = [ZIPPED_SHP, KMZ]
-VALID_QGIS_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP, KMZ, PNG]
+VALID_QGIS_FORMAT = [ZIPPED_TIFF, ZIPPED_SHP, KMZ, PNG, PNG_CC]
