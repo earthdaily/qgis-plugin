@@ -39,7 +39,7 @@ from qgis.core import (
 from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.default import (
-    VECTOR_FORMAT, PNG, PNG_CC, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
+    VECTOR_FORMAT, PNG, PNG_KMZ, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
     ORGANIC_AVERAGE, POSITION, FILTER, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
     MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET, DEFAULT_N_PLANNED,
@@ -432,10 +432,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.map_product == COLOR_COMPOSITION['key']:
             # Color composition will make use of the '.png' format
             # No other format works with color composition
-            png = PNG_CC
+            png = PNG
         else:
             # All other formats will make use of the '.png.kmz' format
-            png = PNG
+            png = PNG_KMZ
 
         widget_data = [
             {
