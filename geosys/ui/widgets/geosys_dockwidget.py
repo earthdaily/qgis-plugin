@@ -615,6 +615,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         :type map_specifications: list
         """
         # Checks whether the gain and offset values are allowed
+
+        self.output_directory = setting(
+            'output_directory', expected_type=str, qsettings=self.settings)
+
         selected_map_product = self.map_product  # Map product type selected by the user
         list_products_to_exclude = ['COLORCOMPOSITION', 'ELEVATION', 'OM', 'SOILMAP', 'SAMZ', 'YGM', 'YPM']
         gain_offset_allowed = True
