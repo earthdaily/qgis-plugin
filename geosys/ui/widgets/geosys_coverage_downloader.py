@@ -8,19 +8,31 @@ import tempfile
 from PyQt5.QtCore import QThread, pyqtSignal, QByteArray, QSettings, QDate
 
 from geosys.bridge_api.default import (
-    MAPS_TYPE, IMAGE_SENSOR, IMAGE_DATE, ZIPPED_FORMAT, PNG, PNG_KMZ, PGW, LEGEND, SHP_EXT, BRIDGE_URLS)
-from geosys.bridge_api.definitions import (SAMZ,
-                                           ELEVATION,
-                                           COLOR_COMPOSITION,
-                                           INSEASON_S2REP,
-                                           REFLECTANCE,
-                                           INSEASON_NDVI,
-                                           SOIL,
-                                           INSEASONFIELD_AVERAGE_NDVI,
-                                           INSEASONFIELD_AVERAGE_LAI,
-                                           INSEASONFIELD_AVERAGE_REVERSE_NDVI,
-                                           INSEASONFIELD_AVERAGE_REVERSE_LAI,
-                                           INSEASON_CVIN)
+    MAPS_TYPE,
+    IMAGE_SENSOR,
+    IMAGE_DATE,
+    ZIPPED_FORMAT,
+    PNG,
+    PNG_KMZ,
+    PGW,
+    LEGEND,
+    SHP_EXT,
+    BRIDGE_URLS
+)
+from geosys.bridge_api.definitions import (
+    SAMZ,
+    ELEVATION,
+    COLOR_COMPOSITION,
+    INSEASON_S2REP,
+    REFLECTANCE,
+    INSEASON_NDVI,
+    SOIL,
+    INSEASONFIELD_AVERAGE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI,
+    INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_REVERSE_LAI,
+    INSEASON_CVIN
+)
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
 from geosys.utilities.qgis_settings import QGISSettings

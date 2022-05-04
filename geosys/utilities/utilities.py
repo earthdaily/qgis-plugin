@@ -312,6 +312,7 @@ def readable_os_version():
     elif platform.system() == 'Windows':
         return platform.platform()
 
+
 def check_if_file_exists(output_dir, file_name, extension):
     """The method checks if a file exists, and if it does, then it adds an increment to the filename.
     This is done until there are no longer a clash with the filename.

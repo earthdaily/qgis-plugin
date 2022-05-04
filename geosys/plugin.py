@@ -25,14 +25,20 @@
 import os.path
 
 from PyQt5.QtCore import (
-    QSettings, QTranslator, qVersion, QCoreApplication, Qt)
+    QSettings,
+    QTranslator,
+    qVersion,
+    QCoreApplication,
+    Qt
+)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction
 
 from qgis.core import QgsApplication
 
 from geosys.processing.geosys_processing_provider import (
-    GeosysProcessingProvider)
+    GeosysProcessingProvider
+)
 from geosys.utilities.resources import resources_path
 
 
