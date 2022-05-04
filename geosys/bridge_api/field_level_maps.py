@@ -176,6 +176,12 @@ class FieldLevelMapsAPIClient(ApiClient):
                 'mapType': COLOR_COMPOSITION['name']
             })
             map_family = map_type['map_family']
+            nitrogen_maps = [
+                INSEASONFIELD_AVERAGE_NDVI['key'],
+                INSEASONFIELD_AVERAGE_LAI['key'],
+                INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
+                INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
+            ]
 
             image_id = data['Image']['Id'] if data.get('Image', None) else None
             seasonfield_id = data['SeasonField']['Id'] if data.get('SeasonField', None) else None
@@ -195,10 +201,7 @@ class FieldLevelMapsAPIClient(ApiClient):
                     headers=headers,
                     params=params,
                     json=data)
-            elif (map_type['key'] == INSEASONFIELD_AVERAGE_NDVI['key'] or
-                    map_type['key'] == INSEASONFIELD_AVERAGE_LAI['key'] or
-                    map_type['key'] == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or
-                    map_type['key'] == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']):
+            elif map_type['key'] in nitrogen_maps:
                 full_url = self.full_url('season-fields',
                                          seasonfield_id,
                                          'coverage',
