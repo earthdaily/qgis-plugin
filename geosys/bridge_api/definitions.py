@@ -366,7 +366,7 @@ DIFFERENCE_MAPS = [
 DEIMOS = {
     'key': 'DEIMOS',
     'name': 'DEIMOS',
-    'description': 'Commercial data at 22 m ground resolution with an'
+    'description': 'Commercial data at 22 m ground resolution with an '
                    'approximate 2-day revisit (combined).'
 }
 
@@ -415,23 +415,23 @@ SENTINEL_2 = {
 ALSAT_1B = {
     'key': 'ALSAT_1B',
     'name': 'ALSAT_1B',
-    'description': 'Algeria Satellite-1B with a spatial resolution at 24 m ground'
+    'description': 'Algeria Satellite-1B with a spatial resolution at 24 m ground '
                    'resolution, up to 3 days of revisit.'
 }
 
 GAOFEN = {
     'key': 'GAOFEN',
     'name': 'GAOFEN',
-    'description': 'Have respectively a ground resolution equal to 16 meters'
+    'description': 'Have respectively a ground resolution equal to 16 meters '
                    'with a revisited equal to 4 days.'
 }
 
 CBERS_4 = {
     'key': 'CBERS_4',
     'name': 'CBERS_4',
-    'description': 'The China-Brazil Earth Resources Satellite Program with'
-                   '20 meters spatial resolution and a revisit capacity of'
-                   '26 days. Images are available only in Brazil via the'
+    'description': 'The China-Brazil Earth Resources Satellite Program with '
+                   '20 meters spatial resolution and a revisit capacity of '
+                   '26 days. Images are available only in Brazil via the '
                    'Geosys virtual constellation.'
 }
 
