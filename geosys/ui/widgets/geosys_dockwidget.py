@@ -174,7 +174,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.back_push_button.setEnabled(False)
         self.next_push_button.setEnabled(True)
         self.difference_map_push_button.setVisible(False)
-        self.samz_zone_form.setValue(int(DEFAULT_ZONE_COUNT))
+        self.samz_zone_form.setValue(DEFAULT_ZONE_COUNT)
         self.stacked_widget.setCurrentIndex(self.current_stacked_widget_index)
         self.set_next_button_text(self.current_stacked_widget_index)
 
@@ -501,7 +501,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             elif key == ORGANIC_AVERAGE:
                 value = DEFAULT_ORGANIC_AVE
             elif key == SAMZ_ZONE:
-                value = int(DEFAULT_ZONE_COUNT)
+                value = DEFAULT_ZONE_COUNT
 
             form.setValue(value)
 
