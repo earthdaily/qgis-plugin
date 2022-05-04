@@ -3,7 +3,16 @@
 """
 from geosys.bridge_api.api_abstract import ApiClient
 from geosys.bridge_api.default import BRIDGE_URLS
-from geosys.bridge_api.definitions import COLOR_COMPOSITION, REFLECTANCE, SOIL, INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_LAI, INSEASON_S2REP
+from geosys.bridge_api.definitions import (
+    COLOR_COMPOSITION,
+    REFLECTANCE,
+    SOIL,
+    INSEASONFIELD_AVERAGE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI,
+    INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_REVERSE_LAI,
+    INSEASON_S2REP
+)
 from geosys.bridge_api.utilities import get_definition
 
 __copyright__ = "Copyright 2019, Kartoza"
@@ -167,21 +176,40 @@ class FieldLevelMapsAPIClient(ApiClient):
                 'mapType': COLOR_COMPOSITION['name']
             })
             map_family = map_type['map_family']
+            nitrogen_maps = [
+                INSEASONFIELD_AVERAGE_NDVI['key'],
+                INSEASONFIELD_AVERAGE_LAI['key'],
+                INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
+                INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
+            ]
 
             image_id = data['Image']['Id'] if data.get('Image', None) else None
             seasonfield_id = data['SeasonField']['Id'] if data.get('SeasonField', None) else None
 
-            if map_type['key'] == REFLECTANCE['key'] or map_type['key'] == INSEASON_S2REP['key']:
+            if (map_type['key'] == REFLECTANCE['key'] or
+                    map_type['key'] == INSEASON_S2REP['key']):
                 # Reflectance and S2REP maps needs to make use of the catalog-imagery API
-                full_url = self.full_url('season-fields', seasonfield_id, 'coverage', image_id, map_family['endpoint'], map_type['key'])
+                full_url = self.full_url('season-fields',
+                                         seasonfield_id,
+                                         'coverage',
+                                         image_id,
+                                         map_family['endpoint'],
+                                         map_type['key'])
 
                 response = self.get(
                     full_url,
                     headers=headers,
                     params=params,
                     json=data)
-            elif map_type['key'] == INSEASONFIELD_AVERAGE_NDVI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_LAI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or map_type['key'] == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
-                full_url = self.full_url('season-fields', seasonfield_id, 'coverage', image_id, map_family['endpoint'], map_type['key'], 'n-planned', str(n_planned))
+            elif map_type['key'] in nitrogen_maps:
+                full_url = self.full_url('season-fields',
+                                         seasonfield_id,
+                                         'coverage',
+                                         image_id,
+                                         map_family['endpoint'],
+                                         map_type['key'],
+                                         'n-planned',
+                                         str(n_planned))
 
                 response = self.get(
                     full_url,
@@ -199,14 +227,22 @@ class FieldLevelMapsAPIClient(ApiClient):
                     }
                 }
 
-                full_url = self.full_url('maps', map_family['endpoint'], map_type['key'])
+                full_url = self.full_url(
+                    'maps',
+                    map_family['endpoint'],
+                    map_type['key']
+                )
                 response = self.post(
                     full_url,
                     headers=headers,
                     params=params,
                     json=data)
             else:
-                full_url = self.full_url('maps', map_family['endpoint'], map_type['name'])
+                full_url = self.full_url(
+                    'maps',
+                    map_family['endpoint'],
+                    map_type['name']
+                )
 
                 response = self.post(
                      full_url,

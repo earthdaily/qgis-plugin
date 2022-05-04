@@ -35,31 +35,36 @@ from qgis.core import (
     QgsFeatureRequest,
     QgsVectorLayer,
     QgsRasterLayer,
-    QgsCoordinateReferenceSystem)
+    QgsCoordinateReferenceSystem
+)
 from qgis.PyQt.QtCore import Qt
 
 from geosys.bridge_api.default import (
     VECTOR_FORMAT, PNG, PNG_KMZ, ZIPPED_TIFF, ZIPPED_SHP, KMZ,
     VALID_QGIS_FORMAT, YIELD_AVERAGE, YIELD_MINIMUM, YIELD_MAXIMUM,
-    ORGANIC_AVERAGE, POSITION, FILTER, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT, ZONING_SEGMENTATION,
-    MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN, OFFSET, DEFAULT_N_PLANNED,
-    DEFAULT_AVE_YIELD, DEFAULT_MIN_YIELD, DEFAULT_MAX_YIELD, DEFAULT_ORGANIC_AVE,
-    DEFAULT_GAIN, DEFAULT_OFFSET)
+    ORGANIC_AVERAGE, POSITION, FILTER, SAMZ_ZONE, SAMZ_ZONING, HOTSPOT,
+    ZONING_SEGMENTATION, MAX_FEATURE_NUMBERS, DEFAULT_ZONE_COUNT, GAIN,
+    OFFSET, DEFAULT_N_PLANNED, DEFAULT_AVE_YIELD, DEFAULT_MIN_YIELD,
+    DEFAULT_MAX_YIELD, DEFAULT_ORGANIC_AVE, DEFAULT_GAIN, DEFAULT_OFFSET
+)
 from geosys.bridge_api.definitions import (
     ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, INSEASON_NDVI, INSEASON_EVI,
     SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2,
     INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_NDVI,
     INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_LAI,
-    COLOR_COMPOSITION)
+    COLOR_COMPOSITION
+)
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
-    CoverageSearchThread, create_map, create_difference_map, create_samz_map)
+    CoverageSearchThread, create_map, create_difference_map, create_samz_map
+)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
     add_layer_to_canvas, reproject, item_data_from_combo,
-    wkt_geometries_from_feature_iterator)
+    wkt_geometries_from_feature_iterator
+)
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting, set_setting
 from geosys.utilities.utilities import check_if_file_exists
@@ -218,9 +223,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def show_previous_page(self):
         """Open previous page of stacked widget."""
         if self.current_stacked_widget_index > 0:
-            # If the current map type is elevation or soil map and the widget is on the map creation page,
-            # the back button should take the user to the coverage parameters page
-            if (self.map_product == ELEVATION['key'] or self.map_product == SOIL['key']) and self.current_stacked_widget_index == 2:
+            # If the current map type is elevation or soil map and the
+            # widget is on the map creation page, the back button should
+            # take the user to the coverage parameters page
+            if ((self.map_product == ELEVATION['key'] or
+                 self.map_product == SOIL['key']) and
+                    self.current_stacked_widget_index == 2):
                 self.current_stacked_widget_index -= 2
             else:
                 self.current_stacked_widget_index -= 1
@@ -342,8 +350,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         coverage_result['seasonField']['id'])
 
             if len(self.selected_coverage_results) == 2 and has_same_id and (
-                    self.map_product in [
-                INSEASON_NDVI['key'], INSEASON_EVI['key']]):
+                    self.map_product in [INSEASON_NDVI['key'],
+                                         INSEASON_EVI['key']]):
                 self.difference_map_push_button.setVisible(True)
             else:
                 self.difference_map_push_button.setVisible(False)
@@ -460,7 +468,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 return wd['data']
 
     def load_layer(self, base_path):
-        """Load layer tp QGIS map canvas.
+        """Load layer into QGIS map canvas.
 
         :param base_path: Base path of the layer.
         :type base_path: str
@@ -620,7 +628,15 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             'output_directory', expected_type=str, qsettings=self.settings)
 
         selected_map_product = self.map_product  # Map product type selected by the user
-        list_products_to_exclude = ['COLORCOMPOSITION', 'ELEVATION', 'OM', 'SOILMAP', 'SAMZ', 'YGM', 'YPM']
+        list_products_to_exclude = [
+            'COLORCOMPOSITION',
+            'ELEVATION',
+            'OM',
+            'SOILMAP',
+            'SAMZ',
+            'YGM',
+            'YPM'
+        ]
         gain_offset_allowed = True
         for map_product_to_exclude in list_products_to_exclude:
             if selected_map_product == map_product_to_exclude:
@@ -714,7 +730,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             filename = '{}_{}_zones_{}_{}'.format(
                 SAMZ['key'], str(zone_cnt), season_field_id, samz_mode)
-            filename = check_if_file_exists(self.output_directory, filename, self.output_map_format['extension'])
+            filename = check_if_file_exists(
+                self.output_directory,
+                filename,
+                self.output_map_format['extension']
+            )
 
             is_success, message = create_samz_map(
                 season_field_id, image_dates, self.output_directory, filename,
@@ -737,7 +757,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     map_specification['seasonField']['id'],
                     map_specification['image']['date']
                 )
-                filename = check_if_file_exists(self.output_directory, filename, self.output_map_format['extension'])
+                filename = check_if_file_exists(
+                    self.output_directory,
+                    filename,
+                    self.output_map_format['extension']
+                )
 
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
@@ -1002,12 +1026,14 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """
         for sensor in [ALL_SENSORS] + SENSORS:
             sensor_name = sensor['name']
-            if sensor_name == LANDSAT_8['name'] or sensor_name == LANDSAT_9['name'] or sensor_name == SENTINEL_2['name']:
+            if sensor_name == LANDSAT_8['name'] or \
+                    sensor_name == LANDSAT_9['name'] or \
+                    sensor_name == SENTINEL_2['name']:
                 add_ordered_combo_item(self.sensor_combo_box, sensor_name, sensor['key'])
 
     def clear_combo_box(self, combo_box):
-        """Clears/removes all of the entries in the provided combo_box
-        :param combo_box: Combobox for which all of the entries should be removed
+        """Clears/removes all the entries in the provided combo_box
+        :param combo_box: Combobox for which all the entries should be removed
         :type combo_box: QComboBox
         """
         cnt = combo_box.count()
@@ -1019,15 +1045,21 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def product_type_change(self):
         map_product = self.map_product_combo_box.currentText()
-        if map_product == REFLECTANCE['name']:  # If TOC reflectance has been chosen, only Sentinel-2 and Landsat-8 will be available as an option
+        # If TOC reflectance has been chosen, only Sentinel-2 and Landsat-8
+        # will be available as an option
+        if map_product == REFLECTANCE['name']:
             self.clear_combo_box(self.sensor_combo_box)
             self.populate_sensors_reflectance()
         else:
             self.clear_combo_box(self.sensor_combo_box)
             self.populate_sensors()
 
-        list_nitrogen_maps = [INSEASONFIELD_AVERAGE_NDVI['name'], INSEASONFIELD_AVERAGE_REVERSE_NDVI['name'],
-                              INSEASONFIELD_AVERAGE_LAI['name'], INSEASONFIELD_AVERAGE_REVERSE_LAI['name']]
+        list_nitrogen_maps = [
+            INSEASONFIELD_AVERAGE_NDVI['name'],
+            INSEASONFIELD_AVERAGE_REVERSE_NDVI['name'],
+            INSEASONFIELD_AVERAGE_LAI['name'],
+            INSEASONFIELD_AVERAGE_REVERSE_LAI['name']
+        ]
 
         if map_product in list_nitrogen_maps:
             # The n-planned parameter should be enabled for nitrogen map types
