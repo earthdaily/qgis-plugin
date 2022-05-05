@@ -19,11 +19,6 @@ jobs:
       - name: Install plugin dependencies
         run: pip install -r requirements.txt
 
-      - name: Use tag name as release version
-        shell: bash
-        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/*/})"
-        id: branch
-
       - name: Create release from tag
         id: create-release
         uses: actions/create-release@v1
@@ -35,7 +30,7 @@ jobs:
           draft: false
 
       - name: Generate zip
-        run: python release.py generate-zip --version ${{ steps.branch.outputs.version}}
+        run: python release.py generate-zip --version ${{ github.ref }}
 
       - name: get zip details
         id: get-zip-details

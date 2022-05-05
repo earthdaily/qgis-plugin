@@ -4,14 +4,13 @@
 """
 
 import datetime as dt
-import json
 import shlex
 import shutil
 import subprocess
 import typing
 import zipfile
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import lru_cache, partial
 from pathlib import Path
 
 import httpx
@@ -19,14 +18,25 @@ import toml
 import typer
 
 LOCAL_ROOT_DIR = Path(__file__).parent.resolve()
-SRC_NAME = "geosys"
+SRC_NAME = "geosys-plugin"
+
 PACKAGE_NAME = SRC_NAME.replace("_", "")
 ICON_PATH = "resources/img/icons/icon.png"
+
 TEST_FILES = [
+    "docker-compose.yml",
+    "scripts",
     "test",
     "test_suite.py",
-    "docker-compose.yml",
-    "scripts"
+]
+
+PLUGIN_FILES = [
+    "__init__.py",
+    "geosys",
+    "metadata.txt",
+    "LICENSE"
+    "README.html",
+    "README.md"
 ]
 app = typer.Typer()
 
@@ -170,21 +180,30 @@ def copy_source_files(
 
     """
     output_directory.mkdir(parents=True, exist_ok=True)
-    target_path = output_directory / "metadata.txt"
-    handler = shutil.copy
-    handler("metadata.txt", str(target_path))
 
-    for child in (LOCAL_ROOT_DIR / SRC_NAME).iterdir():
-        if child.name != "__pycache__":
+    for child in LOCAL_ROOT_DIR.iterdir():
+        if child.name == "__pycache__":
+            continue
+        if (tests and child.name in TEST_FILES) or child.name in PLUGIN_FILES:
             target_path = output_directory / child.name
-            handler = shutil.copytree if child.is_dir() else shutil.copy
-            handler(str(child.resolve()), str(target_path))
-    if tests:
-        for child in LOCAL_ROOT_DIR.iterdir():
-            if child.name in TEST_FILES:
-                target_path = output_directory / child.name
-                handler = shutil.copytree if child.is_dir() else shutil.copy
-                handler(str(child.resolve()), str(target_path))
+
+            if child.is_dir():
+                handler = shutil.copytree
+                patterns = shutil.ignore_patterns(
+                    '*.pyc',
+                    'tmp*',
+                    '__pycache__',
+                    'test*'
+                )
+                handler = partial(handler, ignore=patterns)
+
+            else:
+                handler = shutil.copy
+            handler(
+                str(child.resolve()),
+                str(target_path),
+
+            )
 
 
 @app.command()
@@ -205,21 +224,6 @@ def compile_resources(
     target_path.parent.mkdir(parents=True, exist_ok=True)
     _log(f"compile_resources target_path: {target_path}", context=context)
     subprocess.run(shlex.split(f"pyrcc5 -o {target_path} {resources_path}"))
-
-
-@lru_cache()
-def _get_metadata() -> typing.Dict:
-    """ Reads the metadata properties from the
-        project configuration file 'metadata.txt'
-
-    :return: plugin metadata
-    :type: Dict
-    """
-    metadata_path = LOCAL_ROOT_DIR / "metadata.txt"
-    with metadata_path.open("r") as fh:
-        conf = json.load(fh)
-    metadata = conf["general"]
-    return metadata
 
 
 def _add_to_zip(
