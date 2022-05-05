@@ -19,9 +19,9 @@ jobs:
       - name: Install plugin dependencies
         run: pip install -r requirements.txt
 
-      - name: Use branch name as release version
+      - name: Use tag name as release version
         shell: bash
-        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/*/})"
         id: branch
 
       - name: Create release from tag
