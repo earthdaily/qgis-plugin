@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" QGIS STAC plugin admin operations
+""" GEOSYS plugin release operations
 
 """
 
@@ -10,11 +10,10 @@ import subprocess
 import typing
 import zipfile
 from dataclasses import dataclass
-from functools import lru_cache, partial
+from functools import partial
 from pathlib import Path
 
 import httpx
-import toml
 import typer
 
 LOCAL_ROOT_DIR = Path(__file__).parent.resolve()
@@ -282,7 +281,7 @@ def _get_existing_releases(
     :rtype: List[GithubRelease]
     """
     base_url = "https://api.github.com/repos/" \
-               "stac-utils/qgis-stac-plugin/releases"
+               "GEOSYS/qgis-plugin/releases"
     response = httpx.get(base_url)
     result = []
     if response.status_code == 200:
