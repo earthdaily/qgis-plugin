@@ -30,7 +30,7 @@ jobs:
           draft: false
 
       - name: Generate zip
-        run: python release.py generate-zip --version ${{ github.ref }}
+        run: python release.py generate-zip --version ${{ github.ref_name }}
 
       - name: get zip details
         id: get-zip-details
