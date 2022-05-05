@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/plugins/geosys" >
-        <file>icon.png</file>
+        <file>geosys/resources/img/icons/icon.png</file>
     </qresource>
 </RCC>
