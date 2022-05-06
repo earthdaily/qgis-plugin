@@ -19,7 +19,7 @@ about=GEOSYS® Plugin for QGIS is the easiest way to experience field level capa
  Highlights:
  - Polygon-based maps creation capabilities
  - Multi index map option: NDVI, GNDVI, EVI, CVI, CVIN, S2REP
- - Multi sensor option : Sentinel 2, Landsat 8, Deimos, Modis, Resourcesat
+ - Multi sensor option : Sentinel 2, Landsat 8, Landsat-9, Deimos, Modis, Resourcesat
  - Visualization of Spectral maps
 
  Resources:
