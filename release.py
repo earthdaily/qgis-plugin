@@ -18,6 +18,7 @@ import typer
 
 LOCAL_ROOT_DIR = Path(__file__).parent.resolve()
 SRC_NAME = "geosys-plugin"
+GEOSYS_PACKAGE = "geosys"
 
 PACKAGE_NAME = SRC_NAME.replace("_", "")
 ICON_PATH = "resources/img/icons/icon.png"
@@ -152,7 +153,7 @@ def copy_icon(
     :rtype: Path
     """
 
-    icon_path = LOCAL_ROOT_DIR / SRC_NAME / ICON_PATH
+    icon_path = LOCAL_ROOT_DIR / GEOSYS_PACKAGE / ICON_PATH
     if icon_path.is_file():
         target_path = output_directory / icon_path.name
         target_path.parent.mkdir(parents=True, exist_ok=True)
