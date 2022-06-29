@@ -437,15 +437,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
     def get_map_format(self):
         """Get selected map format from the radio button."""
 
-        # LEAVING CODE HERE FOR IN CASE ITS REQUIRED AGAIN
-        # if self.map_product == COLOR_COMPOSITION['key']:
-        #     # Color composition will make use of the '.png' format
-        #     # No other format works with color composition
-        #     png = PNG
-        # else:
-        #     # All other formats will make use of the '.png.kmz' format
-        #     png = PNG_KMZ
-
         widget_data = [
             {
                 'widget': self.png_radio_button,
