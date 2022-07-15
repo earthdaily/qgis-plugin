@@ -141,7 +141,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.selected_coverage_results = []
 
         # Stores the selected layer text for when a coverage search is done
-        self.current_selected_layer = ''
+        self.current_selected_layer = None
 
         # Coverage parameters from settings
         self.crop_type = setting(
@@ -242,7 +242,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # Sets the current selection to an empty string so
             # that layer changes will not change back to the original selection
             # as it's before the search has been done
-            self.current_selected_layer = ''
+            self.current_selected_layer = None
         if self.current_stacked_widget_index == 0:
             self.back_push_button.setEnabled(False)
 
