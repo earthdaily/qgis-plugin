@@ -33,7 +33,8 @@ jobs:
         qgis_version_tag:
           - release-3_10
           - release-3_16
-          - release-3_22
+          - release-3_24
+          - release-3_26
 
     steps:
 
