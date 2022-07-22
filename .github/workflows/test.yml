@@ -34,7 +34,7 @@ jobs:
           - release-3_10
           - release-3_16
           - release-3_24
-          - release-3_26
+          - final-3_26_0
 
     steps:
 
