@@ -140,6 +140,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.selected_coverage_results = []
 
+        # Stores the selected layer text for when a coverage search is done
+        self.current_selected_layer = None
+
         # Coverage parameters from settings
         self.crop_type = setting(
             'crop_type', expected_type=str, qsettings=self.settings)
@@ -235,6 +238,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.stacked_widget.setCurrentIndex(
                 self.current_stacked_widget_index)
             self.next_push_button.setEnabled(True)
+
+            # Sets the current selection to an empty string so
+            # that layer changes will not change back to the original selection
+            # as it's before the search has been done
+            self.current_selected_layer = None
         if self.current_stacked_widget_index == 0:
             self.back_push_button.setEnabled(False)
 
@@ -246,6 +254,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.current_stacked_widget_index == 0:
             self.start_coverage_search()
             self.next_push_button.setEnabled(False)
+
+            # Stores the current selected layer name
+            # This will be used to keep this layer selected for use in the widget display
+            self.current_selected_layer = self.geometry_combo_box.currentText()
 
         # If current page is coverage results page, prepare map creation
         # parameters.
@@ -427,6 +439,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
             add_ordered_combo_item(
                 self.geometry_combo_box, title, layer_id, icon=icon)
+
+        current_index = self.geometry_combo_box.findText(self.current_selected_layer)
+        if current_index >= 0:
+            # Current text/previous selection, is in the list of active layers
+            # The previous selection will still be selected
+            self.geometry_combo_box.setCurrentIndex(current_index)
 
         self.unblock_signals()
         # Note: Don't change the order of the next two lines otherwise there
