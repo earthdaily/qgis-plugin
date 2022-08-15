@@ -1,0 +1,79 @@
+plugins:
+  - jekyll-relative-links
+  - jekyll-seo-tag
+relative_links:
+  enabled: true
+  collections: true
+include:
+  - CONTRIBUTING.md
+  - README.md
+  - LICENSE.md
+  - COPYING.md
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - ISSUE_TEMPLATE.md
+  - PULL_REQUEST_TEMPLATE.md
+remote_theme: just-the-docs/just-the-docs
+logo: "https://earthdailyagro.com/wp-content/uploads/2022/01/Logo.svg"
+heading_anchors: true
+footer_content: "© 2022 Geosys Holdings ULC, an Antarctica Capital portfolio company | All Rights Reserved. Distributed under the GPL 3.0 License."
+search_enabled: true
+
+# Footer last edited timestamp
+last_edit_timestamp: true # show or hide edit time - page must have `last_modified_date` defined in the frontmatter
+last_edit_time_format: "%b %e %Y at %I:%M %p" # uses ruby's time format: https://ruby-doc.org/stdlib-2.7.0/libdoc/time/rdoc/Time.html
+
+# Footer "Edit this page on GitHub" link text
+gh_edit_link: true # show or hide edit this page link
+gh_edit_link_text: "Edit this page on GitHub."
+gh_edit_repository: "https://github.com/GEOSYS/ArcGIS-plugin" # the github URL for your repo
+gh_edit_branch: "gh-pages" # the branch that your docs is served from
+
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+
+plugins:
+  - jekyll-seo-tag
+
+# Enable or disable the site search
+# Supports true (default) or false
+search_enabled: true
+search:
+  # Split pages into sections that can be searched individually
+  # Supports 1 - 6, default: 2
+  heading_level: 2
+  # Maximum amount of previews per search result
+  # Default: 3
+  previews: 3
+  # Maximum amount of words to display before a matched word in the preview
+  # Default: 5
+  preview_words_before: 3
+  # Maximum amount of words to display after a matched word in the preview
+  # Default: 10
+  preview_words_after: 3
+  # Set the search token separator
+  # Default: /[\s\-/]+/
+  # Example: enable support for hyphenated search words
+  tokenizer_separator: /[\s/]+/
+  # Display the relative url in search results
+  # Supports true (default) or false
+  rel_url: true
+  # Enable or disable the search button that appears in the bottom right corner of every page
+  # Supports true or false (default)
+  button: false
+
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  startings: []
+  blanklines: false
+  profile: false
+  # ignore:
+  #   envs: all
