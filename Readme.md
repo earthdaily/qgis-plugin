@@ -10,6 +10,7 @@ nav_order: 1
 
 GEOSYS® is offering various analytics leveraging satellite imagery available through APIs. Leveraging API requires API integration tasks which can be complex when users just want to get couple of maps or metrics. 
 
+
 GEOSYS® Plugin for QGIS offers an easy way to interact with GEOSYS® Geospatial Analytics without any coding effort. The plugin will give you access to: 
 
 - GEOSYS® field historical maps
