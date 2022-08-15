@@ -38,6 +38,7 @@
 [![CITest][CITest-shield]][CITest-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
+[![pages-build-deployment][Documentationstatus]][CIDocumentation]
   
 </div>
 
@@ -190,5 +191,7 @@ For any additonal information, please <a href="mailto: sales@earthdailyagro.com"
 [GitStars-url]: https://img.shields.io/github/stars/GEOSYS?style=social
 [CITest-shield]: https://img.shields.io/github/workflow/status/GEOSYS/qgis-plugin/Continous%20Integration
 [CITest-url]: https://img.shields.io/github/workflow/status/GEOSYS/qgis-plugin/Continous%20Integration
+[CIDocumentation]: https://github.com/GEOSYS/QGIS-plugin/actions/workflows/pages/pages-build-deployment
+[Documentationstatus]: https://github.com/GEOSYS/QGIS-plugin/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages  
 
 
