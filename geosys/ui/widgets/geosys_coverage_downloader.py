@@ -31,7 +31,9 @@ from geosys.bridge_api.definitions import (
     INSEASONFIELD_AVERAGE_LAI,
     INSEASONFIELD_AVERAGE_REVERSE_NDVI,
     INSEASONFIELD_AVERAGE_REVERSE_LAI,
-    INSEASON_CVIN
+    INSEASON_CVIN,
+    YGM,
+    YVM
 )
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
@@ -58,7 +60,15 @@ S2REP_THUMBNAIL_URL = (
 CVIN_THUMBNAIL_URL = (
     '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
     '/base-reference-map/INSEASON_CVIN/thumbnail.png')
-
+YGM_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/yield-goal-map/YGM/historical-yield-average/80/max-yield-Goal/100/min-yield-Goal/10/thumbnail.png')
+YPM_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/yield-variability-map/YPM/historical-yield-average/80/thumbnail.png')
+SAMZ_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/'
+    '/management-zones-map/SAMZ/thumbnail.png')
 
 
 class CoverageSearchThread(QThread):
@@ -187,6 +197,10 @@ class CoverageSearchThread(QThread):
                     results = searcher_client.get_catalog_imagery(
                         geometry, self.crop_type, self.sowing_date,
                         filters=self.filters)
+                elif self.map_product == YGM['key'] or self.map_product == YVM['key'] or self.map_product == SAMZ['key']:
+                    results = searcher_client.get_catalog_imagery(
+                        geometry, self.crop_type, self.sowing_date,
+                        filters=self.filters)
                 else:
                     # Makes use of the 'coverage' API calls
                     results = searcher_client.get_coverage(
@@ -282,6 +296,27 @@ class CoverageSearchThread(QThread):
                                     nitrogen_map_type=INSEASONFIELD_AVERAGE_REVERSE_LAI['key'],
                                     n_value=str(self.n_planned_value)
                                 ))
+                    elif self.map_product == YGM['key'] or self.map_product == YVM['key']:
+                        if self.map_product == YGM['key']:
+                            thumbnail_url = (
+                                YGM_THUMBNAIL_URL.format(
+                                    bridge_url=searcher_client.bridge_server,
+                                    id=result['seasonField']['id'],
+                                    image=result['image']['id']
+                                ))
+                        else:
+                            thumbnail_url = (
+                                YPM_THUMBNAIL_URL.format(
+                                    bridge_url=searcher_client.bridge_server,
+                                    id=result['seasonField']['id'],
+                                    image=result['image']['id']
+                                ))
+                    elif self.map_product == SAMZ['key']:
+                        thumbnail_url = (
+                            SAMZ_THUMBNAIL_URL.format(
+                                bridge_url=searcher_client.bridge_server,
+                                id=result['seasonField']['id']
+                            ))
                     else:  # All other map types
                         thumbnail_url = (
                             requested_map['_links'].get('thumbnail') or (
@@ -329,6 +364,9 @@ def create_map(
         filename,
         output_map_format,
         n_planned_value,
+        yield_val,
+        min_yield_val,
+        max_yield_val,
         data=None,
         params=None):
     """Create map based on given parameters.
@@ -370,7 +408,16 @@ def create_map(
     :type output_map_format: dict
     
     :param n_planned_value: Value used for nitrogen map type
-    :type n_planned_value: Numeric
+    :type n_planned_value: int
+    
+    :param yield_val: Yield value
+    :type yield_val: int
+    
+    :param min_yield_val: Minimum yield value
+    :type min_yield_val: int
+    
+    :param max_yield_val: Maximum yield value
+    :type max_yield_val: int
     
     :param data: Map creation data.
         example: {
@@ -398,7 +445,15 @@ def create_map(
         *credentials_parameters_from_settings(),
         proxies=QGISSettings.get_qgis_proxy())
     field_map_json = bridge_api.get_field_map(
-        map_type_key, season_field_id, image_date, image_id, n_planned_value, **data)
+        map_type_key,
+        season_field_id,
+        image_date,
+        image_id,
+        n_planned_value,
+        yield_val,
+        min_yield_val,
+        max_yield_val,
+        **data)
 
     return download_field_map(
         field_map_json=field_map_json,

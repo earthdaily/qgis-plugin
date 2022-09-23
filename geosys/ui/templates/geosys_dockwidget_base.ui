@@ -42,7 +42,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="coverage_form_page">
        <property name="minimumSize">
@@ -321,6 +321,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="minimum">
+              <double>1.000000000000000</double>
+             </property>
              <property name="maximum">
               <double>999.990000000000009</double>
              </property>
@@ -353,6 +356,9 @@
                <height>0</height>
               </size>
              </property>
+             <property name="minimum">
+              <double>1.000000000000000</double>
+             </property>
              <property name="maximum">
               <double>999.990000000000009</double>
              </property>
@@ -378,6 +384,9 @@
                <width>302</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="minimum">
+              <double>1.000000000000000</double>
              </property>
              <property name="maximum">
               <double>999.990000000000009</double>
@@ -430,6 +439,12 @@
                <width>302</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="minimum">
+              <number>2</number>
+             </property>
+             <property name="value">
+              <number>5</number>
              </property>
             </widget>
            </item>

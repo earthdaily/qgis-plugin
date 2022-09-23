@@ -250,7 +250,16 @@ class BridgeAPI(ApiClient):
 
         return coverages_json
 
-    def _get_field_map(self, map_type_key, request_data, n_planned=None, params=None):
+    def _get_field_map(
+            self,
+            map_type_key,
+            request_data,
+            n_planned=None,
+            yield_val=None,
+            min_yield_val=None,
+            max_yield_val=None,
+            params=None
+    ):
         """Actual method to call field map creation request.
 
         :param map_type_key: Map type key.
@@ -272,7 +281,13 @@ class BridgeAPI(ApiClient):
         api_client = FieldLevelMapsAPIClient(
             self.access_token, self.bridge_server)
         field_map_json = api_client.get_field_map(
-            map_type_key, request_data, n_planned, params)
+            map_type_key,
+            request_data,
+            n_planned,
+            yield_val,
+            min_yield_val,
+            max_yield_val,
+            params)
 
         return field_map_json
 
@@ -291,7 +306,16 @@ class BridgeAPI(ApiClient):
         return map_json
 
     def get_field_map(
-            self, map_type_key, season_field_id, image_date, image_id=None, n_planned=1.0, **kwargs):
+            self,
+            map_type_key,
+            season_field_id,
+            image_date,
+            image_id=None,
+            n_planned=1.0,
+            yield_val=0,
+            min_yield_val=0,
+            max_yield_val=0,
+            **kwargs):
         """Get requested field map.
 
         :param map_type_key: Map type key.
@@ -308,6 +332,15 @@ class BridgeAPI(ApiClient):
 
         :param n_planned: Value used for nitrogen maps
         :type n_planned: float
+
+        :param yield_val: Average yield
+        :type yield_val: float
+
+        :param min_yield_val: Minimum yield
+        :type min_yield_val: float
+
+        :param max_yield_val: Maximum yield
+        :type max_yield_val: float
 
         :param kwargs: Other map creation and request parameters.
 
@@ -330,7 +363,14 @@ class BridgeAPI(ApiClient):
         # Get request parameters
         params = kwargs.get('params')
 
-        return self._get_field_map(map_type_key, request_data, n_planned, params)
+        return self._get_field_map(
+            map_type_key,
+            request_data,
+            n_planned,
+            yield_val,
+            min_yield_val,
+            max_yield_val,
+            params)
 
     def get_difference_map(
             self, map_type_key, season_field_id,

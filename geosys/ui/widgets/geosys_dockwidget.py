@@ -776,7 +776,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
                     data=data, output_map_format=self.output_map_format,
-                    n_planned_value=self.n_planned_value
+                    n_planned_value=self.n_planned_value,
+                    yield_val=self.yield_average_form.value(),
+                    min_yield_val=self.yield_minimum_form.value(),
+                    max_yield_val=self.yield_maximum_form.value()
                 )
                 if not is_success:
                     QMessageBox.critical(

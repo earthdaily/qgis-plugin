@@ -34,8 +34,8 @@ IDENTITY_URLS = {
 }
 BRIDGE_URLS = {
     'na': {
-        'test': 'http://api-pp.geosys-na.net',
-        'prod': 'http://api.geosys-na.net'
+        'test': 'https://api-pp.geosys-na.net',
+        'prod': 'https://api.geosys-na.net'
     },
     'eu': {
         'test': 'https://api-pp.geosys-na.net',
@@ -51,11 +51,11 @@ MAX_FEATURE_NUMBERS = 10
 DEFAULT_N_PLANNED = 0.01
 
 # Default parameters for map creation
-DEFAULT_AVE_YIELD = 0.0
-DEFAULT_MIN_YIELD = 0.0
-DEFAULT_MAX_YIELD = 0.0
+DEFAULT_AVE_YIELD = 1.0
+DEFAULT_MIN_YIELD = 1.0
+DEFAULT_MAX_YIELD = 1.0
 DEFAULT_ORGANIC_AVE = 0.0
-DEFAULT_ZONE_COUNT = 0
+DEFAULT_ZONE_COUNT = 5
 DEFAULT_GAIN = 0.0
 DEFAULT_OFFSET = 0.0
 
