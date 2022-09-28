@@ -11,7 +11,10 @@ from geosys.bridge_api.definitions import (
     INSEASONFIELD_AVERAGE_LAI,
     INSEASONFIELD_AVERAGE_REVERSE_NDVI,
     INSEASONFIELD_AVERAGE_REVERSE_LAI,
-    INSEASON_S2REP
+    INSEASON_S2REP,
+    SAMZ,
+    YVM,
+    YGM
 )
 from geosys.bridge_api.utilities import get_definition
 
@@ -138,7 +141,16 @@ class FieldLevelMapsAPIClient(ApiClient):
 
         return response.json()
 
-    def get_field_map(self, map_type_key, data, n_planned=1.0, params=None):
+    def get_field_map(
+            self,
+            map_type_key,
+            data,
+            n_planned=1.0,
+            yield_val=None,
+            min_yield_val=None,
+            max_yield_val=None,
+            params=None
+    ):
         """Get requested field map.
 
         :param map_type_key: Map type key.
@@ -157,6 +169,15 @@ class FieldLevelMapsAPIClient(ApiClient):
 
         :param n_planned: Value used for nitrogen maps
         :type n_planned: float
+
+        :param yield_val: Average yield
+        :type yield_val: float
+
+        :param min_yield_val: Minimum yield
+        :type min_yield_val: float
+
+        :param max_yield_val: Maximum yield
+        :type max_yield_val: float
 
         :param params: Map creation parameters.
         :type params: dict
@@ -189,33 +210,93 @@ class FieldLevelMapsAPIClient(ApiClient):
             if (map_type['key'] == REFLECTANCE['key'] or
                     map_type['key'] == INSEASON_S2REP['key']):
                 # Reflectance and S2REP maps needs to make use of the catalog-imagery API
-                full_url = self.full_url('season-fields',
-                                         seasonfield_id,
-                                         'coverage',
-                                         image_id,
-                                         map_family['endpoint'],
-                                         map_type['key'])
+                full_url = self.full_url(
+                    'season-fields',
+                    seasonfield_id,
+                    'coverage',
+                    image_id,
+                    map_family['endpoint'],
+                    map_type['key']
+                )
 
                 response = self.get(
                     full_url,
                     headers=headers,
                     params=params,
-                    json=data)
+                    json=data
+                )
             elif map_type['key'] in nitrogen_maps:
-                full_url = self.full_url('season-fields',
-                                         seasonfield_id,
-                                         'coverage',
-                                         image_id,
-                                         map_family['endpoint'],
-                                         map_type['key'],
-                                         'n-planned',
-                                         str(n_planned))
+                full_url = self.full_url(
+                    'season-fields',
+                    seasonfield_id,
+                    'coverage',
+                    image_id,
+                    map_family['endpoint'],
+                    map_type['key'],
+                    'n-planned',
+                    str(n_planned)
+                )
 
                 response = self.get(
                     full_url,
                     headers=headers,
                     params=params,
-                    json=data)
+                    json=data
+                )
+            elif map_type['key'] == YVM['key']:
+                full_url = self.full_url(
+                    'season-fields',
+                    seasonfield_id,
+                    'coverage',
+                    image_id,
+                    map_family['endpoint'],
+                    map_type['key'],
+                    'historical-yield-average',
+                    str(yield_val)
+                )
+
+                response = self.get(
+                    full_url,
+                    headers=headers,
+                    params=params,
+                    json=data
+                )
+            elif map_type['key'] == YGM['key']:
+                full_url = self.full_url(
+                    'season-fields',
+                    seasonfield_id,
+                    'coverage',
+                    image_id,
+                    map_family['endpoint'],
+                    map_type['key'],
+                    'historical-yield-average',
+                    str(yield_val),
+                    'max-yield-Goal',
+                    str(max_yield_val),
+                    'min-yield-Goal',
+                    str(min_yield_val)
+                )
+
+                response = self.get(
+                    full_url,
+                    headers=headers,
+                    params=params,
+                    json=data
+                )
+            elif map_type['key'] == SAMZ['key']:
+                full_url = self.full_url(
+                    'season-fields',
+                    seasonfield_id,
+                    'management-zones-map',
+                    'SAMZ'
+                )
+
+                response = self.get(
+                    full_url,
+                    headers=headers,
+                    params=params,
+                    json=data
+                )
             elif map_type['key'] == SOIL['key']:
                 # Body required by soilmap
                 # This is a workaround provided by GeoSys
@@ -236,7 +317,8 @@ class FieldLevelMapsAPIClient(ApiClient):
                     full_url,
                     headers=headers,
                     params=params,
-                    json=data)
+                    json=data
+                )
             else:
                 full_url = self.full_url(
                     'maps',
@@ -248,7 +330,8 @@ class FieldLevelMapsAPIClient(ApiClient):
                      full_url,
                      headers=headers,
                      params=params,
-                     json=data)
+                     json=data
+                )
 
             return response.json()
 

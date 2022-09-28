@@ -34,8 +34,8 @@ IDENTITY_URLS = {
 }
 BRIDGE_URLS = {
     'na': {
-        'test': 'http://api-pp.geosys-na.net',
-        'prod': 'http://api.geosys-na.net'
+        'test': 'https://api-pp.geosys-na.net',
+        'prod': 'https://api.geosys-na.net'
     },
     'eu': {
         'test': 'https://api-pp.geosys-na.net',
@@ -51,16 +51,38 @@ MAX_FEATURE_NUMBERS = 10
 DEFAULT_N_PLANNED = 0.01
 
 # Default parameters for map creation
-DEFAULT_AVE_YIELD = 0.0
-DEFAULT_MIN_YIELD = 0.0
-DEFAULT_MAX_YIELD = 0.0
+DEFAULT_AVE_YIELD = 1.0
+DEFAULT_MIN_YIELD = 1.0
+DEFAULT_MAX_YIELD = 1.0
 DEFAULT_ORGANIC_AVE = 0.0
-DEFAULT_ZONE_COUNT = 0
+DEFAULT_ZONE_COUNT = 5
 DEFAULT_GAIN = 0.0
 DEFAULT_OFFSET = 0.0
 
-# coverage filters
+# Thumbnail URLs
+NDVI_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{date}'
+    '/base-reference-map/INSEASON_NDVI/thumbnail.png')
+NITROGEN_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/model-map/{nitrogen_map_type}/n-planned/{n_value}/thumbnail.png')
+S2REP_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/base-reference-map/INSEASON_S2REP/thumbnail.png')
+CVIN_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/base-reference-map/INSEASON_CVIN/thumbnail.png')
+YGM_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/yield-goal-map/YGM/historical-yield-average/80/max-yield-Goal/100/min-yield-Goal/10/thumbnail.png')
+YPM_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
+    '/yield-variability-map/YPM/historical-yield-average/80/thumbnail.png')
+SAMZ_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/season-fields/{id}/'
+    '/management-zones-map/SAMZ/thumbnail.png')
 
+# coverage filters
 COVERAGE_TYPE = 'CoverageType'
 IMAGE_DATE = 'Image.Date'
 IMAGE_SENSOR = 'Image.Sensor'
@@ -70,7 +92,6 @@ MAPS_TYPE = 'Maps.Type'
 MAP_LIMIT = '$limit'
 
 # map creation parameters
-
 YIELD_AVERAGE = 'HistoricalYieldAverage'
 YIELD_MINIMUM = 'MinYieldGoal'
 YIELD_MAXIMUM = 'MaxYieldGoal'
