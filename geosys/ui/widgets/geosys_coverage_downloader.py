@@ -17,7 +17,14 @@ from geosys.bridge_api.default import (
     PGW,
     LEGEND,
     SHP_EXT,
-    BRIDGE_URLS
+    BRIDGE_URLS,
+    NDVI_THUMBNAIL_URL,
+    NITROGEN_THUMBNAIL_URL,
+    S2REP_THUMBNAIL_URL,
+    CVIN_THUMBNAIL_URL,
+    YGM_THUMBNAIL_URL,
+    YPM_THUMBNAIL_URL,
+    SAMZ_THUMBNAIL_URL
 )
 from geosys.bridge_api.definitions import (
     SAMZ,
@@ -48,27 +55,6 @@ __email__ = "rohmat@kartoza.com"
 __revision__ = "$Format:%H$"
 
 settings = QSettings()
-NDVI_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{date}'
-    '/base-reference-map/INSEASON_NDVI/thumbnail.png')
-NITROGEN_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
-    '/model-map/{nitrogen_map_type}/n-planned/{n_value}/thumbnail.png')
-S2REP_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
-    '/base-reference-map/INSEASON_S2REP/thumbnail.png')
-CVIN_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
-    '/base-reference-map/INSEASON_CVIN/thumbnail.png')
-YGM_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
-    '/yield-goal-map/YGM/historical-yield-average/80/max-yield-Goal/100/min-yield-Goal/10/thumbnail.png')
-YPM_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/coverage/{image}'
-    '/yield-variability-map/YPM/historical-yield-average/80/thumbnail.png')
-SAMZ_THUMBNAIL_URL = (
-    '{bridge_url}/field-level-maps/v4/season-fields/{id}/'
-    '/management-zones-map/SAMZ/thumbnail.png')
 
 
 class CoverageSearchThread(QThread):
