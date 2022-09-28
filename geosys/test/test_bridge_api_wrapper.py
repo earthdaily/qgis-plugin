@@ -145,9 +145,7 @@ class BridgeAPIWrapperTest(unittest.TestCase):
         list_of_image_date = ['2018-10-13', '2018-10-18']
         field_map = bridge_api.get_samz_map(
             season_field_id, list_of_image_date, params=params)
-        # Currently the API returns an error when we try to create
-        # custom SAMZ map.
-        self.assertFalse('seasonField' in field_map)
+        self.assertTrue('seasonField' in field_map)
 
     def test_get_content(self):
         """Test we can successfully get the content of png response."""
