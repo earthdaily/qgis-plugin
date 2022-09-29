@@ -27,7 +27,7 @@ about=GEOSYS® Plugin for QGIS is the easiest way to experience field level capa
  - Repository: https://github.com/GEOSYS/qgis-plugin
 
 # Version and release information
-version=1.1.0
+version=1.1.2
 # alpha, beta, rc or final
 status=final
 
@@ -40,7 +40,9 @@ email=sales.na@geosys.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=[2022-05-05] Support for CVIN, LAI, Nitrogen, SOIL, Top of Canopy reflectance, S2REP, BRM and Model maps.
+changelog=[2022-09-28] Coverage API update for SAMZ, YGM and YPM maps.
+    [2022-08-25] Bugs fix, Auto track of past selected layers.
+    [2022-05-05] Support for CVIN, LAI, Nitrogen, SOIL, Top of Canopy reflectance, S2REP, BRM
 
 # Tags are comma separated with spaces allowed
 tags=precision-ag,accuracy,agriculture,agronomy,analysis,api,area,basemap,biomass,bounding box,cartography,catalog,change detection,cvi,earth observation,elevation,evi,field,fields,field vegetation indexes,field agronomy maps,nitogen,gis,gndvi,google earth,geosys,image,imagery,images,import,importer,json,kml,kmz,lai,maps,modis,ndvi,plot,sentinel,shape,shapefile,spatial,spatial data,satellite,quality,spectral,time series,timeseries,vector,vector layer,vegetation,wkt,sustainability,ecology,landsat,field,remote sensing,webservice,satellite,smart farming,satellite data,webservices,digital farming,python,raster
