@@ -326,9 +326,10 @@ class CoverageSearchThread(QThread):
                                 ))
                     elif self.map_product == SAMZ['key']:
                         thumbnail_url = (
-                            SAMZ_THUMBNAIL_URL.format(
+                            NDVI_THUMBNAIL_URL.format(
                                 bridge_url=searcher_client.bridge_server,
-                                id=result['seasonField']['id']
+                                id=result['seasonField']['id'],
+                                date=result['image']['date']
                             ))
                     else:  # All other map types
                         thumbnail_url = (
