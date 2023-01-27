@@ -810,12 +810,14 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         zone_cnt = self.samz_zone_form.value()
         if map_product_definition == SAMZ:
             image_dates = []
+            image_ids = []
             samz_mode = 'auto'
             if map_specifications:
                 season_field_id = map_specifications[0]['seasonField']['id']
                 samz_mode = 'custom'
                 for map_specification in map_specifications:
                     image_dates.append(map_specification['image']['date'])
+                    image_ids.append(map_specification['image']['id'])
             else:
                 # take season field id from the first item in coverage results
                 item = self.coverage_result_list.item(0)
@@ -831,7 +833,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             )
 
             is_success, message = create_samz_map(
-                season_field_id, image_dates, self.output_directory, filename,
+                season_field_id, image_ids, image_dates, self.output_directory, filename,
                 output_map_format=self.output_map_format, params=data)
 
             if not is_success:
@@ -1192,6 +1194,13 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         else:
             # Other maps types makes use of the weather type
             self.cb_weather.setEnabled(True)
+
+        if map_product == SAMZ['name']:
+            self.start_date_edit.setEnabled(False)
+            self.end_date_edit.setEnabled(False)
+        else:
+            self.start_date_edit.setEnabled(True)
+            self.end_date_edit.setEnabled(True)
 
         list_nitrogen_maps = [
             INSEASONFIELD_AVERAGE_NDVI['name'],
