@@ -224,6 +224,8 @@ class CoverageSearchThread(QThread):
                     raise Exception(results['message'])
 
                 for result in results:
+                    thumbnail_url = None
+
                     if self.need_stop:
                         break
                     # get thumbnail content
@@ -243,6 +245,13 @@ class CoverageSearchThread(QThread):
 
                     if not requested_map:
                         continue
+
+                    nitrogen_maps = [
+                        INSEASONFIELD_AVERAGE_NDVI['key'],
+                        INSEASONFIELD_AVERAGE_LAI['key'],
+                        INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
+                        INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
+                    ]
 
                     if self.map_product == REFLECTANCE['key']:
                         # Reflectance map type should make use of the INSEASON_NDVI thumbnail
@@ -267,7 +276,7 @@ class CoverageSearchThread(QThread):
                                 id=result['seasonField']['id'],
                                 image=result['image']['id']
                             ))
-                    elif self.map_product == INSEASONFIELD_AVERAGE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_LAI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
+                    elif self.map_product in nitrogen_maps:
                         # Nitrogen map type
                         if self.map_product == INSEASONFIELD_AVERAGE_NDVI['key']:
                             # INSEASON AVERAGE NDVI
