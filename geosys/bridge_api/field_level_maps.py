@@ -127,6 +127,9 @@ class FieldLevelMapsAPIClient(ApiClient):
             List of maps data specification based on given criteria.
         :rtype: list
         """
+
+        print('field level maps: get catalog imagery')
+
         filters = filters if filters else {}
         headers = {
             'accept': 'application/json',
@@ -138,6 +141,9 @@ class FieldLevelMapsAPIClient(ApiClient):
             headers=headers,
             params=filters,
             json=data)
+
+        print('\n\nRESPONSE: ' + str(response.json()))
+        print('\n\n')
 
         return response.json()
 

@@ -197,6 +197,15 @@
              </property>
             </widget>
            </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Nitrogen data</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
             <widget class="QLabel" name="n_planned_label">
              <property name="text">
@@ -223,21 +232,50 @@
              </property>
             </widget>
            </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Sample data</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
            <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+            <widget class="QLabel" name="lbl_point_layer">
+             <property name="text">
+              <string>Select point layer</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cb_point_layer"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="lbl_column_name">
+             <property name="text">
+              <string>Select column name</string>
              </property>
-            </spacer>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cb_column_name"/>
            </item>
           </layout>
          </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>

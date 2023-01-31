@@ -236,6 +236,9 @@ class BridgeAPI(ApiClient):
         :rtype: list
         """
         # Construct parameter
+
+        print('base api: get catalog imagery')
+
         request_data = {
             'Geometry': geometry,
             'Crop': {

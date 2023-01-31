@@ -81,6 +81,9 @@ YPM_THUMBNAIL_URL = (
 SAMZ_THUMBNAIL_URL = (
     '{bridge_url}/field-level-maps/v4/season-fields/{id}/'
     '/management-zones-map/SAMZ/thumbnail.png')
+SAMPLEMAP_THUMBNAIL_URL = (
+    '{bridge_url}/field-level-maps/v4/maps/{id}/'
+    '/thumbnail.png')
 
 # coverage filters
 COVERAGE_TYPE = 'CoverageType'

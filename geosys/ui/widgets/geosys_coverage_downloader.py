@@ -11,6 +11,7 @@ from geosys.bridge_api.default import (
     MAPS_TYPE,
     IMAGE_SENSOR,
     IMAGE_DATE,
+    IMAGE_WEATHER,
     ZIPPED_FORMAT,
     PNG,
     PNG_KMZ,
@@ -25,7 +26,7 @@ from geosys.bridge_api.default import (
     YGM_THUMBNAIL_URL,
     YPM_THUMBNAIL_URL,
     SAMZ_THUMBNAIL_URL,
-    IMAGE_WEATHER
+    SAMPLEMAP_THUMBNAIL_URL
 )
 from geosys.bridge_api.definitions import (
     SAMZ,
@@ -41,7 +42,8 @@ from geosys.bridge_api.definitions import (
     INSEASONFIELD_AVERAGE_REVERSE_LAI,
     INSEASON_CVIN,
     YGM,
-    YVM
+    YVM,
+    SAMPLE_MAP
 )
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
@@ -158,6 +160,15 @@ class CoverageSearchThread(QThread):
                 self.sensor_type and self.filters.update({
                     IMAGE_SENSOR: self.sensor_type
                 })
+            elif self.map_product == SAMPLE_MAP['key']:
+                print('sample map filters')
+
+                self.filters.update({
+                    MAPS_TYPE: SAMPLE_MAP['key'],
+                    IMAGE_DATE: date_filter,
+                    IMAGE_WEATHER: 'HOT'
+                })
+
             else:
                 # Coverage API call. Maps.Type should be included
                 if self.weather_type == 'ALL':
@@ -196,23 +207,47 @@ class CoverageSearchThread(QThread):
                 *credentials_parameters_from_settings(),
                 proxies=QGISSettings.get_qgis_proxy())
 
+            catalog_imagery_api = [
+                INSEASON_S2REP['key'],
+                REFLECTANCE['key'],
+                INSEASON_CVIN['key'],
+                INSEASONFIELD_AVERAGE_NDVI['key'],
+                INSEASONFIELD_AVERAGE_LAI['key'],
+                INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
+                INSEASONFIELD_AVERAGE_REVERSE_LAI['key'],
+                YGM['key'],
+                YVM['key'],
+                SAMZ['key'],
+                SAMPLE_MAP['key']
+            ]
+
             collected_results = []
             for geometry in self.geometries:
+
+                print('geom: ' + str(geometry))
+
+                print('filters: ' + str(self.filters))
+
                 # Determines the approach required to do the coverage check
-                if self.map_product == INSEASON_S2REP['key'] or self.map_product == REFLECTANCE['key'] or self.map_product == INSEASON_CVIN['key']:
-                    # Makes use of the 'catalog-imagery' API calls
+                if self.map_product in catalog_imagery_api:
                     results = searcher_client.get_catalog_imagery(
                         geometry, self.crop_type, self.sowing_date,
-                        filters=self.filters)
-                elif self.map_product == INSEASONFIELD_AVERAGE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_LAI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
-                    # Nitrogen maps should make use of the 'catalog-imagery' API calls
-                    results = searcher_client.get_catalog_imagery(
-                        geometry, self.crop_type, self.sowing_date,
-                        filters=self.filters)
-                elif self.map_product == YGM['key'] or self.map_product == YVM['key'] or self.map_product == SAMZ['key']:
-                    results = searcher_client.get_catalog_imagery(
-                        geometry, self.crop_type, self.sowing_date,
-                        filters=self.filters)
+                        filters=self.filters
+                    )
+                # if self.map_product == INSEASON_S2REP['key'] or self.map_product == REFLECTANCE['key'] or self.map_product == INSEASON_CVIN['key']:
+                #     # Makes use of the 'catalog-imagery' API calls
+                #     results = searcher_client.get_catalog_imagery(
+                #         geometry, self.crop_type, self.sowing_date,
+                #         filters=self.filters)
+                # elif self.map_product == INSEASONFIELD_AVERAGE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_LAI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
+                #     # Nitrogen maps should make use of the 'catalog-imagery' API calls
+                #     results = searcher_client.get_catalog_imagery(
+                #         geometry, self.crop_type, self.sowing_date,
+                #         filters=self.filters)
+                # elif self.map_product == YGM['key'] or self.map_product == YVM['key'] or self.map_product == SAMZ['key']:
+                #     results = searcher_client.get_catalog_imagery(
+                #         geometry, self.crop_type, self.sowing_date,
+                #         filters=self.filters)
                 else:
                     # Makes use of the 'coverage' API calls
                     results = searcher_client.get_coverage(
@@ -224,8 +259,6 @@ class CoverageSearchThread(QThread):
                     raise Exception(results['message'])
 
                 for result in results:
-                    thumbnail_url = None
-
                     if self.need_stop:
                         break
                     # get thumbnail content
@@ -246,13 +279,14 @@ class CoverageSearchThread(QThread):
                     if not requested_map:
                         continue
 
-                    nitrogen_maps = [
+                    nitrogen_products = [
                         INSEASONFIELD_AVERAGE_NDVI['key'],
                         INSEASONFIELD_AVERAGE_LAI['key'],
                         INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
                         INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
                     ]
 
+                    thumbnail_url = None
                     if self.map_product == REFLECTANCE['key']:
                         # Reflectance map type should make use of the INSEASON_NDVI thumbnail
                         # This is a work-around provided by GeoSys
@@ -276,7 +310,8 @@ class CoverageSearchThread(QThread):
                                 id=result['seasonField']['id'],
                                 image=result['image']['id']
                             ))
-                    elif self.map_product in nitrogen_maps:
+                    #elif self.map_product == INSEASONFIELD_AVERAGE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_LAI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
+                    elif self.map_product in nitrogen_products:
                         # Nitrogen map type
                         if self.map_product == INSEASONFIELD_AVERAGE_NDVI['key']:
                             # INSEASON AVERAGE NDVI
@@ -340,6 +375,16 @@ class CoverageSearchThread(QThread):
                                 id=result['seasonField']['id'],
                                 date=result['image']['date']
                             ))
+                    elif self.map_product == SAMPLE_MAP['key']:
+                        # Sample maps
+                        thumbnail_url = (
+                            SAMPLEMAP_THUMBNAIL_URL.format(
+                                bridge_url=searcher_client.bridge_server,
+                                id=result['seasonField']['id']
+                            ))
+
+                        print('samplemap thumbnail: ' + str(thumbnail_url))
+
                     else:  # All other map types
                         thumbnail_url = (
                             requested_map['_links'].get('thumbnail') or (
