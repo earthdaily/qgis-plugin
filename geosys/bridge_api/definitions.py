@@ -31,6 +31,15 @@ CROPS = {
     'winter_osr': 'WINTER_OSR'
 }
 
+# Weather types for coverage searches`
+WEATHER_TYPES = [
+    'ALL',
+    'COLD',
+    'DRY',
+    'HOT',
+    'WET',
+]
+
 # Map type families definition
 base_reference_map = {
     'key': 'base-reference-map',

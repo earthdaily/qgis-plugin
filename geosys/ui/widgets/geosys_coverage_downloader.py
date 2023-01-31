@@ -24,7 +24,8 @@ from geosys.bridge_api.default import (
     CVIN_THUMBNAIL_URL,
     YGM_THUMBNAIL_URL,
     YPM_THUMBNAIL_URL,
-    SAMZ_THUMBNAIL_URL
+    SAMZ_THUMBNAIL_URL,
+    IMAGE_WEATHER
 )
 from geosys.bridge_api.definitions import (
     SAMZ,
@@ -67,7 +68,7 @@ class CoverageSearchThread(QThread):
 
     def __init__(
             self, geometries, crop_type, sowing_date, map_product, sensor_type,
-            start_date, end_date, mutex, n_planned_value=1.0, parent=None):
+            weather_type, start_date, end_date, mutex, n_planned_value=1.0, parent=None):
         """Thread object wrapper for coverage search.
 
         :param geometries: List of geometry filter in WKT format.
@@ -106,6 +107,7 @@ class CoverageSearchThread(QThread):
         self.sowing_date = sowing_date
         self.map_product = map_product
         self.sensor_type = sensor_type
+        self.weather_type = weather_type
         self.start_date = start_date
         self.end_date = end_date
         self.mutex = mutex
@@ -126,14 +128,26 @@ class CoverageSearchThread(QThread):
             if self.map_product == REFLECTANCE['key']:
                 # Catalog-imagery API call. Maps.Type will be set to INSEASON_NDVI
                 # This is a work-around provided by GeoSys, because reflectance results
-                # are not shown in the respond from the API
-                self.filters.update({
-                    MAPS_TYPE: INSEASON_NDVI['key'],
-                    IMAGE_DATE: date_filter
-                })
-                self.sensor_type and self.filters.update({
-                    IMAGE_SENSOR: self.sensor_type
-                })
+                # are not shown in the response from the API
+                if self.weather_type == 'ALL':
+                    # Image.Weather not required
+                    self.filters.update({
+                        MAPS_TYPE: INSEASON_NDVI['key'],
+                        IMAGE_DATE: date_filter
+                    })
+                    self.sensor_type and self.filters.update({
+                        IMAGE_SENSOR: self.sensor_type
+                    })
+                else:
+                    # Weather type required
+                    self.filters.update({
+                        MAPS_TYPE: INSEASON_NDVI['key'],
+                        IMAGE_DATE: date_filter,
+                        IMAGE_WEATHER: self.weather_type
+                    })
+                    self.sensor_type and self.filters.update({
+                        IMAGE_SENSOR: self.sensor_type
+                    })
             elif self.map_product == SOIL['key']:
                 # This is a workaround to get the seasonfield ID
                 # This has been suggested by GeoSys
@@ -146,13 +160,25 @@ class CoverageSearchThread(QThread):
                 })
             else:
                 # Coverage API call. Maps.Type should be included
-                self.filters.update({
-                    MAPS_TYPE: self.map_product,
-                    IMAGE_DATE: date_filter
-                })
-                self.sensor_type and self.filters.update({
-                    IMAGE_SENSOR: self.sensor_type
-                })
+                if self.weather_type == 'ALL':
+                    # Image.Weather not required
+                    self.filters.update({
+                        MAPS_TYPE: self.map_product,
+                        IMAGE_DATE: date_filter,
+                    })
+                    self.sensor_type and self.filters.update({
+                        IMAGE_SENSOR: self.sensor_type
+                    })
+                else:
+                    # Weather type required
+                    self.filters.update({
+                        MAPS_TYPE: self.map_product,
+                        IMAGE_DATE: date_filter,
+                        IMAGE_WEATHER: self.weather_type
+                    })
+                    self.sensor_type and self.filters.update({
+                        IMAGE_SENSOR: self.sensor_type
+                    })
 
         self.settings = QSettings()
 
@@ -204,7 +230,8 @@ class CoverageSearchThread(QThread):
                     requested_map = None
                     for map_result in result['maps']:
                         if self.map_product == REFLECTANCE['key'] or self.map_product == SOIL['key']:
-                            # Reflectance map and soil map type will make use of the INSEASON_NDVI to show coverage results
+                            # Reflectance map and soil map type will make use of the
+                            # INSEASON_NDVI to show coverage results
                             # This is a work-around provided by GeoSys
                             if map_result['type'] == INSEASON_NDVI['key']:
                                 requested_map = map_result
