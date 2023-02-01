@@ -231,6 +231,12 @@ IGNORE_LAYER_FIELDS = [
     'OID',
     'OBJECTID'
 ]
+# Field types allowed to be selectable
+ALLOWED_FIELD_TYPES = [
+    'Integer64',
+    'Integer',
+    'Real'
+]
 
 # Sentinel-2 Red-edge position index (S2REP)
 INSEASON_S2REP = {

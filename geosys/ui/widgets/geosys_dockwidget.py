@@ -52,7 +52,8 @@ from geosys.bridge_api.definitions import (
     SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2,
     INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_NDVI,
     INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_LAI,
-    COLOR_COMPOSITION, SAMPLE_MAP, IGNORE_LAYER_FIELDS, WEATHER_TYPES
+    COLOR_COMPOSITION, SAMPLE_MAP, IGNORE_LAYER_FIELDS, WEATHER_TYPES,
+    ALLOWED_FIELD_TYPES
 )
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
@@ -1227,7 +1228,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             layer_fields = current_layer.fields().toList()
             for field in layer_fields:
                 field_name = field.name()
-                if field_name not in IGNORE_LAYER_FIELDS:
+                field_type = field.typeName()
+                if field_name not in IGNORE_LAYER_FIELDS \
+                        and field_type in ALLOWED_FIELD_TYPES:
                     self.cb_column_name.addItem(field_name)
 
     def setup_connectors(self):
