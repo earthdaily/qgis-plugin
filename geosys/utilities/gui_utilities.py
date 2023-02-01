@@ -64,6 +64,20 @@ def item_data_from_combo(combo):
     return item_data
 
 
+def item_text_from_combo(combo):
+    """Get the item text currently selected in a combo box.
+    :returns: The currently selected combo box item text.
+    :rtype: str
+    """
+    index = combo.currentIndex()
+
+    if index < 0:
+        return None
+
+    item_data = combo.itemText(index)
+    return item_data
+
+
 def add_ordered_combo_item(
         combo, text, data=None, count_selected_features=None, icon=None):
     """Add a combo item ensuring that all items are listed alphabetically.

@@ -103,6 +103,13 @@ class CoverageSearchResultItemWidget(QWidget):
         self.coverage_type.setText(coverage_map_json.get('coverageType', ''))
         self.map_description_layout.addWidget(self.coverage_type, 3, 0)
 
+        self.weather_type = QLabel(self)
+        self.weather_type.setTextFormat(Qt.RichText)
+        self.weather_type.setWordWrap(True)
+        image = coverage_map_json.get('image', '')
+        self.weather_type.setText(image.get('weather', ''))
+        self.map_description_layout.addWidget(self.weather_type, 4, 0)
+
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
 
         self.coverage_map_json = coverage_map_json

@@ -52,7 +52,7 @@ from geosys.bridge_api.definitions import (
     SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2,
     INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_NDVI,
     INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_LAI,
-    COLOR_COMPOSITION
+    COLOR_COMPOSITION, WEATHER_TYPES
 )
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
@@ -63,7 +63,7 @@ from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
     add_layer_to_canvas, reproject, item_data_from_combo,
-    wkt_geometries_from_feature_iterator
+    wkt_geometries_from_feature_iterator, item_text_from_combo
 )
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting, set_setting
@@ -98,6 +98,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.wkt_geometries = None
         self.map_product = None
         self.sensor_type = None
+        self.weather_type = None
         self.start_date = None
         self.end_date = None
 
@@ -173,6 +174,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Populate sensor combo box
         self.clear_combo_box(self.sensor_combo_box)
         self.populate_sensors()
+        self.populate_weather_types()
 
         # Set default date value
         self.populate_date()
@@ -191,6 +193,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         for sensor in [ALL_SENSORS] + SENSORS:
             add_ordered_combo_item(
                 self.sensor_combo_box, sensor['name'], sensor['key'])
+
+    def populate_weather_types(self):
+        """Populates the the Weather type combobox."""
+        for weather_type in WEATHER_TYPES:
+            self.cb_weather.addItem(weather_type)
 
     def populate_map_products(self):
         """Obtain a list of map products from Bridge API definition.
@@ -618,6 +625,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.sensor_type == ALL_SENSORS['key']:
             self.sensor_type = None
 
+        # Get the weather type
+        self.weather_type = item_text_from_combo(self.cb_weather)
+        if not self.weather_type:
+            # Weather type invalid
+            return False, 'Weather type is invalid.'
+
         # Get the start and end date
         self.start_date = self.start_date_edit.date().toString('yyyy-MM-dd')
         self.end_date = self.end_date_edit.date().toString('yyyy-MM-dd')
@@ -885,6 +898,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             sowing_date=self.sowing_date,
             map_product=self.map_product,
             sensor_type=self.sensor_type,
+            weather_type=self.weather_type,
             end_date=self.end_date,
             start_date=self.start_date,
             mutex=self.one_process_work,
@@ -1066,6 +1080,13 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         else:
             self.clear_combo_box(self.sensor_combo_box)
             self.populate_sensors()
+
+        if map_product == SOIL['name'] or map_product == ELEVATION['key']:
+            # Weather type not required for soil and elevation
+            self.cb_weather.setEnabled(False)
+        else:
+            # Other maps types makes use of the weather type
+            self.cb_weather.setEnabled(True)
 
         list_nitrogen_maps = [
             INSEASONFIELD_AVERAGE_NDVI['name'],

@@ -42,7 +42,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="coverage_form_page">
        <property name="minimumSize">
@@ -146,6 +146,16 @@
               <enum>QComboBox::InsertAlphabetically</enum>
              </property>
             </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="lbl_weather">
+             <property name="text">
+              <string>Select weather type</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cb_weather"/>
            </item>
            <item>
             <widget class="QLabel" name="start_date_label">
