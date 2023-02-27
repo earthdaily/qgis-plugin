@@ -14,7 +14,8 @@ from geosys.bridge_api.definitions import (
     INSEASON_S2REP,
     SAMZ,
     YVM,
-    YGM
+    YGM,
+    SAMPLE_MAP
 )
 from geosys.bridge_api.utilities import get_definition
 
@@ -128,8 +129,6 @@ class FieldLevelMapsAPIClient(ApiClient):
         :rtype: list
         """
 
-        print('field level maps: get catalog imagery')
-
         filters = filters if filters else {}
         headers = {
             'accept': 'application/json',
@@ -142,9 +141,6 @@ class FieldLevelMapsAPIClient(ApiClient):
             params=filters,
             json=data)
 
-        print('\n\nRESPONSE: ' + str(response.json()))
-        print('\n\n')
-
         return response.json()
 
     def get_field_map(
@@ -155,6 +151,7 @@ class FieldLevelMapsAPIClient(ApiClient):
             yield_val=None,
             min_yield_val=None,
             max_yield_val=None,
+            sample_field_id=None,
             params=None
     ):
         """Get requested field map.
@@ -210,8 +207,12 @@ class FieldLevelMapsAPIClient(ApiClient):
                 INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
             ]
 
-            image_id = data['Image']['Id'] if data.get('Image', None) else None
-            seasonfield_id = data['SeasonField']['Id'] if data.get('SeasonField', None) else None
+            if data:
+                image_id = data['Image']['Id'] if data.get('Image', None) else None
+                seasonfield_id = data['SeasonField']['Id'] if data.get('SeasonField', None) else None
+            else:
+                image_id = None
+                seasonfield_id = None
 
             if (map_type['key'] == REFLECTANCE['key'] or
                     map_type['key'] == INSEASON_S2REP['key']):
@@ -325,6 +326,25 @@ class FieldLevelMapsAPIClient(ApiClient):
                     params=params,
                     json=data
                 )
+            elif map_type['key'] == SAMPLE_MAP['key']:
+                if sample_field_id is None:
+                    full_url = self.full_url(
+                        'maps',
+                        map_family['endpoint'],
+                        map_type['key']
+                    )
+
+                    response = self.post(
+                        full_url,
+                        headers=headers,
+                        params=params,
+                        json=data
+                    )
+                else:
+                    # This returns an empty json object
+                    # This step is required to set up the headers for Sample map
+                    # creation, which is required by the downloading step which follows
+                    return {}
             else:
                 full_url = self.full_url(
                     'maps',

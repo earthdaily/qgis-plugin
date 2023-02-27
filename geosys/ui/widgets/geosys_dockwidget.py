@@ -65,7 +65,7 @@ from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
     add_layer_to_canvas, reproject, item_data_from_combo,
     wkt_geometries_from_feature_iterator, item_text_from_combo,
-    is_point_layer
+    is_point_layer, attribute_from_feature_iterator
 )
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting, set_setting
@@ -98,6 +98,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # Coverage parameters from input values
         self.wkt_geometries = None
+        self.wkt_point_geometries = None
+        self.attributes = None
         self.map_product = None
         self.sensor_type = None
         self.weather_type = None
@@ -407,6 +409,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 item_json['maps'][0]['type'] = INSEASONFIELD_AVERAGE_REVERSE_NDVI['key']
             elif self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
                 item_json['maps'][0]['type'] = INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
+            elif self.map_product == SAMPLE_MAP['key']:
+                item_json['maps'][0]['type'] = SAMPLE_MAP['key']
 
             self.selected_coverage_results.append(item_json)
 
@@ -467,9 +471,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.get_layers_lock = False
 
     def get_sample_map_point_layers(self):
-
-        print('get points')
-
+        """Gets the list of possible point layers in the QGIS project
+        and adds them as options for Sample maps
+        """
         # Map registry may be invalid if QGIS is shutting down
         project = QgsProject.instance()
         canvas_layers = self.iface.mapCanvas().layers()
@@ -499,7 +503,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 # Current text/previous selection, is in the list of active layers
                 # The previous selection will still be selected
                 self.cb_point_layer.setCurrentIndex(current_index)
-
 
     def get_map_format(self):
         """Get selected map format from the radio button."""
@@ -629,15 +632,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # map product is not valid
             return False, 'Map product data is not valid.'
 
-        # Get geometry in WKT format
-        # if self.map_product == SAMPLE_MAP['name'].lower():
-        #
-        #     print('validate sample')
-        #
-        #     layer = layer_from_combo(self.cb_point_layer)
-        # else:
         layer = layer_from_combo(self.geometry_combo_box)
-
         if not layer:
             # layer is not selected
             return False, 'Layer is not selected.'
@@ -662,8 +657,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # TODO use Collect Geometries processing algorithm
         self.wkt_geometries = wkt_geometries_from_feature_iterator(
             feature_iterator, MAX_FEATURE_NUMBERS, use_single_geometry)
-
-        print(str(self.wkt_geometries))
 
         if not self.wkt_geometries:
             # geometry is not valid
@@ -694,6 +687,20 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             if not self.sample_map_field:
                 # Field name of point layer attribute table
                 return False, 'Sample point layer column has not been selected.'
+
+            layer_points = layer_from_combo(self.cb_point_layer)
+            feature_points_iterator = layer_points.getFeatures()
+            feature_points_iterator2 = layer_points.getFeatures()
+            if use_selected_features:
+                request = QgsFeatureRequest()
+                request.setFilterFids(layer_points.selectedFeatureIds())
+                feature_points_iterator = layer_points.getFeatures(request)
+                feature_points_iterator2 = layer_points.getFeatures(request)
+
+            self.wkt_point_geometries = wkt_geometries_from_feature_iterator(
+                feature_points_iterator, MAX_FEATURE_NUMBERS, use_single_geometry)
+
+            self.attributes = attribute_from_feature_iterator(feature_points_iterator2, self.sample_map_field)
 
         # Get the start and end date
         self.start_date = self.start_date_edit.date().toString('yyyy-MM-dd')
@@ -850,13 +857,18 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.output_map_format['extension']
                 )
 
+                sample_map_id = None
+                if self.map_product == SAMPLE_MAP['key']:
+                    sample_map_id = map_specification['id']
+
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
                     data=data, output_map_format=self.output_map_format,
                     n_planned_value=self.n_planned_value,
                     yield_val=self.yield_average_form.value(),
                     min_yield_val=self.yield_minimum_form.value(),
-                    max_yield_val=self.yield_maximum_form.value()
+                    max_yield_val=self.yield_maximum_form.value(),
+                    sample_map_id=sample_map_id
                 )
                 if not is_success:
                     QMessageBox.critical(
@@ -965,6 +977,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             weather_type=self.weather_type,
             end_date=self.end_date,
             start_date=self.start_date,
+            geometries_points=self.wkt_point_geometries,
+            attributes_points=self.attributes,
+            attribute_field=self.sample_map_field,
             mutex=self.one_process_work,
             n_planned_value=self.n_planned_value,
             parent=self.iface.mainWindow())
@@ -1052,7 +1067,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """
         if coverage_map_json:
             custom_widget = CoverageSearchResultItemWidget(
-                coverage_map_json, thumbnail_ba)
+                coverage_map_json, thumbnail_ba, self.map_product)
             new_item = QListWidgetItem(self.coverage_result_list)
             new_item.setSizeHint(custom_widget.sizeHint())
             new_item.setData(Qt.UserRole, coverage_map_json)
@@ -1171,8 +1186,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.clear_combo_box(self.sensor_combo_box)
             self.populate_sensors()
 
-        if map_product == SOIL['name'] or map_product == ELEVATION['key']:
-            # Weather type not required for soil and elevation
+        if map_product == SOIL['name'] or map_product == ELEVATION['key'] or map_product == SAMPLE_MAP['name']:
+            # Weather type not required for soil, elevation, and sample maps
             self.cb_weather.setEnabled(False)
         else:
             # Other maps types makes use of the weather type
@@ -1194,9 +1209,19 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # Sample map parameters
         if map_product == SAMPLE_MAP['name']:
+            self.sensor_combo_box.setEnabled(False)
+            self.start_date_edit.setEnabled(False)
+            self.end_date_edit.setEnabled(False)
+
+            # Enable point layer and field attribute
             self.cb_point_layer.setEnabled(True)
             self.cb_column_name.setEnabled(True)
         else:
+            self.sensor_combo_box.setEnabled(True)
+            self.start_date_edit.setEnabled(True)
+            self.end_date_edit.setEnabled(True)
+
+            # Disable point layer and field attribute
             self.cb_point_layer.setEnabled(False)
             self.cb_column_name.setEnabled(False)
 

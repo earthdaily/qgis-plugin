@@ -374,6 +374,28 @@ def wkt_geometries_from_feature_iterator(
     else:
         return []
 
+def attribute_from_feature_iterator(
+        feature_iterator, attribute):
+    """Get list of attributes from a QgsMapLayer feature iterator.
+    Based on the provided attribute/field name.
+
+    :param feature_iterator: QGIS layer feature iterator.
+        *retrieved from QgsMapLayer.getFeatures()
+    :type feature_iterator: QgsFeatureIterator
+
+    :param attribute: Field name.
+    :type attribute: str
+
+    :return: List of attributes.
+    :rtype: list
+    """
+
+    attr_vals = []
+    for index, feature in enumerate(feature_iterator):
+        attr = feature.attribute(attribute)
+        attr_vals.append(attr)
+
+    return attr_vals
 
 def create_hotspot_layer(source, source_type, source_filename):
     """Creates layer from wkt text in the source.

@@ -55,7 +55,7 @@ DEFAULT_AVE_YIELD = 1.0
 DEFAULT_MIN_YIELD = 1.0
 DEFAULT_MAX_YIELD = 1.0
 DEFAULT_ORGANIC_AVE = 0.0
-DEFAULT_ZONE_COUNT = 5
+DEFAULT_ZONE_COUNT = 0
 DEFAULT_GAIN = 0.0
 DEFAULT_OFFSET = 0.0
 
@@ -128,9 +128,14 @@ KMZ_KEY = 'image:application/vnd.google-earth.kmz'
 THUMBNAIL_KEY = 'thumbnail'
 LEGEND_KEY = 'legend'
 WORLD_FILE_KEY = 'worldFile'
+WORLD_FILE_KEY2 = 'worldfile'
 
 PGW = {
     'api_key': WORLD_FILE_KEY,
+    'extension': PGW_EXT
+}
+PGW2 = {
+    'api_key': WORLD_FILE_KEY2,
     'extension': PGW_EXT
 }
 PNG = {

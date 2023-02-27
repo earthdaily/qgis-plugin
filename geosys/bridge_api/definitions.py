@@ -339,7 +339,7 @@ SOIL = {
 SAMPLE_MAP = {
     'key': 'samplemap',
     'name': 'SAMPLEMAP',
-    'map_family': samplemap,
+    'map_family': sample,
     'description': ''
 }
 
