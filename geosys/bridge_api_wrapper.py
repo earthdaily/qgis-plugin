@@ -472,6 +472,9 @@ class BridgeAPI(ApiClient):
                 {"id": image_id} for image_id in list_of_image_ids
             ]
         }
+
+        print(str(request_data))
+
         request_data.update(kwargs)
 
         # Get request parameters
