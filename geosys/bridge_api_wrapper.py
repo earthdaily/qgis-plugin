@@ -8,6 +8,8 @@ from geosys.bridge_api.definitions import CROPS, SAMZ
 from geosys.bridge_api.field_level_maps import FieldLevelMapsAPIClient
 from geosys.bridge_api.utilities import get_definition
 
+from geosys.bridge_api.definitions import SAMPLE_MAP
+
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
 __email__ = "rohmat@kartoza.com"
@@ -236,6 +238,7 @@ class BridgeAPI(ApiClient):
         :rtype: list
         """
         # Construct parameter
+
         request_data = {
             'Geometry': geometry,
             'Crop': {
@@ -258,6 +261,7 @@ class BridgeAPI(ApiClient):
             yield_val=None,
             min_yield_val=None,
             max_yield_val=None,
+            sample_field_id=None,
             params=None
     ):
         """Actual method to call field map creation request.
@@ -287,6 +291,7 @@ class BridgeAPI(ApiClient):
             yield_val,
             min_yield_val,
             max_yield_val,
+            sample_field_id,
             params)
 
         return field_map_json
@@ -315,6 +320,8 @@ class BridgeAPI(ApiClient):
             yield_val=0,
             min_yield_val=0,
             max_yield_val=0,
+            sample_map_data=None,
+            sample_map_id=None,
             **kwargs):
         """Get requested field map.
 
@@ -342,6 +349,12 @@ class BridgeAPI(ApiClient):
         :param max_yield_val: Maximum yield
         :type max_yield_val: float
 
+        :param sample_map_data: Sample map request data
+        :type sample_map_data: dict
+
+        :param sample_map_id: Sample map ID from API call
+        :type sample_map_id: str
+
         :param kwargs: Other map creation and request parameters.
 
         :return: JSON response.
@@ -349,16 +362,24 @@ class BridgeAPI(ApiClient):
         :rtype: dict
         """
         # Construct map creation parameters
-        request_data = {
-            'SeasonField': {
-                'Id': season_field_id
-            },
-            'Image': {
-                'Date': image_date,
-                'Id': image_id
+        if map_type_key == SAMPLE_MAP['key']:
+            # Only for Sample maps
+            if sample_map_id is None:
+                request_data = sample_map_data
+                request_data.update(kwargs)
+            else:
+                request_data = None
+        else:
+            request_data = {
+                'SeasonField': {
+                    'Id': season_field_id
+                },
+                'Image': {
+                    'Date': image_date,
+                    'Id': image_id
+                }
             }
-        }
-        request_data.update(kwargs)
+            request_data.update(kwargs)
 
         # Get request parameters
         params = kwargs.get('params')
@@ -370,6 +391,7 @@ class BridgeAPI(ApiClient):
             yield_val,
             min_yield_val,
             max_yield_val,
+            sample_map_id,
             params)
 
     def get_difference_map(

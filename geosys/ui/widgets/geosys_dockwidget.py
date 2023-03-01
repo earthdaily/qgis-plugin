@@ -52,7 +52,8 @@ from geosys.bridge_api.definitions import (
     SAMZ, SOIL, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2,
     INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_NDVI,
     INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_LAI,
-    COLOR_COMPOSITION, WEATHER_TYPES
+    COLOR_COMPOSITION, SAMPLE_MAP, IGNORE_LAYER_FIELDS, WEATHER_TYPES,
+    ALLOWED_FIELD_TYPES
 )
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
@@ -63,7 +64,8 @@ from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
     add_layer_to_canvas, reproject, item_data_from_combo,
-    wkt_geometries_from_feature_iterator, item_text_from_combo
+    wkt_geometries_from_feature_iterator, item_text_from_combo,
+    is_point_layer, attribute_from_feature_iterator
 )
 from geosys.utilities.resources import get_ui_class
 from geosys.utilities.settings import setting, set_setting
@@ -96,6 +98,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # Coverage parameters from input values
         self.wkt_geometries = None
+        self.wkt_point_geometries = None
+        self.attributes = None
         self.map_product = None
         self.sensor_type = None
         self.weather_type = None
@@ -105,6 +109,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # Nitrogen map type parameter
         self.n_planned_value = DEFAULT_N_PLANNED
         self.n_planned_value_spinbox.setValue(self.n_planned_value)
+
+        # Sample map parameters
+        self.sample_map_point_layer = None
+        self.sample_map_field = None
 
         # Map creation parameters from input values
         self.yield_average = None
@@ -161,6 +169,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         # Populate layer combo box
         self.connect_layer_listener()
+        self.connect_point_layer_listener()
 
         # Set checkbox label based on MAX_FEATURE_NUMBERS constant
         if MAX_FEATURE_NUMBERS:
@@ -400,6 +409,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 item_json['maps'][0]['type'] = INSEASONFIELD_AVERAGE_REVERSE_NDVI['key']
             elif self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
                 item_json['maps'][0]['type'] = INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
+            elif self.map_product == SAMPLE_MAP['key']:
+                item_json['maps'][0]['type'] = SAMPLE_MAP['key']
 
             self.selected_coverage_results.append(item_json)
 
@@ -458,6 +469,40 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # will be a lot of unneeded looping around as the signal is handled
         self.connect_layer_listener()
         self.get_layers_lock = False
+
+    def get_sample_map_point_layers(self):
+        """Gets the list of possible point layers in the QGIS project
+        and adds them as options for Sample maps
+        """
+        # Map registry may be invalid if QGIS is shutting down
+        project = QgsProject.instance()
+        canvas_layers = self.iface.mapCanvas().layers()
+        # MapLayers returns a QMap<QString id, QgsMapLayer layer>
+        layers = list(project.mapLayers().values())
+
+        self.cb_point_layer.clear()
+
+        for layer in layers:
+            # show only active layers
+            if layer not in canvas_layers or not is_point_layer(layer):
+                continue
+
+            layer_id = layer.id()
+            title = layer.title() or layer.name()
+            icon = layer_icon(layer)
+
+            add_ordered_combo_item(
+                self.cb_point_layer, title, layer_id, icon=icon)
+
+        active_layer = self.iface.activeLayer()
+        if active_layer:
+            active_layer_name = self.iface.activeLayer().name()
+            current_index = self.cb_point_layer.findText(active_layer_name)
+
+            if current_index >= 0:
+                # Current text/previous selection, is in the list of active layers
+                # The previous selection will still be selected
+                self.cb_point_layer.setCurrentIndex(current_index)
 
     def get_map_format(self):
         """Get selected map format from the radio button."""
@@ -580,7 +625,13 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
     def validate_coverage_parameters(self):
         """Check current state of coverage parameters."""
-        # Get geometry in WKT format
+
+        # Get map product
+        self.map_product = item_data_from_combo(self.map_product_combo_box)
+        if not self.map_product:
+            # map product is not valid
+            return False, 'Map product data is not valid.'
+
         layer = layer_from_combo(self.geometry_combo_box)
         if not layer:
             # layer is not selected
@@ -611,12 +662,6 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # geometry is not valid
             return False, 'Geometry is not valid.'
 
-        # Get map product
-        self.map_product = item_data_from_combo(self.map_product_combo_box)
-        if not self.map_product:
-            # map product is not valid
-            return False, 'Map product data is not valid.'
-
         # Get the sensor type
         self.sensor_type = item_data_from_combo(self.sensor_combo_box)
         if not self.sensor_type:
@@ -630,6 +675,32 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if not self.weather_type:
             # Weather type invalid
             return False, 'Weather type is invalid.'
+
+        if self.map_product == SAMPLE_MAP['name'].lower():
+            # These checks are only required for sample maps
+            self.sample_map_point_layer = item_data_from_combo(self.cb_point_layer)
+            if not self.sample_map_point_layer:
+                # Point layer
+                return False, 'Sample point layer has not been selected.'
+
+            self.sample_map_field = item_text_from_combo(self.cb_column_name)
+            if not self.sample_map_field:
+                # Field name of point layer attribute table
+                return False, 'Sample point layer column has not been selected.'
+
+            layer_points = layer_from_combo(self.cb_point_layer)
+            feature_points_iterator = layer_points.getFeatures()
+            feature_points_iterator2 = layer_points.getFeatures()
+            if use_selected_features:
+                request = QgsFeatureRequest()
+                request.setFilterFids(layer_points.selectedFeatureIds())
+                feature_points_iterator = layer_points.getFeatures(request)
+                feature_points_iterator2 = layer_points.getFeatures(request)
+
+            self.wkt_point_geometries = wkt_geometries_from_feature_iterator(
+                feature_points_iterator, MAX_FEATURE_NUMBERS, use_single_geometry)
+
+            self.attributes = attribute_from_feature_iterator(feature_points_iterator2, self.sample_map_field)
 
         # Get the start and end date
         self.start_date = self.start_date_edit.date().toString('yyyy-MM-dd')
@@ -786,13 +857,18 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.output_map_format['extension']
                 )
 
+                sample_map_id = None
+                if self.map_product == SAMPLE_MAP['key']:
+                    sample_map_id = map_specification['id']
+
                 is_success, message = create_map(
                     map_specification, self.output_directory, filename,
                     data=data, output_map_format=self.output_map_format,
                     n_planned_value=self.n_planned_value,
                     yield_val=self.yield_average_form.value(),
                     min_yield_val=self.yield_minimum_form.value(),
-                    max_yield_val=self.yield_maximum_form.value()
+                    max_yield_val=self.yield_maximum_form.value(),
+                    sample_map_id=sample_map_id
                 )
                 if not is_success:
                     QMessageBox.critical(
@@ -901,6 +977,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             weather_type=self.weather_type,
             end_date=self.end_date,
             start_date=self.start_date,
+            geometries_points=self.wkt_point_geometries,
+            attributes_points=self.attributes,
+            attribute_field=self.sample_map_field,
             mutex=self.one_process_work,
             n_planned_value=self.n_planned_value,
             parent=self.iface.mainWindow())
@@ -988,7 +1067,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """
         if coverage_map_json:
             custom_widget = CoverageSearchResultItemWidget(
-                coverage_map_json, thumbnail_ba)
+                coverage_map_json, thumbnail_ba, self.map_product)
             new_item = QListWidgetItem(self.coverage_result_list)
             new_item.setSizeHint(custom_widget.sizeHint())
             new_item.setData(Qt.UserRole, coverage_map_json)
@@ -1047,6 +1126,32 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
         self.iface.mapCanvas().layersChanged.disconnect(self.get_layers)
 
+    def connect_point_layer_listener(self):
+        """Establish a signal/slot to listen for point layers loaded in QGIS.
+
+        ..seealso:: disconnect_point_layer_listener
+        """
+        project = QgsProject.instance()
+        project.layersWillBeRemoved.connect(self.get_sample_map_point_layers)
+        project.layersAdded.connect(self.get_sample_map_point_layers)
+        project.layersRemoved.connect(self.get_sample_map_point_layers)
+
+        self.iface.mapCanvas().layersChanged.connect(self.get_sample_map_point_layers) \
+            if self.iface is not None else None
+
+    # pylint: disable=W0702
+    def disconnect_point_layer_listener(self):
+        """Destroy the signal/slot to listen for point layers loaded in QGIS.
+
+        ..seealso:: connect_point_layer_listener
+        """
+        project = QgsProject.instance()
+        project.layersWillBeRemoved.disconnect(self.get_sample_map_point_layers)
+        project.layersAdded.disconnect(self.get_sample_map_point_layers)
+        project.layersRemoved.disconnect(self.get_sample_map_point_layers)
+
+        self.iface.mapCanvas().layersChanged.disconnect(self.get_sample_map_point_layers)
+
     def populate_sensors_reflectance(self):
         """Obtain a list of sensors from Bridge API definition.
         For reflectance TOC, so only Landsat-8 and Sentinel-8 should be included, otherwise all of the sensors
@@ -1081,8 +1186,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.clear_combo_box(self.sensor_combo_box)
             self.populate_sensors()
 
-        if map_product == SOIL['name'] or map_product == ELEVATION['key']:
-            # Weather type not required for soil and elevation
+        if map_product == SOIL['name'] or map_product == ELEVATION['key'] or map_product == SAMPLE_MAP['name']:
+            # Weather type not required for soil, elevation, and sample maps
             self.cb_weather.setEnabled(False)
         else:
             # Other maps types makes use of the weather type
@@ -1102,6 +1207,57 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             # The n-planned parameter should be disabled for other map types
             self.n_planned_value_spinbox.setEnabled(False)
 
+        # Sample map parameters
+        if map_product == SAMPLE_MAP['name']:
+            self.sensor_combo_box.setEnabled(False)
+            self.start_date_edit.setEnabled(False)
+            self.end_date_edit.setEnabled(False)
+
+            # Enable point layer and field attribute
+            self.cb_point_layer.setEnabled(True)
+            self.cb_column_name.setEnabled(True)
+        else:
+            self.sensor_combo_box.setEnabled(True)
+            self.start_date_edit.setEnabled(True)
+            self.end_date_edit.setEnabled(True)
+
+            # Disable point layer and field attribute
+            self.cb_point_layer.setEnabled(False)
+            self.cb_column_name.setEnabled(False)
+
+    def point_layer_changed(self):
+        """Calls this function when the selected point layer changed in the
+        QCombobox. Repopulates the fields Combobox with the newly selected
+        point layer.
+        """
+        self.cb_column_name.clear()
+
+        project = QgsProject.instance()
+        canvas_layers = self.iface.mapCanvas().layers()
+        layers = list(project.mapLayers().values())
+
+        current_layer = None
+        current_index = self.cb_point_layer.currentIndex()
+        cb_layer_id = self.cb_point_layer.itemData(current_index)
+        for layer in layers:
+            # Get the active layer
+            if layer not in canvas_layers or not is_point_layer(layer):
+                continue
+            layer_id = layer.id()
+            if layer_id == cb_layer_id:
+                current_layer = layer
+                break
+
+        if current_layer:
+            # Populate the selected layer fields in the QCombobox
+            layer_fields = current_layer.fields().toList()
+            for field in layer_fields:
+                field_name = field.name()
+                field_type = field.typeName()
+                if field_name not in IGNORE_LAYER_FIELDS \
+                        and field_type in ALLOWED_FIELD_TYPES:
+                    self.cb_column_name.addItem(field_name)
+
     def setup_connectors(self):
         """Setup signal/slot mechanisms for dock elements."""
         # Button connector
@@ -1120,6 +1276,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         # List widget item connector
         self.coverage_result_list.itemSelectionChanged.connect(
             self.update_selection_data)
+
+        # If the selected point layer for the Sample maps changes
+        self.cb_point_layer.currentIndexChanged.connect(self.point_layer_changed)
 
     def unblock_signals(self):
         """Let the combos listen for event changes again."""

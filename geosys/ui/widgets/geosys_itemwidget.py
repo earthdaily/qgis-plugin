@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (
     QWidget, QHBoxLayout, QLabel, QSizePolicy, QGridLayout)
 
 from qgis.PyQt.QtCore import Qt
+from geosys.bridge_api.definitions import SAMPLE_MAP
 
 __copyright__ = "Copyright 2019, Kartoza"
 __license__ = "GPL version 3"
@@ -16,7 +17,7 @@ __revision__ = "$Format:%H$"
 class CoverageSearchResultItemWidget(QWidget):
     """Custom item widget for coverage search results."""
 
-    def __init__(self, coverage_map_json, thumbnail_ba, parent=None):
+    def __init__(self, coverage_map_json, thumbnail_ba, map_product, parent=None):
         """Custom item widget for coverage search results.
 
         :param coverage_map_json: Result of single map coverage.
@@ -84,31 +85,40 @@ class CoverageSearchResultItemWidget(QWidget):
             u"   <strong> {} </strong>".format(season_field_id))
         self.map_description_layout.addWidget(self.season_field_id, 0, 0, 1, 3)
 
-        image_description = coverage_map_json.get('image', {})
-        self.image_date = QLabel(self)
-        self.image_date.setTextFormat(Qt.RichText)
-        self.image_date.setWordWrap(True)
-        self.image_date.setText(image_description.get('date', ''))
-        self.map_description_layout.addWidget(self.image_date, 1, 0)
+        if map_product != SAMPLE_MAP['key']:
+            # All of these parameters will be excluded for Sample maps
+            image_description = coverage_map_json.get('image', {})
+            self.image_date = QLabel(self)
+            self.image_date.setTextFormat(Qt.RichText)
+            self.image_date.setWordWrap(True)
+            self.image_date.setText(image_description.get('date', ''))
+            self.map_description_layout.addWidget(self.image_date, 1, 0)
 
-        self.image_sensor = QLabel(self)
-        self.image_sensor.setTextFormat(Qt.RichText)
-        self.image_sensor.setWordWrap(True)
-        self.image_sensor.setText(image_description.get('sensor', ''))
-        self.map_description_layout.addWidget(self.image_sensor, 2, 0)
+            self.image_sensor = QLabel(self)
+            self.image_sensor.setTextFormat(Qt.RichText)
+            self.image_sensor.setWordWrap(True)
+            self.image_sensor.setText(image_description.get('sensor', ''))
+            self.map_description_layout.addWidget(self.image_sensor, 2, 0)
 
-        self.coverage_type = QLabel(self)
-        self.coverage_type.setTextFormat(Qt.RichText)
-        self.coverage_type.setWordWrap(True)
-        self.coverage_type.setText(coverage_map_json.get('coverageType', ''))
-        self.map_description_layout.addWidget(self.coverage_type, 3, 0)
+            self.coverage_type = QLabel(self)
+            self.coverage_type.setTextFormat(Qt.RichText)
+            self.coverage_type.setWordWrap(True)
+            self.coverage_type.setText(coverage_map_json.get('coverageType', ''))
+            self.map_description_layout.addWidget(self.coverage_type, 3, 0)
 
-        self.weather_type = QLabel(self)
-        self.weather_type.setTextFormat(Qt.RichText)
-        self.weather_type.setWordWrap(True)
-        image = coverage_map_json.get('image', '')
-        self.weather_type.setText(image.get('weather', ''))
-        self.map_description_layout.addWidget(self.weather_type, 4, 0)
+            self.weather_type = QLabel(self)
+            self.weather_type.setTextFormat(Qt.RichText)
+            self.weather_type.setWordWrap(True)
+            image = coverage_map_json.get('image', '')
+            self.weather_type.setText(image.get('weather', ''))
+            self.map_description_layout.addWidget(self.weather_type, 4, 0)
+        else:
+            # Add "SAMPLEMAP" to the coverage results item
+            self.image_date = QLabel(self)
+            self.image_date.setTextFormat(Qt.RichText)
+            self.image_date.setWordWrap(True)
+            self.image_date.setText(SAMPLE_MAP['name'])
+            self.map_description_layout.addWidget(self.image_date, 1, 0)
 
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
 

@@ -85,9 +85,13 @@ reflectance_map = {
     'key': 'reflectance-map',
     'endpoint': 'reflectance-map'
 }
-samplemap = {
+sample = {
     'key': 'sample',
     'endpoint': 'sample'
+}
+samplemap = {
+    'key': 'samplemap',
+    'endpoint': 'samplemap'
 }
 
 # Map types definition
@@ -219,6 +223,21 @@ INSEASONFIELD_AVERAGE_REVERSE_LAI = {
                    'map based on LAI map to better inform input placement.'
 }
 
+# Ignores these fields when populating the QCombobox
+IGNORE_LAYER_FIELDS = [
+    'fid',
+    'FID',
+    'oid',
+    'OID',
+    'OBJECTID'
+]
+# Field types allowed to be selectable
+ALLOWED_FIELD_TYPES = [
+    'Integer64',
+    'Integer',
+    'Real'
+]
+
 # Sentinel-2 Red-edge position index (S2REP)
 INSEASON_S2REP = {
     'key': 'INSEASON_S2REP',
@@ -310,10 +329,18 @@ SLOPE = {
 SOIL = {
     'key': 'soilmap',
     'name': 'SOILMAP',
-    'map_family': samplemap,
+    'map_family': sample,
     'description': 'Provides the in-season Soil type map. Can be generate only in'
                    'the USA, contains information about soil as collected by the'
                    'National Cooperative Soil Survey.'
+}
+
+# Sample map
+SAMPLE_MAP = {
+    'key': 'samplemap',
+    'name': 'SAMPLEMAP',
+    'map_family': sample,
+    'description': ''
 }
 
 ARCHIVE_MAP_PRODUCTS = [
@@ -337,7 +364,8 @@ ARCHIVE_MAP_PRODUCTS = [
     OM,
     YGM,
     YVM,
-    SAMZ
+    SAMZ,
+    SAMPLE_MAP
 ]
 
 BASIC_INSEASON_MAP_PRODUCTS = [

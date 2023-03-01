@@ -11,10 +11,12 @@ from geosys.bridge_api.default import (
     MAPS_TYPE,
     IMAGE_SENSOR,
     IMAGE_DATE,
+    IMAGE_WEATHER,
     ZIPPED_FORMAT,
     PNG,
     PNG_KMZ,
     PGW,
+    PGW2,
     LEGEND,
     SHP_EXT,
     BRIDGE_URLS,
@@ -25,7 +27,7 @@ from geosys.bridge_api.default import (
     YGM_THUMBNAIL_URL,
     YPM_THUMBNAIL_URL,
     SAMZ_THUMBNAIL_URL,
-    IMAGE_WEATHER
+    SAMPLEMAP_THUMBNAIL_URL
 )
 from geosys.bridge_api.definitions import (
     SAMZ,
@@ -41,7 +43,8 @@ from geosys.bridge_api.definitions import (
     INSEASONFIELD_AVERAGE_REVERSE_LAI,
     INSEASON_CVIN,
     YGM,
-    YVM
+    YVM,
+    SAMPLE_MAP
 )
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.utilities.downloader import fetch_data, extract_zip
@@ -68,7 +71,8 @@ class CoverageSearchThread(QThread):
 
     def __init__(
             self, geometries, crop_type, sowing_date, map_product, sensor_type,
-            weather_type, start_date, end_date, mutex, n_planned_value=1.0, parent=None):
+            weather_type, start_date, end_date, geometries_points, attributes_points, attribute_field,
+            mutex, n_planned_value=1.0, parent=None):
         """Thread object wrapper for coverage search.
 
         :param geometries: List of geometry filter in WKT format.
@@ -110,6 +114,9 @@ class CoverageSearchThread(QThread):
         self.weather_type = weather_type
         self.start_date = start_date
         self.end_date = end_date
+        self.geometries_points = geometries_points
+        self.attributes_points = attributes_points
+        self.attribute_field = attribute_field
         self.mutex = mutex
         self.n_planned_value = n_planned_value
         self.parent = parent
@@ -158,6 +165,22 @@ class CoverageSearchThread(QThread):
                 self.sensor_type and self.filters.update({
                     IMAGE_SENSOR: self.sensor_type
                 })
+            elif self.map_product == SAMPLE_MAP['key']:
+                if self.weather_type == 'ALL':
+                    self.filters.update({
+                        MAPS_TYPE: INSEASON_NDVI['key'],
+                        IMAGE_DATE: date_filter
+                    })
+                else:
+                    self.filters.update({
+                        MAPS_TYPE: INSEASON_NDVI['key'],
+                        IMAGE_DATE: date_filter,
+                        IMAGE_WEATHER: self.weather_type
+                    })
+                self.sensor_type and self.filters.update({
+                    IMAGE_SENSOR: self.sensor_type
+                })
+
             else:
                 # Coverage API call. Maps.Type should be included
                 if self.weather_type == 'ALL':
@@ -196,23 +219,28 @@ class CoverageSearchThread(QThread):
                 *credentials_parameters_from_settings(),
                 proxies=QGISSettings.get_qgis_proxy())
 
+            catalog_imagery_api = [
+                INSEASON_S2REP['key'],
+                REFLECTANCE['key'],
+                INSEASON_CVIN['key'],
+                INSEASONFIELD_AVERAGE_NDVI['key'],
+                INSEASONFIELD_AVERAGE_LAI['key'],
+                INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
+                INSEASONFIELD_AVERAGE_REVERSE_LAI['key'],
+                YGM['key'],
+                YVM['key'],
+                SAMZ['key'],
+                SAMPLE_MAP['key']
+            ]
+
             collected_results = []
             for geometry in self.geometries:
                 # Determines the approach required to do the coverage check
-                if self.map_product == INSEASON_S2REP['key'] or self.map_product == REFLECTANCE['key'] or self.map_product == INSEASON_CVIN['key']:
-                    # Makes use of the 'catalog-imagery' API calls
+                if self.map_product in catalog_imagery_api:
                     results = searcher_client.get_catalog_imagery(
                         geometry, self.crop_type, self.sowing_date,
-                        filters=self.filters)
-                elif self.map_product == INSEASONFIELD_AVERAGE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_LAI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'] or self.map_product == INSEASONFIELD_AVERAGE_REVERSE_LAI['key']:
-                    # Nitrogen maps should make use of the 'catalog-imagery' API calls
-                    results = searcher_client.get_catalog_imagery(
-                        geometry, self.crop_type, self.sowing_date,
-                        filters=self.filters)
-                elif self.map_product == YGM['key'] or self.map_product == YVM['key'] or self.map_product == SAMZ['key']:
-                    results = searcher_client.get_catalog_imagery(
-                        geometry, self.crop_type, self.sowing_date,
-                        filters=self.filters)
+                        filters=self.filters
+                    )
                 else:
                     # Makes use of the 'coverage' API calls
                     results = searcher_client.get_coverage(
@@ -223,36 +251,107 @@ class CoverageSearchThread(QThread):
                     # TODO handle model_validation_error
                     raise Exception(results['message'])
 
+                sample_map_ids = []
                 for result in results:
-                    thumbnail_url = None
-
+                    # Get thumbnail content
                     if self.need_stop:
                         break
-                    # get thumbnail content
-                    requested_map = None
-                    for map_result in result['maps']:
-                        if self.map_product == REFLECTANCE['key'] or self.map_product == SOIL['key']:
-                            # Reflectance map and soil map type will make use of the
-                            # INSEASON_NDVI to show coverage results
-                            # This is a work-around provided by GeoSys
-                            if map_result['type'] == INSEASON_NDVI['key']:
-                                requested_map = map_result
-                                break
-                        else:  # Other map types
-                            if map_result['type'] == self.map_product or (self.map_product == ELEVATION['key']):
-                                requested_map = map_result
-                                break
 
-                    if not requested_map:
+                    json_id = None
+                    requested_map = None
+                    if self.map_product == SAMPLE_MAP['key']:
+                        # Sample maps has a different workflow than other map products
+                        # The sample maps first needs to be created, and then the thumpnails
+                        # can be retrieved.
+
+                        # Required parameters for Sample maps
+                        image = result['image']
+                        image_id = image['id']
+                        image_date = image['date']
+                        season_field = result['seasonField']
+                        season_field_id = season_field['id']
+
+                        result_ids = {
+                            'image_id': image_id,
+                            'field_id': season_field_id
+                        }
+                        sample_map_ids.append(result_ids)
+
+                        data = []
+                        i = 0
+                        # Create the request data from the points and its values
+                        for geom in self.geometries_points:
+                            val = self.attributes_points[i]
+                            data_item = {
+                                "geometry": geom,
+                                "value": val
+                            }
+                            data.append(data_item)
+
+                            i += 1
+                        # The final request data
+                        request_data = {
+                            "seasonField": {
+                                "id": season_field_id
+                            },
+                            "properties": {
+                                "nutrientType": self.attribute_field
+                            },
+                            "data": data
+                        }
+
+                        bridge_api = BridgeAPI(
+                            *credentials_parameters_from_settings(),
+                            proxies=QGISSettings.get_qgis_proxy())
+
+                        params = {
+                            'directlinks': 'true',
+                            '$epsg-out': '4326'
+                        }
+
+                        # Perform the request
+                        # This step now "creates" the sample map
+                        field_map_json = bridge_api.get_field_map(
+                            SAMPLE_MAP['key'],
+                            season_field_id,
+                            image_date,
+                            image_id,
+                            sample_map_data=request_data,
+                            params=params
+                        )
+
+                        # This ID is required for thumpnails, etc.
+                        json_id = field_map_json['id']
+                        result['id'] = json_id
+                        # Links are required for map creation, etc.
+                        result['_links'] = field_map_json['_links']
+                    else:
+                        # All other map types
+                        for map_result in result['maps']:
+                            if self.map_product == REFLECTANCE['key'] or self.map_product == SOIL['key']:
+                                # Reflectance map and soil map type will make use of the
+                                # INSEASON_NDVI to show coverage results
+                                # This is a work-around provided by GeoSys
+                                if map_result['type'] == INSEASON_NDVI['key']:
+                                    requested_map = map_result
+                                    break
+                            else:  # Other map types
+                                if map_result['type'] == self.map_product or (self.map_product == ELEVATION['key']):
+                                    requested_map = map_result
+                                    break
+
+                    # Workflow differs for Sample maps
+                    if not requested_map and self.map_product != SAMPLE_MAP['key']:
                         continue
 
-                    nitrogen_maps = [
+                    nitrogen_products = [
                         INSEASONFIELD_AVERAGE_NDVI['key'],
                         INSEASONFIELD_AVERAGE_LAI['key'],
                         INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
                         INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
                     ]
 
+                    thumbnail_url = None
                     if self.map_product == REFLECTANCE['key']:
                         # Reflectance map type should make use of the INSEASON_NDVI thumbnail
                         # This is a work-around provided by GeoSys
@@ -276,7 +375,7 @@ class CoverageSearchThread(QThread):
                                 id=result['seasonField']['id'],
                                 image=result['image']['id']
                             ))
-                    elif self.map_product in nitrogen_maps:
+                    elif self.map_product in nitrogen_products:
                         # Nitrogen map type
                         if self.map_product == INSEASONFIELD_AVERAGE_NDVI['key']:
                             # INSEASON AVERAGE NDVI
@@ -340,6 +439,13 @@ class CoverageSearchThread(QThread):
                                 id=result['seasonField']['id'],
                                 date=result['image']['date']
                             ))
+                    elif self.map_product == SAMPLE_MAP['key']:
+                        # Sample maps
+                        thumbnail_url = (
+                            SAMPLEMAP_THUMBNAIL_URL.format(
+                                bridge_url=searcher_client.bridge_server,
+                                id=json_id
+                            ))
                     else:  # All other map types
                         thumbnail_url = (
                             requested_map['_links'].get('thumbnail') or (
@@ -360,6 +466,11 @@ class CoverageSearchThread(QThread):
                         'data': result,
                         'thumbnail': thumbnail_ba
                     })
+
+                    if self.map_product == SAMPLE_MAP['key']:
+                        # Only one sample needs to be shown
+                        # One set created from the points
+                        break
 
             # Using this trick, rendering each list item will not be delayed
             # by thumbnail request.
@@ -390,6 +501,7 @@ def create_map(
         yield_val,
         min_yield_val,
         max_yield_val,
+        sample_map_id=None,
         data=None,
         params=None):
     """Create map based on given parameters.
@@ -450,6 +562,9 @@ def create_map(
         }
     :type data: dict
     
+    :param sample_map_id: Sample map ID received from the API
+    :type sample_map_id: str
+    
     :param params: Map creation parameters.
     :type params: dict
     """""
@@ -476,7 +591,11 @@ def create_map(
         yield_val,
         min_yield_val,
         max_yield_val,
+        sample_map_id=sample_map_id,
         **data)
+
+    if map_type_key == SAMPLE_MAP['key']:
+        field_map_json = map_specification
 
     return download_field_map(
         field_map_json=field_map_json,
@@ -718,7 +837,17 @@ def download_field_map(
                              else BRIDGE_URLS[region]['prod'])
 
             reflectance_map_family = REFLECTANCE['map_family']
-            url = '{}/field-level-maps/v4/season-fields/{}/coverage/{}/{}/{}/image.tiff.zip'.format(bridge_server, seasonfield_id, image_id, reflectance_map_family['endpoint'], REFLECTANCE['key'])
+            url = '{}/field-level-maps/v4/season-fields/{}/coverage/{}/{}/{}/image.tiff.zip'.format(
+                bridge_server,
+                seasonfield_id,
+                image_id,
+                reflectance_map_family['endpoint'],
+                REFLECTANCE['key']
+            )
+        elif map_type_key == SAMPLE_MAP['key']:
+            # Sample maps _links are stored differently
+            # Only png format available
+            url = field_map_json['_links']['image:image/png']
         else:  # Other map types
             url = field_map_json['_links'][output_map_format['api_key']]
 
@@ -756,14 +885,21 @@ def download_field_map(
                 # If that is the case, legend will not be included to the items
                 # list as the API does not include a legend for color composition
                 if map_type_key == COLOR_COMPOSITION['key']:
+                    # Color composition has no legend
                     list_items = [PGW]
+                elif map_type_key == SAMPLE_MAP['key']:
+                    # Sample maps needs to make use of the 'worldfile' keyword
+                    list_items = [PGW2, LEGEND]
                 else:
+                    # Other maps makes use of the 'worldFile' keyword
                     list_items = [PGW, LEGEND]
+
                 for item in list_items:
                     url = field_map_json['_links'][item['api_key']]
 
                     char_question_mark = '?'  # Filtering char
-                    if char_question_mark in url:  # Filtering, which starts with '?' has already been added, so appending with '&'
+                    # Filtering, which starts with '?' has already been added, so appending with '&'
+                    if char_question_mark in url:
                         url = '{}&zoning=true&zoneCount={}'.format(
                             url, data.get('zoneCount')) \
                             if data.get('zoning') else url
