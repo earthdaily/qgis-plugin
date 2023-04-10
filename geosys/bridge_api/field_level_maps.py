@@ -292,16 +292,15 @@ class FieldLevelMapsAPIClient(ApiClient):
                 )
             elif map_type['key'] == SAMZ['key']:
                 full_url = self.full_url(
-                    'season-fields',
-                    seasonfield_id,
+                    'maps',
                     'management-zones-map',
                     'SAMZ'
                 )
 
-                response = self.get(
+                response = self.post(
                     full_url,
                     headers=headers,
-                    params=params,
+                    # params=params,
                     json=data
                 )
             elif map_type['key'] == SOIL['key']:

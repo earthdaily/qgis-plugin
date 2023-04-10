@@ -704,6 +704,7 @@ def create_difference_map(
 
 def create_samz_map(
         season_field_id,
+        list_of_image_ids,
         list_of_image_date,
         output_dir,
         filename,
@@ -714,6 +715,9 @@ def create_samz_map(
 
     :param season_field_id: ID of the season field.
     :param season_field_id: str
+
+    :param list_of_image_ids: List of selected image IDs
+    :param list_of_image_ids: list
 
     :param list_of_image_date: List of image date indicating the maps
         which are going to be compiled.
@@ -749,7 +753,11 @@ def create_samz_map(
         *credentials_parameters_from_settings(),
         proxies=QGISSettings.get_qgis_proxy())
     samz_map_json = bridge_api.get_samz_map(
-        season_field_id, list_of_image_date, **data)
+        season_field_id,
+        list_of_image_ids,
+        list_of_image_date,
+        **data
+    )
 
     return download_field_map(
         field_map_json=samz_map_json,
