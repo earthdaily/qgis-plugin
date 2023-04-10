@@ -304,8 +304,10 @@ class CoverageSearchThread(QThread):
                             *credentials_parameters_from_settings(),
                             proxies=QGISSettings.get_qgis_proxy())
 
+                        # Set directLinks to false for Sample maps to receive direct links
+                        # API requires it to be as such
                         params = {
-                            'directlinks': 'true',
+                            'directlinks': 'false',
                             '$epsg-out': '4326'
                         }
 
@@ -823,9 +825,7 @@ def download_field_map(
     # in requested format.
     map_extension = output_map_format['extension']
     try:
-
         seasonfield_id = field_map_json['seasonField']['id']
-
         if map_type_key == REFLECTANCE['key']:
             # This is only for reflectance map type
             # Also, reflectance can ONLY make use of tiff.zip format
@@ -844,10 +844,6 @@ def download_field_map(
                 reflectance_map_family['endpoint'],
                 REFLECTANCE['key']
             )
-        elif map_type_key == SAMPLE_MAP['key']:
-            # Sample maps _links are stored differently
-            # Only png format available
-            url = field_map_json['_links']['image:image/png']
         else:  # Other map types
             url = field_map_json['_links'][output_map_format['api_key']]
 
@@ -887,11 +883,8 @@ def download_field_map(
                 if map_type_key == COLOR_COMPOSITION['key']:
                     # Color composition has no legend
                     list_items = [PGW]
-                elif map_type_key == SAMPLE_MAP['key']:
-                    # Sample maps needs to make use of the 'worldfile' keyword
-                    list_items = [PGW2, LEGEND]
                 else:
-                    # Other maps makes use of the 'worldFile' keyword
+                    # Other maps
                     list_items = [PGW, LEGEND]
 
                 for item in list_items:
