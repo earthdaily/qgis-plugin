@@ -461,20 +461,15 @@ class BridgeAPI(ApiClient):
             Map data specification based on given criteria.
         :rtype: dict
         """
-        #list_of_image_date = list_of_image_date if list_of_image_date else []
         # Construct map creation parameters
         request_data = {
             "SeasonField": {
                 "Id": season_field_id
             },
             "Images": [
-                #{"Date": image_date} for image_date in list_of_image_date
                 {"id": image_id} for image_id in list_of_image_ids
             ]
         }
-
-        print(str(request_data))
-
         request_data.update(kwargs)
 
         # Get request parameters
