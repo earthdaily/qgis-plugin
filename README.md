@@ -104,7 +104,7 @@ This project has been testes with QGIS 3.22.3
 
 ### Installation
 
-1. Within the QGIS plugin manager as described [here](https://developer.geosys.com/docs/qgis-plugin-doc/ZG9jOjY3MzU0OQ-installation)
+1. Within the QGIS plugin manager as described [here](https://earthdaily.github.io/qgis-plugin/2.%20Installation.html)
    
 2. Manual install by download a zip of the project and use the manual plugin install from QGIS. Please see https://docs.qgis.org/3.4/en/docs/user_manual/plugins/plugins.html#the-install-from-zip-tab
    
@@ -113,7 +113,7 @@ This project has been testes with QGIS 3.22.3
 <!-- FEATURES -->
 ## Features
 
-The plugin once configured provides an easy way to get satelitte imagery derived map on polygon of interest. User can select one or multiple polygon object on the map canvas and request maps creation. For more detailed information, please see the [user documentation](https://geosys.github.io/qgis-plugin/Readme.html). 
+The plugin once configured provides an easy way to get satelitte imagery derived map on polygon of interest. User can select one or multiple polygon object on the map canvas and request maps creation. For more detailed information, please see the [user documentation](https://earthdaily.github.io/qgis-plugin/Readme.html). 
 
 Here is an example of QGIS with field level maps
 <p align="center">
