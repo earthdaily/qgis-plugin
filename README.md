@@ -9,7 +9,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/GEOSYS">
+  <a href="https://github.com/earthdaily">
     <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/Logo.svg" alt="Logo" width="400" height="200">
   </a>
 
@@ -21,11 +21,11 @@
     <a href="https://earthdailyagro.com/"><strong>Who we are</strong></a>
     <br />
     <br />
-    <a href="https://github.com/GEOSYS/qgis-plugin">Project description</a>
+    <a href="https://github.com/earthdaily/qgis-plugin">Project description</a>
     ·
-    <a href="https://github.com/GEOSYS/qgis-plugin/issues">Report Bug</a>
+    <a href="https://github.com/earthdaily/qgis-plugin/issues">Report Bug</a>
     ·
-    <a href="https://github.com/GEOSYS/qgis-plugin/issues">Request Feature</a>
+    <a href="https://github.com/earthdaily/qgis-plugin/issues">Request Feature</a>
   </p>
 </p>
 
@@ -161,7 +161,7 @@ For any additonal information, please <a href="mailto: sales@earthdailyagro.com"
 <!-- COPYRIGHT -->
 ## Copyrights
 
-© 2022 Geosys Holdings ULC, an Antarctica Capital portfolio company | All Rights Reserved.
+© 2024 Geosys Holdings ULC, an Antarctica Capital portfolio company | All Rights Reserved.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -191,7 +191,7 @@ For any additonal information, please <a href="mailto: sales@earthdailyagro.com"
 [GitStars-url]: https://img.shields.io/github/stars/GEOSYS?style=social
 [CITest-shield]: https://img.shields.io/github/workflow/status/GEOSYS/qgis-plugin/Continous%20Integration
 [CITest-url]: https://img.shields.io/github/workflow/status/GEOSYS/qgis-plugin/Continous%20Integration
-[CIDocumentation]: https://github.com/GEOSYS/QGIS-plugin/actions/workflows/pages/pages-build-deployment
-[Documentationstatus]: https://github.com/GEOSYS/QGIS-plugin/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages  
+[CIDocumentation]: https://github.com/earthdaily/QGIS-plugin/actions/workflows/pages/pages-build-deployment
+[Documentationstatus]: https://github.com/earthdaily/QGIS-plugin/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages  
 
 
