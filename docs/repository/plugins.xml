@@ -1,0 +1,21 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<plugins>
+<pyqgis_plugin name="GEOSYS Plugin" version="1.1.0">
+                    <description><![CDATA[Discover, request and use aggregate imagery products based on landsat-8, Sentinel 2 and other sensors from within QGIS, using the GEOSYS API.]]></description>
+                    <about><![CDATA[GEOSYS® Plugin for QGIS is the easiest way to experience field level capabilities of the GEOSYS® Platform. The plugin will offer an easy way to interact with GEOSYS® Geospatial Analytics without any coding effort and will give you access to:]]></about>
+                    <version>1.1.0</version>
+                    <qgis_minimum_version>3.0</qgis_minimum_version>
+                    <homepage><![CDATA[https://github.com/GEOSYS/qgis-plugin]]></homepage>
+                    <file_name>geosys-plugin.1.0.0.zip</file_name>
+                    <icon>icon.png</icon>
+                    <author_name><![CDATA[test]]></author_name>
+                    <download_url>https://raw.githubusercontent.com/Samweli/qgis-plugin/refs/heads/release/docs/repository/v1.1.3dev/geosys-plugin.1.0.0.zip</download_url>
+                    <update_date>2024-11-08 12:41:55</update_date>
+                    <experimental>False</experimental>
+                    <deprecated>False</deprecated>
+                    <tracker><![CDATA[https://github.com/GEOSYS/qgis-plugin/issues]]></tracker>
+                    <repository><![CDATA[https://github.com/GEOSYS/qgis-plugin]]></repository>
+                    <tags><![CDATA[['precision-ag,accuracy,agriculture,agronomy,analysis,api,area,basemap,biomass,bounding box,cartography,catalog,change detection,cvi,earth observation,elevation,evi,field,fields,field vegetation indexes,field agronomy maps,nitogen,gis,gndvi,google earth,geosys,image,imagery,images,import,importer,json,kml,kmz,lai,maps,modis,ndvi,plot,sentinel,shape,shapefile,spatial,spatial data,satellite,quality,spectral,time series,timeseries,vector,vector layer,vegetation,wkt,sustainability,ecology,landsat,field,remote sensing,webservice,satellite,smart farming,satellite data,webservices,digital farming,python,raster']]]></tags>
+                    <server>False</server>
+                </pyqgis_plugin>
+</plugins> 
