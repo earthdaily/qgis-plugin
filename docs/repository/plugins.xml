@@ -9,8 +9,8 @@
                     <file_name>geosys-plugin.1.0.0.zip</file_name>
                     <icon>icon.png</icon>
                     <author_name><![CDATA[test]]></author_name>
-                    <download_url>https://raw.githubusercontent.com/Samweli/qgis-plugin/refs/heads/release/docs/repository/v1.1.3dev/geosys-plugin.1.0.0.zip</download_url>
-                    <update_date>2024-11-08 12:41:55</update_date>
+                    <download_url>https://raw.githubusercontent.com/Samweli/qgis-plugin/refs/heads/release/docs/repository/v1.1.4dev/geosys-plugin.1.0.0.zip</download_url>
+                    <update_date>2024-11-08 22:38:06</update_date>
                     <experimental>False</experimental>
                     <deprecated>False</deprecated>
                     <tracker><![CDATA[https://github.com/GEOSYS/qgis-plugin/issues]]></tracker>
