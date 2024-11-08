@@ -57,3 +57,29 @@ jobs:
         with:
           name: ${{ env.ZIP_NAME }}
           path: ${{ env.ZIP_PATH }}
+
+      - name: Find Comment
+        uses: actions/comment@v3
+        id: find-comment
+        with:
+          repository: ${{ github.repository }}
+          issue-number: ${{ github.event.number }}
+          author: 'github-actions[bot]'
+          find-mode: 'exact'
+
+      - name: Create or Update Comment
+        uses: actions/comment@v3
+        with:
+          repository: ${{ github.repository }}
+          issue-number: ${{ github.event.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          find-id: ${{ steps.find-comment.outputs.comment-id }}
+          mode: 'replace'
+          body: |
+            ![badge]
+            
+            Plugin zip package for the changes in this PR has been successfully built!
+            
+            Download the plugin zip file here: ${{ steps.artifact-upload-step.outputs.artifact-url }}
+            
+            [badge]: https://img.shields.io/badge/package_build-success-green
