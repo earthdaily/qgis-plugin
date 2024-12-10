@@ -1,16 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <plugins>
-<pyqgis_plugin name="GEOSYS Plugin" version="1.1.5dev">
+<pyqgis_plugin name="GEOSYS Plugin" version="1.1.6dev">
                     <description><![CDATA[Discover, request and use aggregate imagery products based on landsat-8, Sentinel 2 and other sensors from within QGIS, using the GEOSYS API.]]></description>
                     <about><![CDATA[GEOSYS® Plugin for QGIS is the easiest way to experience field level capabilities of the GEOSYS® Platform. The plugin will offer an easy way to interact with GEOSYS® Geospatial Analytics without any coding effort and will give you access to:]]></about>
-                    <version>1.1.5dev</version>
+                    <version>1.1.6dev</version>
                     <qgis_minimum_version>3.0</qgis_minimum_version>
                     <homepage><![CDATA[https://github.com/GEOSYS/qgis-plugin]]></homepage>
-                    <file_name>geosys-plugin.1.1.5dev.zip</file_name>
+                    <file_name>geosys-plugin.1.1.6dev.zip</file_name>
                     <icon>icon.png</icon>
                     <author_name><![CDATA[test]]></author_name>
-                    <download_url>https://raw.githubusercontent.com/earthdaily/qgis-plugin/refs/heads/release/docs/repository/v1.1.5dev/geosys-plugin.1.1.5dev.zip</download_url>
-                    <update_date>2024-11-27 06:21:07</update_date>
+                    <download_url>https://raw.githubusercontent.com/earthdaily/qgis-plugin/refs/heads/release/docs/repository/v1.1.6dev/geosys-plugin.1.1.6dev.zip</download_url>
+                    <update_date>2024-12-10 09:35:38</update_date>
                     <experimental>False</experimental>
                     <deprecated>False</deprecated>
                     <tracker><![CDATA[https://github.com/GEOSYS/qgis-plugin/issues]]></tracker>
