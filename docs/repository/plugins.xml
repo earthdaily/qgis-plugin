@@ -1,16 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <plugins>
-<pyqgis_plugin name="EarthDaily Plugin" version="1.1.7dev">
+<pyqgis_plugin name="EarthDaily Plugin" version="1.1.8dev">
                     <description><![CDATA[Discover, request and use imagery products based on virtual constellation within QGIS, using the EarthDaily® Platform capabilities.]]></description>
                     <about><![CDATA[The EarthDaily® plugin for QGIS is the easiest way to leverage the powerful capabilities of the EarthDaily® Platform directly within your QGIS workflows. Designed for Earth observation professionals, it enables seamless access to field-level analytics, eliminating the need for coding while providing actionable geospatial insights.]]></about>
-                    <version>1.1.7dev</version>
+                    <version>1.1.8dev</version>
                     <qgis_minimum_version>3.0</qgis_minimum_version>
                     <homepage><![CDATA[https://github.com/GEOSYS/qgis-plugin]]></homepage>
-                    <file_name>geosys-plugin.1.1.7dev.zip</file_name>
+                    <file_name>geosys-plugin.1.1.8dev.zip</file_name>
                     <icon>icon.png</icon>
                     <author_name><![CDATA[test]]></author_name>
-                    <download_url>https://raw.githubusercontent.com/earthdaily/qgis-plugin/refs/heads/release/docs/repository/v1.1.7dev/geosys-plugin.1.1.7dev.zip</download_url>
-                    <update_date>2024-12-11 12:13:07</update_date>
+                    <download_url>https://raw.githubusercontent.com/earthdaily/qgis-plugin/refs/heads/release/docs/repository/v1.1.8dev/geosys-plugin.1.1.8dev.zip</download_url>
+                    <update_date>2024-12-13 09:25:36</update_date>
                     <experimental>False</experimental>
                     <deprecated>False</deprecated>
                     <tracker><![CDATA[https://github.com/GEOSYS/qgis-plugin/issues]]></tracker>
