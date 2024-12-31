@@ -773,6 +773,14 @@ def create_map(
                 'Id': image_id
             }
         }
+
+    elif map_type_key == SOIL['key']:
+        request_data = {
+            'SeasonField': {
+                'Id': season_field_id,
+                'geometry': season_field_geom,
+            }
+        }
     else:
         request_data = {
             'SeasonField': {
@@ -792,6 +800,9 @@ def create_map(
     bridge_api = BridgeAPI(
         *credentials_parameters_from_settings(),
         proxies=QGISSettings.get_qgis_proxy())
+
+    if map_type_key == SOIL['key']:
+        data = request_data
 
     if map_type_key == SAMPLE_MAP['key']:
 
@@ -830,6 +841,8 @@ def create_map(
             sample_map_id=None,
             zone_count=zone_count,
             **data)
+
+    log(f"used data for SOIL {data} \n map json {field_map_json}")
 
     result, message = download_field_map(
         field_map_json=field_map_json,
