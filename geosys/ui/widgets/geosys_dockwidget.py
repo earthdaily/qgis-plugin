@@ -1006,6 +1006,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 for key, value in position_values.items():
                     if value:
                         position = f"{key}"
+                        break
                 data.update({
                     POSITION: position
                 })
