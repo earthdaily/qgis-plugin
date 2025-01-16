@@ -1115,9 +1115,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 filename = '{}_{}_zones_{}_{}'.format(
                     self.map_product,  # map_specification['maps'][0]['type'],
                     str(zone_cnt),
-                    map_specification['seasonField']['id'],
-                    map_specification['image']['date']
+                    map_specification['seasonField']['id'] or '',
+                    map_specification['image']['date'] or ''
                 )
+
                 filename = clean_filename(filename)
                 filename = check_if_file_exists(
                     self.output_directory,

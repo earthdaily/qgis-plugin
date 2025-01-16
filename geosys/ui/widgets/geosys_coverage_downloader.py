@@ -1266,6 +1266,7 @@ def download_field_map(
         else:
             destination_filename = (
                 destination_base_path + output_map_format['extension'])
+
             fetch_data(url, destination_filename, headers=headers)
             if output_map_format == PNG or output_map_format == PNG_KMZ:
                 # Download associated legend and world-file for geo-referencing
@@ -1360,8 +1361,9 @@ def download_field_map(
                 hotspot_filename = (
                     f"{'HotspotsPerPart' if params['Type'] == 'Polygon' else 'HotspotsPerPolygon'}_"
                     f"{params.get('Position').lower() if params.get('Position') else ''}_"
-                    f"{str(request_body.get('image_id')[0])[:4]}_"
-                    f"{str(uuid.uuid4())[:4]}")
+                    f"{str(request_body.get('image_id')[0])[:4] or ''}_"
+                    f"{str(uuid.uuid4())[:4] or ''}")
+
                 hotspot_filename = check_if_file_exists(
                     output_dir, hotspot_filename, SHP_EXT)
 
@@ -1376,8 +1378,9 @@ def download_field_map(
                 segment_filename = (
                     f"{'SegmentsPerPart' if params['Type'] == 'Polygon' else 'SegmentsPerPolygon'}_"
                     f"{params.get('Position').lower() if params.get('Position') else ''}_"
-                    f"{str(request_body.get('image_id')[0])[:4]}_"
-                    f"{str(uuid.uuid4())[:4]}")
+                    f"{str(request_body.get('image_id')[0])[:4] or ''}_"
+                    f"{str(uuid.uuid4())[:4] or ''}")
+
                 segment_filename = check_if_file_exists(
                     output_dir, segment_filename, SHP_EXT)
 
