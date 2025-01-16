@@ -153,11 +153,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.hotspot_polygon = None
         self.hotspot_polygon_part = None
         self.hotspot_position = None
-        self.hot_spot_point_on_surface = None
-        self.hot_spot_min = None
-        self.hot_spot_ave = None
-        self.hot_spot_med = None
-        self.hot_spot_max = None
+        self.hot_spot_point_on_surface = True
+        self.hot_spot_min = False
+        self.hot_spot_ave = False
+        self.hot_spot_med = False
+        self.hot_spot_max = False
         self.zoning_segmentation = None
         self.output_map_format = None
         self.gain = DEFAULT_GAIN
@@ -817,19 +817,12 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         if self.hotspot_fetch:
             self.hotspot_polygon = self.hotspot_polygon_form.isChecked()
             self.hotspot_polygon_part = self.hotspot_polygon_part_form.isChecked()
-            self.hotspot_position = self.hotspots_position_group.isChecked()
-            if self.hotspot_position:
-                self.hot_spot_point_on_surface = self.rb_point_on_surface.isChecked()
-                self.hot_spot_min = self.rb_min.isChecked()
-                self.hot_spot_ave = self.rb_ave.isChecked()
-                self.hot_spot_med = self.rb_med.isChecked()
-                self.hot_spot_max = self.rb_max.isChecked()
-            else:
-                self.hot_spot_point_on_surface = False
-                self.hot_spot_min = False
-                self.hot_spot_ave = False
-                self.hot_spot_med = False
-                self.hot_spot_max = False
+
+            self.hot_spot_point_on_surface = self.rb_point_on_surface.isChecked()
+            self.hot_spot_min = self.rb_min.isChecked()
+            self.hot_spot_ave = self.rb_ave.isChecked()
+            self.hot_spot_med = self.rb_med.isChecked()
+            self.hot_spot_max = self.rb_max.isChecked()
 
         # SaMZ map creation accept zero selected results, which means it will
         # trigger automatic SaMZ map creation.
@@ -1001,23 +994,21 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         HOTSPOT: self.hotspot_polygon_part,
                         ZONING_SEGMENTATION: 'Zone'
                     })
-                if self.hotspot_position:
-                    position_values = {
-                        'PointOnSurface': self.hot_spot_point_on_surface,
-                        'Minimum': self.hot_spot_min,
-                        'Maximum': self.hot_spot_max,
-                        'Average': self.hot_spot_ave,
-                        'Median': self.hot_spot_med,
-                    }
-                    position = ""
-                    for key, value in position_values.items():
-                        if value:
-                            position = f"{position}{key} "
-                    position = position.rstrip()
-                    position = position.replace(' ', '|')
-                    data.update({
-                        POSITION: position
-                    })
+
+                position_values = {
+                    'PointOnSurface': self.hot_spot_point_on_surface,
+                    'Minimum': self.hot_spot_min,
+                    'Maximum': self.hot_spot_max,
+                    'Average': self.hot_spot_ave,
+                    'Median': self.hot_spot_med,
+                }
+                position = 'Average'
+                for key, value in position_values.items():
+                    if value:
+                        position = f"{key}"
+                data.update({
+                    POSITION: position
+                })
 
         zone_cnt = self.samz_zone_form.value()
         if map_product_definition == SAMZ:
