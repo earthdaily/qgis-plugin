@@ -1012,53 +1012,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 })
 
         zone_cnt = self.samz_zone_form.value()
-        if map_product_definition == SAMZ:
-            image_dates = []
-            image_ids = []
-            # Check if images are provided; raise an error if none are selected
-            if not map_specifications:
-                QMessageBox.critical(
-                    self,
-                    'Image Selection Required',
-                    'At least one image must be selected to generate a SAMZ map.')
-                return
-            # Proceed with custom SAMZ using selected images
-            season_field_id = map_specifications[0]['seasonField']['id']
-            geometry = self.wkt_geometries[0]
-            if len(map_specifications) == 1:
-                # Log and use the single image provided
-                single_specification = map_specifications[0]
-                image_dates.append(single_specification['image']['date'])
-                image_ids.append(single_specification['image']['id'])
-            else:
-                # Iterate through multiple specifications
-                for map_specification in map_specifications:
-                    image_dates.append(map_specification['image']['date'])
-                    image_ids.append(map_specification['image']['id'])
-
-            filename = '{}_{}_zones'.format(
-                SAMZ['key'], str(zone_cnt))
-            filename = clean_filename(filename)
-            filename = check_if_file_exists(
-                self.output_directory,
-                filename,
-                self.output_map_format['extension']
-            )
-
-            is_success, message = create_samz_map(
-                geometry, image_ids, image_dates, zone_cnt, self.output_directory, filename,
-                output_map_format=self.output_map_format, params=data)
-
-            if not is_success:
-                QMessageBox.critical(
-                    self,
-                    'Map Creation Status',
-                    'Error creating map. {}'.format(message))
-                return
-
-            # Add map to qgis canvas
-            self.load_layer(os.path.join(self.output_directory, filename))
-        elif self.fetch_rx_group and self.fetch_rx_group.isChecked():  # RX Map Logic
+        if self.fetch_rx_group and self.fetch_rx_group.isChecked():  # RX Map Logic
             rx_zone_count = self.fetch_rx_zones.value()
             
             rx_json_map = self.rx_map_json
@@ -1111,14 +1065,32 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.load_layer(os.path.join(self.output_directory, filename))
             return
         else:
-            for map_specification in map_specifications:
-                filename = '{}_{}_zones_{}_{}'.format(
-                    self.map_product,  # map_specification['maps'][0]['type'],
-                    str(zone_cnt),
-                    map_specification['seasonField']['id'] or '',
-                    map_specification['image']['date'] or ''
-                )
+            if map_product_definition == SAMZ:
+                image_dates = []
+                image_ids = []
+                # Check if images are provided; raise an error if none are selected
+                if not map_specifications:
+                    QMessageBox.critical(
+                        self,
+                        'Image Selection Required',
+                        'At least one image must be selected to generate a SAMZ map.')
+                    return
+                # Proceed with custom SAMZ using selected images
+                season_field_id = map_specifications[0]['seasonField']['id']
+                geometry = self.wkt_geometries[0]
+                if len(map_specifications) == 1:
+                    # Log and use the single image provided
+                    single_specification = map_specifications[0]
+                    image_dates.append(single_specification['image']['date'])
+                    image_ids.append(single_specification['image']['id'])
+                else:
+                    # Iterate through multiple specifications
+                    for map_specification in map_specifications:
+                        image_dates.append(map_specification['image']['date'])
+                        image_ids.append(map_specification['image']['id'])
 
+                filename = '{}_{}_zones'.format(
+                    SAMZ['key'], str(zone_cnt))
                 filename = clean_filename(filename)
                 filename = check_if_file_exists(
                     self.output_directory,
@@ -1126,45 +1098,9 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                     self.output_map_format['extension']
                 )
 
-                sample_map_data = None
-                if self.map_product == SAMPLE_MAP['key']:
-                    sample_data = []
-                    i = 0
-                    # Create the request data from the points and its
-                    # values
-                    for geom in self.wkt_point_geometries:
-                        val = self.attributes[i]
-                        data_item = {
-                            "geometry": geom,
-                            "value": val
-                        }
-                        sample_data.append(data_item)
-
-                        i += 1
-                    # The final request data
-                    sample_map_data = {
-                        "seasonField": {
-                            "Id": None,
-                            "geometry": geometry,
-                        },
-                        "properties": {
-                            "nutrientType": self.sample_map_field
-                        },
-                        "data": sample_data
-                    }
-
-                    data = sample_map_data
-
-                is_success, message = create_map(
-                    map_specification, self.map_product, geometry, self.output_directory, filename,
-                    data=data, output_map_format=self.output_map_format,
-                    n_planned_value=self.n_planned_value,
-                    yield_val=self.yield_average_form.value(),
-                    min_yield_val=self.yield_minimum_form.value(),
-                    max_yield_val=self.yield_maximum_form.value(),
-                    sample_map_id=None, params=data, crop_type=self.crop_type,
-                    gain=self.gain, offset=self.offset, zone_count=self.samz_zone,
-                )
+                is_success, message = create_samz_map(
+                    geometry, image_ids, image_dates, zone_cnt, self.output_directory, filename,
+                    output_map_format=self.output_map_format, params=data)
 
                 if not is_success:
                     QMessageBox.critical(
@@ -1175,6 +1111,70 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
                 # Add map to qgis canvas
                 self.load_layer(os.path.join(self.output_directory, filename))
+            else:
+                for map_specification in map_specifications:
+                    filename = '{}_{}_zones_{}_{}'.format(
+                        self.map_product,  # map_specification['maps'][0]['type'],
+                        str(zone_cnt),
+                        map_specification['seasonField']['id'] or '',
+                        map_specification['image']['date'] or ''
+                    )
+                    filename = clean_filename(filename)
+                    filename = check_if_file_exists(
+                        self.output_directory,
+                        filename,
+                        self.output_map_format['extension']
+                    )
+
+                    sample_map_data = None
+                    if self.map_product == SAMPLE_MAP['key']:
+                        sample_data = []
+                        i = 0
+                        # Create the request data from the points and its
+                        # values
+                        for geom in self.wkt_point_geometries:
+                            val = self.attributes[i]
+                            data_item = {
+                                "geometry": geom,
+                                "value": val
+                            }
+                            sample_data.append(data_item)
+
+                            i += 1
+                        # The final request data
+                        sample_map_data = {
+                            "seasonField": {
+                                "Id": None,
+                                "geometry": geometry,
+                            },
+                            "properties": {
+                                "nutrientType": self.sample_map_field
+                            },
+                            "data": sample_data
+                        }
+
+                        data = sample_map_data
+
+                    is_success, message = create_map(
+                        map_specification, self.map_product, geometry, self.output_directory, filename,
+                        data=data, output_map_format=self.output_map_format,
+                        n_planned_value=self.n_planned_value,
+                        yield_val=self.yield_average_form.value(),
+                        min_yield_val=self.yield_minimum_form.value(),
+                        max_yield_val=self.yield_maximum_form.value(),
+                        sample_map_id=None, params=data, crop_type=self.crop_type,
+                        gain=self.gain, offset=self.offset, zone_count=self.samz_zone,
+                    )
+
+                    if not is_success:
+                        QMessageBox.critical(
+                            self,
+                            'Map Creation Status',
+                            'Error creating map. {}'.format(message))
+                        return
+
+                    # Add map to qgis canvas
+                    self.load_layer(os.path.join(self.output_directory, filename))
 
     def start_map_creation(self):
         """Map creation starts here."""
