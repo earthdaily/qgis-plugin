@@ -26,7 +26,7 @@ about=The EarthDaily® plugin for QGIS is the easiest way to leverage the powerf
     - EarthDaily python package: https://github.com/earthdaily/earthdaily-python-client
 
 # Version and release information
-version=1.2.3dev
+version=1.2.4dev
 # alpha, beta, rc or final
 status=final
 
