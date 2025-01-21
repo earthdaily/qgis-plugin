@@ -598,26 +598,33 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """Updates the area values in the corresponding line_edit fields based on the RX zone data."""
 
         # Fetch the rx_map_json and extract the areas
-        self.rx_map_json = self.fetch_rx_json(
-            self.selected_coverage_results,
-            self.map_product
-        )
-        areas = self.get_areas_from_rx_map(
-            self.rx_map_json)  # Call the method to get areas
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.rx_map_json = self.fetch_rx_json(
+                self.selected_coverage_results,
+                self.map_product
+            )
+            areas = self.get_areas_from_rx_map(
+                self.rx_map_json)  # Call the method to get areas
 
-        for zone_index in range(1, 21):
-            # Dynamically construct object names for line edits
-            line_edit_name = f"zone_{zone_index}_val"
+            for zone_index in range(1, 21):
+                # Dynamically construct object names for line edits
+                line_edit_name = f"zone_{zone_index}_val"
 
-            # Retrieve the line_edit element using getattr
-            line_edit = getattr(self, line_edit_name, None)
+                # Retrieve the line_edit element using getattr
+                line_edit = getattr(self, line_edit_name, None)
 
-            # Only update if the line_edit exists and the area data is
-            # available for the zone
-            if line_edit and zone_index <= len(areas):
-                area_value = areas[zone_index - 1]  # Adjust for 0-based index
-                line_edit.setText(f"{area_value:.3f} Ha")
-                line_edit.setReadOnly(True)
+                # Only update if the line_edit exists and the area data is
+                # available for the zone
+                if line_edit and zone_index <= len(areas):
+                    # Adjust for 0-based index
+                    area_value = areas[zone_index - 1]
+                    line_edit.setText(f"{area_value:.3f} Ha")
+                    line_edit.setReadOnly(True)
+        except Exception as e:
+            log(f"Error updating area values: {e}")
+        finally:
+            QApplication.restoreOverrideCursor()
 
     def set_gain_offset_state(self):
         """Disables the gain and offset options in the parameters menu for the COLORCOMPOSITION, ELEVATION,
