@@ -638,6 +638,181 @@ class CoverageSearchThread(QThread):
         self.need_stop = True
 
 
+def fetch_map(
+        map_specification,
+        map_product,
+        geometry,
+        n_planned_value,
+        yield_val,
+        min_yield_val,
+        max_yield_val,
+        data=None,
+        params=None,
+        crop_type=None,
+        gain=None,
+        offset=None,
+        zone_count=None
+):
+    """
+    Fetch and generate a map based on the given parameters.
+
+    :param map_specification: Coverage image details.
+    :type map_specification: dict
+
+    :param map_product: Type of map product to generate (e.g, NDVI).
+    :type map_product: str
+
+    :param geometry: Spatial geometry defining
+    the area of interest in Well-Known text.
+    :type geometry: str
+
+    :param n_planned_value: Planned value used for nitrogen map type.
+    :type n_planned_value: int
+
+    :param yield_val: Yield value for crop analysis.
+    :type yield_val: int
+
+    :param min_yield_val: Minimum yield value for analysis.
+    :type min_yield_val: int
+
+    :param max_yield_val: Maximum yield value for analysis.
+    :type max_yield_val: int
+
+    :param data: Optional additional data for map generation.
+    :type data: dict, optional
+
+    :param params: Additional parameters for map customization.
+    :type params: dict, optional
+
+    :param crop_type: Type of crop to analyze (e.g., WHEAT, CORN).
+    :type crop_type: str, optional
+
+    :param gain: Gain factor for map computation.
+    :type gain: float, optional
+
+    :param offset: Offset value for map computation.
+    :type offset: float, optional
+
+    :param zone_count: Number of zones.
+    :type zone_count: int, optional
+
+    :return: Response with map details.
+    :rtype: dict
+    """
+
+    # Construct map creation parameters
+    map_specification.update(map_specification['maps'][0])
+    map_specification.update(map_specification['seasonField'])
+    map_type_key = map_product
+    season_field_id = map_specification['seasonField']['id']
+    season_field_geom = geometry
+    image_date = map_specification['image']['date']
+    image_id = map_specification['image']['id']
+
+    nitrogen_maps = [
+        INSEASONFIELD_AVERAGE_NDVI['key'],
+        INSEASONFIELD_AVERAGE_LAI['key'],
+        INSEASONFIELD_AVERAGE_REVERSE_NDVI['key'],
+        INSEASONFIELD_AVERAGE_REVERSE_LAI['key']
+    ]
+    if map_type_key == OM['key']:
+        request_data = {
+            'Image': {
+                "Id": image_id
+            },
+            "AverageOrganicMatter": 100,
+            'SeasonField': {
+                'Id': season_field_id,
+                'geometry': season_field_geom
+            }
+        }
+    elif map_type_key in nitrogen_maps:
+        request_data = {
+            'Image': {
+                "Id": image_id
+            },
+            'SeasonField': {
+                'Id': season_field_id,
+                'geometry': season_field_geom,
+                'crop': crop_type
+            },
+            "nPlanned": n_planned_value,
+            "gain": gain or 1,
+            "offset": offset or 0
+        }
+
+    elif map_type_key == LAI['key']:
+        request_data = {
+            'SeasonField': {
+                'Id': season_field_id,
+                'geometry': season_field_geom,
+                'crop': crop_type
+            },
+            'Image': {
+                'Id': image_id
+            }
+        }
+    else:
+        request_data = {
+            'SeasonField': {
+                'Id': season_field_id,
+                'geometry': season_field_geom
+            },
+            'Image': {
+                'Id': image_id
+            },
+            "zoneCount": zone_count
+        }
+    params = params if params else {}
+    if data:
+        data.update(params or {})
+        data.update(request_data)
+
+    bridge_api = BridgeAPI(
+        *credentials_parameters_from_settings(),
+        proxies=QGISSettings.get_qgis_proxy())
+
+    if map_type_key == SAMPLE_MAP['key']:
+
+        map_params = {
+            'directlinks': 'true',
+            '$epsg-out': '4326'
+        }
+        map_data = {}
+        map_data['seasonField'] = data.get('seasonField')
+        map_data['properties'] = data.get('properties')
+        map_data['data'] = data.get('data')
+
+        # Perform the request
+        # This step now "creates" the sample map
+        field_map_json = bridge_api.get_field_map(
+            SAMPLE_MAP['key'],
+            None,
+            image_date,
+            image_id,
+            sample_map_data=map_data,
+            params=map_params
+        )
+
+        data['request_data'] = map_data
+    else:
+        field_map_json = bridge_api.get_field_map(
+            map_type_key,
+            season_field_id,
+            season_field_geom,
+            image_date,
+            image_id,
+            n_planned_value,
+            yield_val,
+            min_yield_val,
+            max_yield_val,
+            sample_map_id=None,
+            zone_count=zone_count,
+            **data)
+
+    return field_map_json
+
+
 def create_map(
         map_specification,
         map_product,
@@ -738,15 +913,15 @@ def create_map(
     ]
     if map_type_key == OM['key']:
         request_data = {
-                'Image': {
-                    "Id": image_id
-                },
-                "AverageOrganicMatter": 100,
-                'SeasonField': {
-                    'Id': season_field_id,
-                    'geometry': season_field_geom
-                }
+            'Image': {
+                "Id": image_id
+            },
+            "AverageOrganicMatter": 100,
+            'SeasonField': {
+                'Id': season_field_id,
+                'geometry': season_field_geom
             }
+        }
     elif map_type_key in nitrogen_maps:
         request_data = {
             'Image': {
@@ -936,6 +1111,51 @@ def create_difference_map(
         data=data)
 
 
+def fetch_samz_map(
+        geometry,
+        list_of_image_ids,
+        list_of_image_date,
+        zone_count
+):
+    """Fetch and generate SAMZ map based on the given parameters.
+
+    :param geometry: Spatial geometry defining the area of interest in WKT (Well-Known Text) format.
+        Example:
+        "POLYGON ((30.5 -10.5, 30.6 -10.6, 30.7 -10.7, 30.5 -10.5))"
+    :type geometry: str
+
+    :param list_of_image_ids: List of image IDs to be used in map generation.
+        Example:
+        ["image_id_1", "image_id_2", "image_id_3"]
+    :type list_of_image_ids: list[str]
+
+    :param list_of_image_date: List of corresponding dates for the images in ISO 8601 format.
+        Example:
+        ["2022-05-01", "2022-05-10", "2022-05-20"]
+    :type list_of_image_date: list[str]
+
+    :param zone_count: Number of zones or regions to segment the map into.
+        Example: 5
+    :type zone_count: int
+
+    :return: SAMZ map dict based on the provided parameters.
+    :rtype: dict
+    """
+
+    bridge_api = BridgeAPI(
+        *credentials_parameters_from_settings(),
+        proxies=QGISSettings.get_qgis_proxy())
+
+    samz_map_json = bridge_api.get_samz_map(
+        geometry,
+        list_of_image_ids,
+        list_of_image_date,
+        zone_count=zone_count,
+    )
+
+    return samz_map_json
+
+
 def create_samz_map(
         geometry,
         list_of_image_ids,
@@ -1030,7 +1250,7 @@ def create_rx_map(
         patch_data=None,
         params=None):
     """Create map based on given parameters.
-    
+
     :param rx_map_json: JSON response from Bridge API field map request.
     :type rx_map_json: dict
 
@@ -1079,7 +1299,7 @@ def create_rx_map(
         source_map_id=source_map_id,
         patch_data=patch_data
     )
-    
+
     rx_map_json_2 = bridge_api.get_rx_generated(
         url=bridge_api.bridge_server,
         source_map_id=source_map_id,
@@ -1095,16 +1315,16 @@ def create_rx_map(
 
 
 def download_field_map(
-        field_map_json,
-        map_type_key,
-        destination_base_path,
-        output_map_format,
-        headers,
-        map_specification=None,
-        data=None,
-        image_id='',
-        zone_count=None
-    ):
+    field_map_json,
+    map_type_key,
+    destination_base_path,
+    output_map_format,
+    headers,
+    map_specification=None,
+    data=None,
+    image_id='',
+    zone_count=None
+):
     """Download field map from requested field map json.
 
     :param field_map_json: JSON response from Bridge API field map request.
@@ -1397,8 +1617,8 @@ def download_field_map(
     return True, message
 
 
-def fetch_ndvi_map(geometry, image_id, data):
-    """Fetch NDVI map for a given image and geometry.
+def fetch_field_map(geometry, image_id, data, map_type):
+    """Fetch map for a given image and geometry.
 
     :param bridge_api: Instance of the BridgeAPI.
     :type bridge_api: BridgeAPI
@@ -1412,22 +1632,22 @@ def fetch_ndvi_map(geometry, image_id, data):
     :param image_id: ID of the image to fetch.
     :type image_id: str
 
-    :return: JSON response containing NDVI map details.
+    :return: JSON response containing map details.
     :rtype: dict
     """
-    
+
     bridge_api = BridgeAPI(
         *credentials_parameters_from_settings(),
         proxies=QGISSettings.get_qgis_proxy())
-    ndvi_map_json = bridge_api.get_field_map(
-        map_type_key="NDVI",
+    map_json = bridge_api.get_field_map(
+        map_type_key=map_type,
         season_field_id=None,
         season_field_geom=geometry,
         image_date=None,  # Optional if already filtered
         image_id=image_id,
         data=data
     )
-    return ndvi_map_json
+    return map_json
 
 
 def credentials_parameters_from_settings():
