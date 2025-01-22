@@ -72,20 +72,40 @@ from geosys.bridge_api.default import (
     DEFAULT_OFFSET,
     DEFAULT_COVERAGE_PERCENT)
 from geosys.bridge_api.definitions import (
-    ARCHIVE_MAP_PRODUCTS, ALL_SENSORS, SENSORS, NDVI, EVI,
-    SAMZ, SOIL, SLOPE, ELEVATION, REFLECTANCE, LANDSAT_8, LANDSAT_9, SENTINEL_2,
-    INSEASONFIELD_AVERAGE_NDVI, INSEASONFIELD_AVERAGE_REVERSE_NDVI,
-    INSEASONFIELD_AVERAGE_LAI, INSEASONFIELD_AVERAGE_REVERSE_LAI,
-    COLOR_COMPOSITION, SAMPLE_MAP, IGNORE_LAYER_FIELDS, MASK_PARAMETERS,
-    ALLOWED_FIELD_TYPES
-)
+    ARCHIVE_MAP_PRODUCTS,
+    ALL_SENSORS,
+    SENSORS,
+    NDVI,
+    EVI,
+    SAMZ,
+    SOIL,
+    SLOPE,
+    ELEVATION,
+    REFLECTANCE,
+    LANDSAT_8,
+    LANDSAT_9,
+    SENTINEL_2,
+    INSEASONFIELD_AVERAGE_NDVI,
+    INSEASONFIELD_AVERAGE_REVERSE_NDVI,
+    INSEASONFIELD_AVERAGE_LAI,
+    INSEASONFIELD_AVERAGE_REVERSE_LAI,
+    COLOR_COMPOSITION,
+    SAMPLE_MAP,
+    IGNORE_LAYER_FIELDS,
+    MASK_PARAMETERS,
+    ALLOWED_FIELD_TYPES)
 from geosys.bridge_api_wrapper import BridgeAPI
 from geosys.bridge_api.utilities import get_definition
 from geosys.ui.help.help_dialog import HelpDialog
 from geosys.ui.widgets.geosys_coverage_downloader import (
-    CoverageSearchThread, create_map, create_difference_map, create_samz_map,
-    create_rx_map, fetch_ndvi_map, credentials_parameters_from_settings
-)
+    CoverageSearchThread,
+    create_map,
+    create_difference_map,
+    create_samz_map,
+    create_rx_map,
+    fetch_map,
+    fetch_samz_map,
+    credentials_parameters_from_settings)
 from geosys.ui.widgets.geosys_itemwidget import CoverageSearchResultItemWidget
 from geosys.utilities.gui_utilities import (
     add_ordered_combo_item, layer_icon, is_polygon_layer, layer_from_combo,
@@ -348,7 +368,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
                 self.kmz_radio_button.setChecked(False)
                 self.kmz_radio_button.setEnabled(False)
-                
+
                 # Hide groups that are not needed for color composition
                 self.hotspots_group.hide()
                 self.fetch_rx_group.hide()
@@ -426,53 +446,140 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                 line_edit.show()
                 spinbox.show()
 
-    def fetch_rx_json(self, map_specifications):
+    def fetch_rx_json(self, map_specifications, map_product):
         bridge_api = BridgeAPI(
             *credentials_parameters_from_settings(),
             proxies=QGISSettings.get_qgis_proxy())
 
-        # Extract season field and image IDs
-        image_id = map_specifications[0]['image']['id']
-        image_date = map_specifications[0]['image']['date']
-        season_field_geom = self.wkt_geometries[0]
-        source_map_id = None
-        zone_count = self.fetch_rx_zones.value()
-        self.yield_average = self.yield_average_form.value()
-        self.yield_minimum = self.yield_minimum_form.value()
-        self.yield_maximum = self.yield_maximum_form.value()
-        self.organic_average = self.organic_average_form.value()
-        self.gain = self.spinBox_gain.value()  # Gain set by user
-        self.offset = self.spinBox_offset.value()  # Offset set by user
-        data = {
-            YIELD_AVERAGE: self.yield_average,
-            YIELD_MINIMUM: self.yield_minimum,
-            YIELD_MAXIMUM: self.yield_maximum,
-            ORGANIC_AVERAGE: self.organic_average,
-            SAMZ_ZONE: self.samz_zone,
-            GAIN: self.gain,
-            OFFSET: self.offset
-        }
-        try:
-            # Call API to fetch NDVI for the selected image
-            ndvi_response = fetch_ndvi_map(
-                season_field_geom, image_id, data=data)
-            if ndvi_response and 'id' in ndvi_response:
-                source_map_id = (ndvi_response['id'])
-        except Exception as e:
-            QMessageBox.critical(
-                self,
-                'RX Map',
-                f'Error fetching NDVI map: {e}'
+        geometry = self.wkt_geometries[0]
+
+        if map_product == SAMZ['key']:
+            image_dates = []
+            image_ids = []
+            # Check if images are provided; raise an error if none are selected
+            if not map_specifications:
+                QMessageBox.critical(
+                    self,
+                    'Image Selection Required',
+                    'At least one image must be selected to generate a SAMZ map.')
+                return
+            # Proceed with custom SAMZ using selected images
+            geometry = self.wkt_geometries[0]
+            zone_cnt = self.fetch_rx_zones.value()
+
+            if len(map_specifications) == 1:
+                # Log and use the single image provided
+                single_specification = map_specifications[0]
+                image_dates.append(single_specification['image']['date'])
+                image_ids.append(single_specification['image']['id'])
+            else:
+                # Iterate through multiple specifications
+                for map_specification in map_specifications:
+                    image_dates.append(map_specification['image']['date'])
+                    image_ids.append(map_specification['image']['id'])
+            try:
+                map_response = fetch_samz_map(
+                    geometry,
+                    image_ids,
+                    image_dates,
+                    zone_cnt
+                )
+
+                if map_response and 'id' in map_response:
+                    source_map_id = (map_response['id'])
+            except Exception as e:
+                QMessageBox.critical(
+                    self,
+                    'RX Map',
+                    f'Error fetching samz map data: {e}'
+                )
+                return
+
+            rx_map_json = bridge_api.get_rx_map(
+                url=bridge_api.bridge_server,
+                source_map_id=source_map_id,
+                zone_count=zone_cnt
             )
-            return
 
-        rx_map_json = bridge_api.get_rx_map(
-            url=bridge_api.bridge_server,
-            source_map_id=source_map_id,
-            zone_count=zone_count
-        )
+            return rx_map_json
 
-        return rx_map_json
+        else:
+            data = {
+                YIELD_AVERAGE: self.yield_average,
+                YIELD_MINIMUM: self.yield_minimum,
+                YIELD_MAXIMUM: self.yield_maximum,
+                ORGANIC_AVERAGE: self.organic_average,
+                SAMZ_ZONE: self.samz_zone,
+                GAIN: self.gain,
+                OFFSET: self.offset
+            }
+            for map_specification in map_specifications:
+                sample_map_data = None
+                if self.map_product == SAMPLE_MAP['key']:
+                    sample_data = []
+                    i = 0
+                    # Create the request data from the points and its
+                    # values
+                    for geom in self.wkt_point_geometries:
+                        val = self.attributes[i]
+                        data_item = {
+                            "geometry": geom,
+                            "value": val
+                        }
+                        sample_data.append(data_item)
+
+                        i += 1
+                    # The final request data
+                    sample_map_data = {
+                        "seasonField": {
+                            "Id": None,
+                            "geometry": geometry,
+                        },
+                        "properties": {
+                            "nutrientType": self.sample_map_field
+                        },
+                        "data": sample_data
+                    }
+
+                    data = sample_map_data
+
+                # Extract season field and image IDs
+                source_map_id = None
+                zone_count = self.fetch_rx_zones.value()
+                self.gain = self.spinBox_gain.value()  # Gain set by user
+                self.offset = self.spinBox_offset.value()  # Offset set by user
+
+                try:
+
+                    map_response = fetch_map(
+                        map_specification, map_product, geometry,
+                        n_planned_value=self.n_planned_value,
+                        yield_val=self.yield_average_form.value(),
+                        min_yield_val=self.yield_minimum_form.value(),
+                        max_yield_val=self.yield_maximum_form.value(),
+                        params=data, data=data,
+                        crop_type=self.crop_type,
+                        gain=self.gain, offset=self.offset,
+                        zone_count=self.samz_zone
+                    )
+
+                    if map_response and 'id' in map_response:
+                        source_map_id = (map_response['id'])
+                except Exception as e:
+                    QMessageBox.critical(
+                        self,
+                        'RX Map',
+                        f'Error fetching map data: {e}'
+                    )
+                    return
+
+                rx_map_json = bridge_api.get_rx_map(
+                    url=bridge_api.bridge_server,
+                    source_map_id=source_map_id,
+                    zone_count=zone_count
+                )
+
+                return rx_map_json
 
     def get_areas_from_rx_map(self, rx_map_json):
         """Collect areas of each zone from the rx_map_json."""
@@ -491,23 +598,33 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         """Updates the area values in the corresponding line_edit fields based on the RX zone data."""
 
         # Fetch the rx_map_json and extract the areas
-        self.rx_map_json = self.fetch_rx_json(self.selected_coverage_results)
-        areas = self.get_areas_from_rx_map(
-            self.rx_map_json)  # Call the method to get areas
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.rx_map_json = self.fetch_rx_json(
+                self.selected_coverage_results,
+                self.map_product
+            )
+            areas = self.get_areas_from_rx_map(
+                self.rx_map_json)  # Call the method to get areas
 
-        for zone_index in range(1, 21):
-            # Dynamically construct object names for line edits
-            line_edit_name = f"zone_{zone_index}_val"
+            for zone_index in range(1, 21):
+                # Dynamically construct object names for line edits
+                line_edit_name = f"zone_{zone_index}_val"
 
-            # Retrieve the line_edit element using getattr
-            line_edit = getattr(self, line_edit_name, None)
+                # Retrieve the line_edit element using getattr
+                line_edit = getattr(self, line_edit_name, None)
 
-            # Only update if the line_edit exists and the area data is
-            # available for the zone
-            if line_edit and zone_index <= len(areas):
-                area_value = areas[zone_index - 1]  # Adjust for 0-based index
-                line_edit.setText(f"{area_value:.3f} Ha")
-                line_edit.setReadOnly(True)
+                # Only update if the line_edit exists and the area data is
+                # available for the zone
+                if line_edit and zone_index <= len(areas):
+                    # Adjust for 0-based index
+                    area_value = areas[zone_index - 1]
+                    line_edit.setText(f"{area_value:.3f} Ha")
+                    line_edit.setReadOnly(True)
+        except Exception as e:
+            log(f"Error updating area values: {e}")
+        finally:
+            QApplication.restoreOverrideCursor()
 
     def set_gain_offset_state(self):
         """Disables the gain and offset options in the parameters menu for the COLORCOMPOSITION, ELEVATION,
@@ -1014,12 +1131,11 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         zone_cnt = self.samz_zone_form.value()
         if self.fetch_rx_group and self.fetch_rx_group.isChecked():  # RX Map Logic
             rx_zone_count = self.fetch_rx_zones.value()
-            
             rx_json_map = self.rx_map_json
-            
+
             source_map_id = rx_json_map.get('id')
 
-            filename = f"RX_zones_{rx_zone_count}"
+            filename = f"{self.map_product}_RX_zones_{rx_zone_count}"
             filename = clean_filename(filename)
             filename = check_if_file_exists(
                 self.output_directory,
@@ -1068,7 +1184,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             if map_product_definition == SAMZ:
                 image_dates = []
                 image_ids = []
-                # Check if images are provided; raise an error if none are selected
+                # Check if images are provided; raise an error if none are
+                # selected
                 if not map_specifications:
                     QMessageBox.critical(
                         self,
@@ -1114,7 +1231,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             else:
                 for map_specification in map_specifications:
                     filename = '{}_{}_zones_{}_{}'.format(
-                        self.map_product,  # map_specification['maps'][0]['type'],
+                        self.map_product,
+                        # map_specification['maps'][0]['type'],
                         str(zone_cnt),
                         map_specification['seasonField']['id'] or '',
                         map_specification['image']['date'] or ''
@@ -1174,7 +1292,10 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         return
 
                     # Add map to qgis canvas
-                    self.load_layer(os.path.join(self.output_directory, filename))
+                    self.load_layer(
+                        os.path.join(
+                            self.output_directory,
+                            filename))
 
     def start_map_creation(self):
         """Map creation starts here."""
@@ -1485,7 +1606,8 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             self.clear_combo_box(self.sensor_combo_box)
             self.populate_sensors()
 
-        if map_product == SOIL['name'] or map_product == ELEVATION['key'] or map_product == SAMPLE_MAP['name'] or map_product == SLOPE['key']:
+        if map_product == SOIL['name'] or map_product == ELEVATION[
+                'key'] or map_product == SAMPLE_MAP['name'] or map_product == SLOPE['key']:
             # Mask type not required for soil, elevation, and sample maps
             self.cb_mask.setEnabled(False)
         else:
