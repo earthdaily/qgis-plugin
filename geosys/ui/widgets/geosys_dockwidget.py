@@ -504,12 +504,19 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
             return rx_map_json
 
         else:
+
+            # Extract season field and image IDs
+            source_map_id = None
+            zone_count = self.fetch_rx_zones.value()
+            self.gain = self.spinBox_gain.value()
+            self.offset = self.spinBox_offset.value()
+
             data = {
                 YIELD_AVERAGE: self.yield_average,
                 YIELD_MINIMUM: self.yield_minimum,
                 YIELD_MAXIMUM: self.yield_maximum,
                 ORGANIC_AVERAGE: self.organic_average,
-                SAMZ_ZONE: self.samz_zone,
+                SAMZ_ZONE: zone_count,
                 GAIN: self.gain,
                 OFFSET: self.offset
             }
@@ -543,14 +550,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
                     data = sample_map_data
 
-                # Extract season field and image IDs
-                source_map_id = None
-                zone_count = self.fetch_rx_zones.value()
-                self.gain = self.spinBox_gain.value()  # Gain set by user
-                self.offset = self.spinBox_offset.value()  # Offset set by user
-
                 try:
-
                     map_response = fetch_map(
                         map_specification, map_product, geometry,
                         n_planned_value=self.n_planned_value,
@@ -560,7 +560,7 @@ class GeosysPluginDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
                         params=data, data=data,
                         crop_type=self.crop_type,
                         gain=self.gain, offset=self.offset,
-                        zone_count=self.samz_zone
+                        zone_count=zone_count
                     )
 
                     if map_response and 'id' in map_response:
