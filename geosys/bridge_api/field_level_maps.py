@@ -216,7 +216,7 @@ class FieldLevelMapsAPIClient(ApiClient):
                     'maps',
                     map_family['endpoint'],
                     map_type['key'],
-                    '?directLinks=true'
+                    '?storeRequest=true&directLinks=true'
                 )
 
                 response = self.post(
@@ -230,7 +230,7 @@ class FieldLevelMapsAPIClient(ApiClient):
                     'maps',
                     map_family['endpoint'],
                     map_type['key'],
-                    '?directLinks=true'
+                    '?storeRequest=true&directLinks=true'
                 )
                 response = self.post(
                     full_url,
@@ -301,7 +301,7 @@ class FieldLevelMapsAPIClient(ApiClient):
                 )
                 if zone_count:
                     full_url = f'{full_url}&zoning=true&zoneCount={zone_count}'
-                    
+
                 response = self.post(
                     f"{full_url}",
                     headers=headers,
@@ -414,7 +414,7 @@ class FieldLevelMapsAPIClient(ApiClient):
             return response.json()
 
         return {}
-    
+
     def get_rx_generated(
             self,
             url,
