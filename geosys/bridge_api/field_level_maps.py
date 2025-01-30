@@ -186,7 +186,7 @@ class FieldLevelMapsAPIClient(ApiClient):
                     'maps',
                     map_family['endpoint'],
                     map_type['key'],
-                    '?directLinks=true'
+                    '?storeRequest=true&directLinks=true'
                 )
 
                 response = self.post(
@@ -263,7 +263,7 @@ class FieldLevelMapsAPIClient(ApiClient):
                     'maps',
                     map_family['endpoint'],
                     map_type['key'],
-                    '?directLinks=true'
+                    '?storeRequest=true&directLinks=true'
                 )
 
                 response = self.post(
