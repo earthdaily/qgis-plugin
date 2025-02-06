@@ -3,13 +3,16 @@
 
 ![logo](https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/EDA_QGIS_logo.png)
 
-### EarthDaily is a global leader in Earth observation, delivering unparalleled geospatial insights across industries such as Agriculture, water management, and forest planning. With a team of world-class agronomists, data scientists, and Earth observation specialists, EarthDaily transforms the highest-quality satellite imagery into actionable solutions. 
+### EarthDaily is a global leader in Earth observation, delivering unparalleled geospatial insights across industries such as Agriculture, water management, and forest planning. 
+
+With a team of world-class agronomists, data scientists, and Earth observation specialists, EarthDaily transforms the highest-quality satellite imagery into actionable solutions. 
 
 By combining advanced analytics and superior signal-to-noise ratio data, EarthDaily empowers organizations to mitigate risk, optimize operations, and achieve sustainable outcomes. 
 
 Explore how EarthDaily's innovative platforms support the vital sectors shaping our world at earthdaily.com. 
 
-The EarthDaily® plugin for QGIS is the easiest way to leverage the powerful capabilities of the EarthDaily® Platform directly within your QGIS workflows. 
+
+### The EarthDaily® plugin for QGIS is the easiest way to leverage the powerful capabilities of the EarthDaily® Platform directly within your QGIS workflows. 
 
 Designed for Earth observation professionals, it enables seamless access to field-level analytics, eliminating the need for coding while providing actionable geospatial insights. 
 
