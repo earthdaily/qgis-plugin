@@ -10,13 +10,13 @@
 <br />
 <p align="center">
   <a href="https://github.com/earthdaily">
-    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/Logo.svg" alt="Logo" width="400" height="200">
+![logo](https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/EarthDaily.png)
   </a>
 
   <h1 align="center">QGIS Plugin</h3>
 
   <p align="center">
-    To be able to discover, request and use imagery products based on <geosys/> virtual constellation within QGIS, using the &ltgeosys/&gt API.
+    To be able to discover, request and use imagery products based on virtual constellation within QGIS, using the EarthDaily API.
     <br />
     <a href="https://earthdailyagro.com/"><strong>Who we are</strong></a>
     <br />
@@ -73,7 +73,12 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-EarthDaily Agro is the agricultural analysis division of EartDaily Analytics. Learn more about Earth Daily at [EarthDaily Analytics | Satellite imagery & data for agriculture, insurance, surveillance](https://earthdaily.com/).  EarthDaily Agro uses satellite imaging to provide advanced analytics to mitigate risk and increase efficiencies – leading to more sustainable outcomes for the organizations and people who feed the planet.
+### EarthDaily is a global leader in Earth observation, delivering unparalleled geospatial insights across industries such as Agriculture, water management, and forest planning. 
+
+With a team of world-class agronomists, data scientists, and Earth observation specialists, EarthDaily transforms the highest-quality satellite imagery into actionable solutions. 
+
+By combining advanced analytics and superior signal-to-noise ratio data, EarthDaily empowers organizations to mitigate risk, optimize operations, and achieve sustainable outcomes. Explore how EarthDaily's innovative platforms support the vital sectors shaping our world at [earthdaily.com](http://earthdaily.com/). 
+
 <p align="center">
   <a href="https://earthdailyagro.com/geosys/">
     <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/new-logo.png" alt="Logo" width="400">
@@ -81,14 +86,29 @@ EarthDaily Agro is the agricultural analysis division of EartDaily Analytics. Le
 </p>
 
  <p align="left">
-Throught our &ltgeosys/&gt platform, we make geospatial analytics easily accessible for you to be browsed or analyzed, within our cloud or within your own environment. We provide developers and data scientists both flexibility and extensibility with analytic ready data and digital agriculture ready development blocks. We empower your team to enrich your systems with information at the field, regional or continent level via our API or Apps.
+Throught our EarthDaily® platform, we make geospatial analytics easily accessible for you to be browsed or analyzed, within our cloud or within your own environment. We provide developers and data scientists both flexibility and extensibility with analytic ready data and digital agriculture ready development blocks. We empower your team to enrich your systems with information at the field, regional or continent level via our API or Apps.
 </p>
 
 We have a team of experts around the world that understand local crops and ag industry, as well as advanced analytics to support your business.
 
 We have established a developer community to provide you with plug-ins and integrations to be able to discover, request and use aggregate imagery products based on Landsat, Sentinel, Modis and many other open and commercial satellite sensors.
 
-The QGIS plugin project aims to provide an easy and ready to use connector allowign any QGIS users to quickly experience Earthdaily Agro capabilities.
+The QGIS plugin project aims to provide an easy and ready to use connector allowign any QGIS users to quickly experience EarthDaily capabilities.
+
+
+### The EarthDaily® plugin for QGIS is the easiest way to leverage the powerful capabilities of the EarthDaily® Platform directly within your QGIS workflows. 
+
+Designed for Earth observation professionals, it enables seamless access to field-level analytics, eliminating the need for coding while providing actionable geospatial insights. 
+
+Key Features: 
+
+- Historical and In-Season Maps: Analyze past trends and current conditions with EarthDaily® field-level data. 
+- Multi-Index Maps: Visualize indices such as NDVI, GNDVI, EVI, CVI, S2REP, NDWI, and NDMI to unlock deeper insights into vegetation health, moisture, and more. 
+- Multi-Sensor Integration: Utilize data from Sentinel-2, Landsat-8, Landsat-9, Gaofen, Huanjing, and the upcoming EarthDaily Constellation (2025). 
+- Advanced Processing Tools: Create polygon-based maps and access robust spectral visualizations for precision analysis. 
+- EarthDaily’s QGIS Plugin bridges the gap between data and decision-making, empowering users in agriculture, water management, forest planning, and beyond to make informed choices. 
+ 
+Explore the plugin today and revolutionize how you interact with Earth Observation data. 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -100,7 +120,7 @@ The QGIS plugin project aims to provide an easy and ready to use connector allow
 
 To be able to get maps within QGIS, please make sure you have valid credentials. If you need to get trial access, please register [here](https://earthdailyagro.com/geosys-api/#get-started).
 
-This project has been testes with QGIS 3.22.3
+This project has been testes with QGIS 3.26.3
 
 ### Installation
 
