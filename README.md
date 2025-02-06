@@ -31,8 +31,8 @@
 
 <div align="center">
   
-[![LinkedIn][linkedin-shield]][[linkedin-url](https://www.linkedin.com/company/earthdailyanalytics?utm_medium=developer&utm_source=linkedin&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)]
-[![Twitter][twitter-shield]][[twitter-url](https://x.com/earthdailya?utm_medium=developer&utm_source=twitter&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)]
+[![LinkedIn][linkedin-shield]](https://www.linkedin.com/company/earthdailyanalytics?utm_medium=developer&utm_source=linkedin&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)]
+[![Twitter][twitter-shield]](https://x.com/earthdailya?utm_medium=developer&utm_source=twitter&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)]
 [![languages][language-python-shiedl]][issues-url]
 [![CITest][CITest-shield]][CITest-url]
 [![Issues][issues-shield]][issues-url]
