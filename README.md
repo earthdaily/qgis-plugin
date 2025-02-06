@@ -31,9 +31,8 @@
 
 <div align="center">
   
-[![LinkedIn][linkedin-shield]][linkedin-url]
-[![Twitter][twitter-shield]][twitter-url]
-[![Youtube][youtube-shield]][youtube-url]
+[![LinkedIn][linkedin-shield]][[linkedin-url](https://www.linkedin.com/company/earthdailyanalytics?utm_medium=developer&utm_source=linkedin&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)]
+[![Twitter][twitter-shield]][[twitter-url](https://x.com/earthdailya?utm_medium=developer&utm_source=twitter&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)]
 [![languages][language-python-shiedl]][issues-url]
 [![CITest][CITest-shield]][CITest-url]
 [![Issues][issues-shield]][issues-url]
@@ -148,13 +147,13 @@ Here is an example of QGIS with field level maps
 
 <!-- USAGE EXAMPLES -->
 ## Use cases
-This project is used by prospect interested to create field level maps in few clicks to better understand the interest and benefits of maps available trought the <'geosys/> API. It has been also used to support various innovation projects on precison agriculture and regeneratice Ag with Organic matter maps used to optimize in field sampling.
+This project is used by prospect interested to create field level maps in few clicks to better understand the interest and benefits of maps available trought the EarthDaily® APIs. It has been also used to support various innovation projects on precison agriculture and regeneratice Ag with Organic matter maps used to optimize in field sampling.
 
 
 <!-- RESOURCES -->
 ## Resources 
 The following links will provide access to more information:
-- [EarthDaily agro developer portal  ](https://developer.geosys.com/)
+- [EarthDaily developer portal  ](https://developer.geosys.com/)
 - [QGIS website  ](https://www.qgis.org/en/site/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -176,7 +175,7 @@ Distributed under the [GPL 3.0 License](https://www.gnu.org/licenses/gpl-3.0.en.
 <!-- CONTACT -->
 ## Contact
 
-For any additonal information, please <a href="mailto: sales@earthdailyagro.com">email us</a>
+For any additonal information, please <a href="mailto: sales@earthdaily.com">email us</a>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
