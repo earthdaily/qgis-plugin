@@ -22,16 +22,16 @@ about=The EarthDaily® plugin for QGIS is the easiest way to leverage the powerf
 
     Resources:
     - Documentation: https://github.com/earthdaily/EDA-Documentation
-    - Repository: https://github.com/GEOSYS/qgis-plugin
+    - Repository: https://github.com/earthdaily/qgis-plugin
     - EarthDaily python package: https://github.com/earthdaily/earthdaily-python-client
 
 # Version and release information
-version=1.1.0
+version=1.4.0
 # alpha, beta, rc or final
 status=final
 
 # Author contact information
-author=GEOSYS
+author=Earth Daily
 email=sales.na@geosys.com
 
 # End of mandatory metadata
@@ -39,14 +39,41 @@ email=sales.na@geosys.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-changelog=[2022-05-05] Support for CVIN, LAI, Nitrogen, SOIL, Top of Canopy reflectance, S2REP, BRM and Model maps.
+changelog=Version 1.4.0 2025-02-06
+        - Support for Earth daily API version 5. Including coverage search, thumbnail fetching and products access.
+        - Plugin renamed to Earth daily.
+        - Implemented RX maps creation, patching and download.
+        - Hotspots updates to use latest API endpoints and respective filters update.
+        - Updates to the plugin description and about page links.
+        - Option page changed to remove field location selection.
+        - Updates on the map coverage search filters and parameters.
+        - Fixed zoning in map creation output formats.
+        Version 1.3.0 2023-04-21
+        - Fix for SAMZ thumbnail. Will from now on use the NDVI thumbnail.
+        - Weather types has been added as a parameter.
+        - Sample maps can now be created. This allows users to provide a point vector layer and a field to generate a Sample map.
+        - SAMZ can be custom and automatic now. I no SAMZ coverage is selected, automatic SAMZ is generated. Custom will depend on the selected coverages.
+        Version 1.1.2 2022-09-28
+        - Coverage API update for SAMZ, YGM and YPM maps.
+        Version 1.1.1 2022-08-25
+        - Bugs fix, Auto track of past selected layers.
+        Version 1.1.0 2022-05-05
+        - Support for CVIN, LAI, Nitrogen, SOIL, Top of Canopy reflectance, S2REP, BRM
+        Version 1.0.3 2020-06-25
+        - Support for zoned maps.
+        - Hotspots and segments fetching.
+        Version 1.0.2 2019-12-12
+        - Take zoneCount into account for SAMZ maps.
+        - Updated GeoSYS logo.
+        Version 1.0.1 2019-10-16
+        - Fixed Image thumbnail when requesting image for SaMZ creation
 
 # Tags are comma separated with spaces allowed
 tags=precision-ag,accuracy,agriculture,agronomy,analysis,api,area,basemap,biomass,bounding box,cartography,catalog,change detection,cvi,earth observation,elevation,evi,field,fields,field vegetation indexes,field agronomy maps,nitogen,gis,gndvi,google earth,geosys,image,imagery,images,import,importer,json,kml,kmz,lai,maps,modis,ndvi,plot,sentinel,shape,shapefile,spatial,spatial data,satellite,quality,spectral,time series,timeseries,vector,vector layer,vegetation,wkt,sustainability,ecology,landsat,field,remote sensing,webservice,satellite,smart farming,satellite data,webservices,digital farming,python,raster
 
-homepage=https://github.com/GEOSYS/qgis-plugin
-tracker=https://github.com/GEOSYS/qgis-plugin/issues
-repository=https://github.com/GEOSYS/qgis-plugin
+homepage=https://github.com/earthdaily/qgis-plugin
+tracker=https://github.com/earthdaily/qgis-plugin/issues
+repository=https://github.com/earthdaily/qgis-plugin
 category=Plugins
 icon=icon.png
 # experimental flag
