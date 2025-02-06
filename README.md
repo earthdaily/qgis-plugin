@@ -10,7 +10,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/earthdaily">
-<img src="https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/EDA_QGIS_logo.png" alt="Logo" width="400" height="200">
+<img src="https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/EarthDaily.png" alt="Logo" width="400" height="200">
   </a>
 
   <h1 align="center">QGIS Plugin</h3>
