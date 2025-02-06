@@ -18,7 +18,7 @@
   <p align="center">
     To be able to discover, request and use imagery products based on virtual constellation within QGIS, using the EarthDaily API.
     <br />
-    <a href="https://earthdailyagro.com/"><strong>Who we are</strong></a>
+    <a href=["earthdaily.com"](https://earthdaily.com/?utm_medium=developer&utm_source=landing-page&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)><strong>Who we are</strong></a>
     <br />
     <br />
     <a href="https://github.com/earthdaily/qgis-plugin">Project description</a>
@@ -31,8 +31,8 @@
 
 <div align="center">
   
-[![LinkedIn][linkedin-shield]](https://www.linkedin.com/company/earthdailyanalytics?utm_medium=developer&utm_source=linkedin&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)]
-[![Twitter][twitter-shield]](https://x.com/earthdailya?utm_medium=developer&utm_source=twitter&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)]
+[![LinkedIn][linkedin-shield]](https://www.linkedin.com/company/earthdailyanalytics?utm_medium=developer&utm_source=linkedin&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)
+[![Twitter][twitter-shield]](https://x.com/earthdailya?utm_medium=developer&utm_source=twitter&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)
 [![languages][language-python-shiedl]][issues-url]
 [![CITest][CITest-shield]][CITest-url]
 [![Issues][issues-shield]][issues-url]
