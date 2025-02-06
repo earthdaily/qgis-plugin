@@ -9,7 +9,7 @@ With a team of world-class agronomists, data scientists, and Earth observation s
 
 By combining advanced analytics and superior signal-to-noise ratio data, EarthDaily empowers organizations to mitigate risk, optimize operations, and achieve sustainable outcomes. 
 
-Explore how EarthDaily's innovative platforms support the vital sectors shaping our world at earthdaily.com
+Explore how EarthDaily's innovative platforms support the vital sectors shaping our world at [earthdaily.com](earthdaily.com)
 
 
 ### The EarthDaily® plugin for QGIS is the easiest way to leverage the powerful capabilities of the EarthDaily® Platform directly within your QGIS workflows. 
@@ -26,5 +26,5 @@ Key Features:
  
 Explore the plugin today and revolutionize how you interact with Earth Observation data. 
 
-If you have any question, feel free to contact us sales@earthdaily.com and visit us: https://earthdailyagro.com/ and https://earthdaily.com/
+If you have any question, feel free to contact us sales@earthdaily.com and visit us: [earthdailyagro.com](earthdailyagro.com)
 
