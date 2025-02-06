@@ -1,7 +1,7 @@
 
 # Welcome to the EARTHDAILY® Plugin for QGIS supporting documentation
 
-![logo](https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/geosys_Qgis_logo.png)
+![logo](https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/EDA_QGIS_logo.png)
 
 EarthDaily is a global leader in Earth observation, delivering unparalleled geospatial insights across industries such as Agriculture, water management, and forest planning. With a team of world-class agronomists, data scientists, and Earth observation specialists, EarthDaily transforms the highest-quality satellite imagery into actionable solutions. 
 By combining advanced analytics and superior signal-to-noise ratio data, EarthDaily empowers organizations to mitigate risk, optimize operations, and achieve sustainable outcomes. Explore how EarthDaily's innovative platforms support the vital sectors shaping our world at earthdaily.com. 
@@ -17,18 +17,5 @@ Key Features:
  
 Explore the plugin today and revolutionize how you interact with Earth Observation data. 
 
+If you have any question, feel free to contact us sales@earthdaily.com and visit us: https://earthdailyagro.com/ and https://earthdaily.com/
 
-GEOSYS® is offering various analytics leveraging satellite imagery available through APIs. Leveraging API requires API integration tasks which can be complex when users just want to get couple of maps or metrics. 
-
-
-GEOSYS® Plugin for QGIS offers an easy way to interact with GEOSYS® Geospatial Analytics without any coding effort. The plugin will give you access to: 
-
-- GEOSYS® field historical maps
-- GEOSYS® field in-season maps
-- GEOSYS® processing services 
-
-GEOSYS® Plugin for QGIS is the easiest way to experience field level capabilities of the GEOSYS® Platform.
-
-The documentation will guide you through all the steps to get, install and use GEOSYS® Plugin for QGIS. 
-
-If you have any question, feel free to contact us Api.Support@geosys.com 
