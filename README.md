@@ -81,7 +81,7 @@ By combining advanced analytics and superior signal-to-noise ratio data, EarthDa
 
 <p align="center">
   <a href="https://earthdailyagro.com/geosys/">
-    <img src="https://earthdailyagro.com/wp-content/uploads/2022/01/new-logo.png" alt="Logo" width="400">
+    <img src="https://raw.githubusercontent.com/GEOSYS/qgis-plugin-doc/master/pictures/EarthDaily.png">
   </a>
 </p>
 
