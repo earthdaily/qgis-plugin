@@ -18,7 +18,7 @@
   <p align="center">
     To be able to discover, request and use imagery products based on virtual constellation within QGIS, using the EarthDaily API.
     <br />
-    <a href=["earthdaily.com"](https://earthdaily.com/?utm_medium=developer&utm_source=landing-page&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description)><strong>Who we are</strong></a>
+    <a href="https://earthdaily.com/?utm_medium=developer&utm_source=landing-page&utm_campaign=qgis-plugin-edagro&utm_content=geosys-qgis-description"><strong>Who we are</strong></a>
     <br />
     <br />
     <a href="https://github.com/earthdaily/qgis-plugin">Project description</a>
