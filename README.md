@@ -134,7 +134,7 @@ Documentation about development setup can be found here https://github.com/earth
 <!-- FEATURES -->
 ## Features
 
-The plugin once configured provides an easy way to get satelitte imagery derived map on polygon of interest. User can select one or multiple polygon object on the map canvas and request maps creation. For more detailed information, please see the [user documentation](https://earthdaily.github.io/qgis-plugin/Readme.html). 
+The plugin once configured provides an easy way to get satelitte imagery derived map on polygon of interest. User can select one or multiple polygon object on the map canvas and request maps creation. For more detailed information, please see the [user documentation](https://earthdaily.github.io/qgis-plugin/). 
 
 Here is an example of QGIS with field level maps
 <p align="center">
